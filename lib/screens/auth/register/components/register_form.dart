@@ -27,7 +27,9 @@ class RegisterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
 
-    final AuthLink authLink = AuthLink(getToken: () {});
+    final AuthLink authLink = AuthLink(getToken: () {
+      return null;
+    });
     final Link link = authLink.concat(httpLink);
     ValueNotifier<GraphQLClient> client = ValueNotifier(
       GraphQLClient(

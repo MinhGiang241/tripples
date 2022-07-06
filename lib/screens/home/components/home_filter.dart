@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:survey/constants.dart';
 import 'package:survey/models/company.dart';
 
 class HomeFilter extends StatefulWidget {

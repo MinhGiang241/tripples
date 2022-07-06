@@ -213,7 +213,7 @@ class SurveyScreen extends StatelessWidget {
                               builder: (_) => AlertDialog(
                                 title: Text("Thông báo"),
                                 content: Text(
-                                    data["question_result_save"]["code"] == 0
+                                    data!["question_result_save"]["code"] == 0
                                         ? "Thành công"
                                         : "Thất bại"),
                                 actions: [

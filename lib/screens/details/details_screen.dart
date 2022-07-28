@@ -32,7 +32,7 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print(" id campain: " + idCampaign);
     final String detailsQuery = """
-  query {
+    query {
     find_Campaign_dto(_id : "$idCampaign"){
       data{
         _id
@@ -45,9 +45,18 @@ class DetailsScreen extends StatelessWidget {
         schema
         start_time
         updatedTime
-        
+        questions {
+          questID
+          hint
+          title
+          type
+          max_score
+          poll{
+            label
+            factor
+          }
+        }
       }
-      message
     }
   }
   """;

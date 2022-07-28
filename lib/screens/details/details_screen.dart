@@ -30,33 +30,26 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(" id campain: " + idCampaign);
     final String detailsQuery = """
   query {
-	find_Campaign_dto(_id :"$idCampaign"){
-    data{
-      name
-      description
-      ref_companyId_CompanyDto{
+    find_Campaign_dto(_id : "$idCampaign"){
+      data{
         _id
-        name  
+        name
+        description
+        end_time
+        createdTime
+        isLocked
+        isOpen
+        schema
+        start_time
+        updatedTime
+        
       }
-      start_time
-      end_time
-      questions{
-        questID
-        hint
-        title
-        type
-        max_score
-        poll{
-          label
-          factor
-        }
-      }
+      message
     }
   }
-}
-  
   """;
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
     final AuthLink authLink = AuthLink(

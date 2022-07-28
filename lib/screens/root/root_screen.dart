@@ -9,7 +9,7 @@ class RootScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var status = context.watch<AuthController>().authStatus;
     if (status == AuthStatus.unauthentication) {
-      return LoginScreen();
+      return LoginScreen(); //LoginScreen
     } else if (status == AuthStatus.authentication) {
       return HomeScreen();
     } else {

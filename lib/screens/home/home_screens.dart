@@ -16,8 +16,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
-  final String queryMe = """query {
-                                  me{
+  final String queryMe = """mutation {
+                                  authorization_me{
+                                    code
+                                    message
                                     data
                                     }
                                   }""";
@@ -28,11 +30,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     {
       data
       {
-        _id
-        question_result
+        _id 
         appointment_date
         appointment_time
-        ref_companyId_CompanyDto{
+        ref_tenantId_CompanyDto{
           _id
           name
         }
@@ -81,12 +82,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           body: Query(
             options: QueryOptions(document: gql(queryMe)),
             builder: (meResult, {fetchMore, refetch}) {
+              print(meResult);
+
               if (meResult.isLoading) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              if (meResult.data != null) if (meResult.data!['me'] == null) {
+              if (meResult.data != null) if (meResult.data!['authorization_me']
+                      ['data'] ==
+                  null) {
                 return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -101,16 +106,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 //   child: Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
                 // );
               }
-              var isRoot = meResult.data!['me']['data']['isRoot'] ?? false;
+              var isRoot =
+                  meResult.data!['authorization_me']['data']['isRoot'] ?? false;
               context.read<AuthController>().idUser =
-                  meResult.data!['me']['data']['_id'] as String;
+                  meResult.data!['authorization_me']['data']['_id'] as String;
               return Column(
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
                   HomeAppBar(
-                    name: meResult.data!["me"]["data"] != null
-                        ? meResult.data!["me"]["data"]["fullName"] ??
-                            meResult.data!["me"]["data"]["userName"] ??
+                    name: meResult.data!["authorization_me"]["data"] != null
+                        ? meResult.data!["authorization_me"]["data"]
+                                ["fullName"] ??
+                            meResult.data!["authorization_me"]["data"]
+                                ["userName"] ??
                             "Tên"
                         : "",
                   ),
@@ -126,8 +134,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           "children": [
                             {
                               "id": isRoot == true ? "creator" : "agent",
-                              "value": meResult.data!['me']['data'] != null
-                                  ? meResult.data!['me']['data']['userName'] ??
+                              "value": meResult.data!['authorization_me']
+                                          ['data'] !=
+                                      null
+                                  ? meResult.data!['authorization_me']['data']
+                                          ['userName'] ??
                                       ""
                                   : ""
                             }

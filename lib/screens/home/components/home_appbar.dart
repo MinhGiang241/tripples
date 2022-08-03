@@ -2,27 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:survey/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
+import '../../user/providers/user.dart';
+import '../../user/user_profile.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({
     Key? key,
     required this.name,
+    required this.userId,
   }) : super(key: key);
   final String name;
+  final String userId;
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.all(padding),
         child: Row(
           children: [
-            CircleAvatar(
-              backgroundColor: Colors.grey.shade400,
-              radius: 25,
-              child: Icon(
-                Icons.person,
-                size: 40,
-              ),
-            ),
+            Stack(children: [
+              PopupMenuButton(
+                onSelected: (_) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => DetailUser(userId)));
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey.shade400,
+                  radius: 25,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                  ),
+                ),
+                itemBuilder: (_) => [
+                  PopupMenuItem(child: Text('Hồ sơ'), value: 0),
+                ],
+              )
+            ]),
             SizedBox(
               width: padding,
             ),

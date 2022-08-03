@@ -1,3 +1,6 @@
+// apply plugin: 'com.android.application'
+
+
 buildscript {
     ext.kotlin_version = '1.6.10'
     repositories {
@@ -25,6 +28,33 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(':app')
 }
+
+
+// def keystoreProperties = new Properties()
+// def keystorePropertiesFile = rootProject.file('key.properties')
+// if (keystorePropertiesFile.exists()) {
+//     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+// }
+
+// android {
+//     compileSdkVersion 24
+//     buildToolsVersion '24.0.0'
+// }
+
+
+// signingConfigs {
+//     release {
+//         keyAlias keystoreProperties['keyAlias']
+//         keyPassword keystoreProperties['keyPassword']
+//         storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+//         storePassword keystoreProperties['storePassword']
+//     }
+// }
+// buildTypes {
+//     release {
+//         signingConfig signingConfigs.release
+//     }
+//    }
 
 task clean(type: Delete) {
     delete rootProject.buildDir

@@ -117,18 +117,33 @@ class LoginForm extends StatelessWidget {
 
                   return isDemo
                       ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 50),
-                          child: Row(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Column(
                             children: [
-                              Text(S.current.noAccount),
                               TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => RegisterScreen()));
-                                  },
-                                  child: Text(S.current.signup))
+                                  onPressed: null,
+                                  child: Text(
+                                    'Quên mật khẩu',
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                              Row(
+                                children: [
+                                  Text(S.current.noAccount),
+                                  TextButton(
+                                      style: TextButton.styleFrom(
+                                          primary:
+                                              Theme.of(context).primaryColor),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    RegisterScreen()));
+                                      },
+                                      child: Text(S.current.signup))
+                                ],
+                              )
                             ],
                           ),
                         )

@@ -8,6 +8,7 @@ import 'components/home_appbar.dart';
 import 'components/home_tabbar.dart';
 import 'components/template_tab_view.dart';
 import 'package:provider/provider.dart';
+import '../user/providers/user.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -114,14 +115,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
                   HomeAppBar(
-                    name: meResult.data!["authorization_me"]["data"] != null
-                        ? meResult.data!["authorization_me"]["data"]
-                                ["fullName"] ??
-                            meResult.data!["authorization_me"]["data"]
-                                ["userName"] ??
-                            "Tên"
-                        : "",
-                  ),
+                      name: meResult.data!["authorization_me"]["data"] != null
+                          ? meResult.data!["authorization_me"]["data"]
+                                  ["fullName"] ??
+                              meResult.data!["authorization_me"]["data"]
+                                  ["userName"] ??
+                              "Tên"
+                          : "",
+                      userId: meResult.data!["authorization_me"]["data"] != null
+                          ? meResult.data!["authorization_me"]["data"]["_id"]
+                          : "id"
+                      // user: meResult.data!["authorization_me"]["data"],
+                      ),
                   SizedBox(height: padding),
                   HomeTabBar(tabController: tabController),
                   Expanded(

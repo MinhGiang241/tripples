@@ -41,7 +41,7 @@ class _UpdatePassord extends State<UpdatePassord> {
       print('validated');
       print(result);
       // ignore: await_only_futures
-      var r = await runMutation(
+      await runMutation(
           {"oldpass": oldPasController.text, "newpass": newPasCotroller.text});
     }
   }
@@ -99,40 +99,28 @@ class _UpdatePassord extends State<UpdatePassord> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                TextField(
-                    decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
-                    controller: oldPasController,
-                    onSubmitted: (_) => submitData),
-                TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Mật khẩu mới",
-                      errorText: null,
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red, width: 1.0),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red, width: 1.0),
-                      ),
-                    ),
-                    controller: newPasCotroller,
-                    onSubmitted: (_) => submitData),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
+                  controller: oldPasController,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: "Mật khẩu mới",
+                    errorText: null,
+                  ),
+                  controller: newPasCotroller,
+                ),
                 TextFormField(
                   validator: (val) {
                     // ignore: unrelated_type_equality_checks
                     if (val == newPasCotroller.text) {
                       return null;
                     } else {
-                      return 'Password không khớp';
+                      return 'mật khẩu không khớp';
                     }
                   },
                   decoration: const InputDecoration(
                     labelText: "Nhập lại mật khẩu mới",
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red, width: 1.0),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red, width: 1.0),
-                    ),
                   ),
                   controller: confirmNewPasCotroller,
                   // onSubmitted: (_) => submitData

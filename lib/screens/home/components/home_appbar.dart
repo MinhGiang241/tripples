@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:survey/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
-import '../../user/providers/user.dart';
-import '../../user/user_profile.dart';
+import '../../profile/user_profile.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({

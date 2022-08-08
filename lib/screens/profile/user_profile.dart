@@ -8,10 +8,26 @@ import '../../data_sources/api/constants.dart';
 import 'edit_password.dart';
 
 class DetailUser extends StatelessWidget {
+  final String userId;
   DetailUser(this.userId);
-  final queryInfo = '''
+
+  @override
+  Widget build(BuildContext context) {
+    final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
+
+    final AuthLink authLink = AuthLink(
+        getToken: () => 'Bearer ${context.read<AuthController>().token}');
+    final Link link = authLink.concat(httpLink);
+    ValueNotifier<GraphQLClient> client = ValueNotifier(
+      GraphQLClient(
+        link: link,
+        // The default store is the InMemoryStore, which does NOT persist to disk
+        cache: GraphQLCache(store: HiveStore()),
+      ),
+    );
+    final queryInfo = '''
               query {
-    find_Account_dto(_id:"61606338c82d3b710a385a20"){
+    find_Account_dto(_id: "${userId}"){
       data {
         _id
         avatar
@@ -43,22 +59,6 @@ class DetailUser extends StatelessWidget {
     }
   }
     ''';
-  final String userId;
-
-  @override
-  Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
-
-    final AuthLink authLink = AuthLink(
-        getToken: () => 'Bearer ${context.read<AuthController>().token}');
-    final Link link = authLink.concat(httpLink);
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
-      GraphQLClient(
-        link: link,
-        // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
-      ),
-    );
 
     return GraphQLProvider(
       client: client,

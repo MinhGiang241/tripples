@@ -8,7 +8,6 @@ import 'components/home_appbar.dart';
 import 'components/home_tabbar.dart';
 import 'components/template_tab_view.dart';
 import 'package:provider/provider.dart';
-import '../user/providers/user.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,14 +16,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
-  final String queryMe = """mutation {
-                                  authorization_me{
-                                    code
-                                    message
-                                    data
-                                    }
-                                  }""";
-  final String queryTemplate = """
+  final String queryMe =
+      """mutation {
+    authorization_me{
+      code
+      message
+      data
+      }
+    }""";
+  final String queryTemplate =
+      """
   query(\$filter:GeneralCollectionFilterInput)
   {
     query_Schedules_dto(filter:\$filter)

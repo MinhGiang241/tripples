@@ -49,6 +49,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           name
           address
         }
+        ref_QuestionResult_scheduleIdDto {
+          campaignId
+          departmentId
+          creator
+          departmentId
+          display_name
+          follower_numb
+          media
+          updatedTime
+          note
+          score
+          task_numb
+          tenantId
+          values {
+            factor
+            label
+          }
+          question {
+            name
+            max_score
+            poll {
+              factor
+              icon
+              label
+            }
+            questID
+            type
+          }
+        }
       }
     }
   }

@@ -37,7 +37,7 @@ class QuerySchedulesDto {
       });
       if (json['data'].length > 0) {
         questionResultScheduleIdDto =
-            json['data'][0]['question_result']?.forEach((v) {
+            json['data'][0]['ref_QuestionResult_scheduleIdDto']?.forEach((v) {
           questionResultScheduleIdDto
               ?.add(new QuestionResultScheduleIdDto.fromJson(v));
         });
@@ -88,9 +88,9 @@ class Campaign {
     refCompanyIdCompanyDto = json['ref_companyId_CompanyDto'] != null
         ? new RefCompanyIdCompanyDto.fromJson(json['ref_companyId_CompanyDto'])
         : null;
-    if (json['question_result'] != null) {
+    if (json['ref_campaignId_CampaignDto'].length != 0) {
       questionResultScheduleIdDto = <QuestionResultScheduleIdDto>[];
-      json['question_result'].forEach((v) {
+      json['ref_QuestionResult_scheduleIdDto'].forEach((v) {
         questionResultScheduleIdDto
             ?.add(new QuestionResultScheduleIdDto.fromJson(v));
       });
@@ -135,10 +135,10 @@ class QuestionResultScheduleIdDto {
       this.question});
 
   QuestionResultScheduleIdDto.fromJson(Map<dynamic, dynamic> json) {
-    sId = json['_id'];
+    sId = json['campaignId'];
     updatedTime = json['updatedTime'];
     score = json['score'];
-    note = json['note'];
+    note = json['note'] != null ? json['note'] : null;
     question = Question.fromJson(json['question']);
     if (json['media'] != null) {
       media = <Media>[];

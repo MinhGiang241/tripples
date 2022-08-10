@@ -10,6 +10,8 @@ import 'package:survey/screens/auth/components/auth_button.dart';
 import 'package:survey/screens/auth/components/auth_input.dart';
 import 'package:survey/screens/auth/register/register_screen.dart';
 
+import '../../reset_password/forget_password.dart';
+
 class LoginForm extends StatelessWidget {
   LoginForm({
     Key? key,
@@ -99,7 +101,9 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               Query(
-                options: QueryOptions(document: gql("""query {
+                options: QueryOptions(
+                    document: gql(
+                        """query {
                                     response:configuration{
                                               code
                                               message
@@ -121,7 +125,12 @@ class LoginForm extends StatelessWidget {
                           child: Column(
                             children: [
                               TextButton(
-                                  onPressed: null,
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => ForgetPassword()));
+                                  },
                                   child: Text(
                                     'Quên mật khẩu',
                                     style: TextStyle(

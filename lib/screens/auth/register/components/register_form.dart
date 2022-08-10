@@ -71,7 +71,7 @@ class RegisterForm extends StatelessWidget {
                 controller: emailController,
                 hint: S.current.email,
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: Icon(Icons.email),
+                prefixIcon: Icon(Icons.abc),
                 validator: (val) {
                   if (val!.isEmpty) {
                     return S.current.not_blank;
@@ -123,7 +123,8 @@ class RegisterForm extends StatelessWidget {
               ),
               Mutation(
                 options: MutationOptions(
-                  document: gql("""
+                  document: gql(
+                      """
               mutation (\$userName: String!, \$email: String!, \$password: String!, \$phoneNumber: String!){
                     register(data: {userName: \$userName,
                                     email: \$email, 

@@ -13,6 +13,7 @@ class DetailUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(userId);
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
 
     final AuthLink authLink = AuthLink(
@@ -71,72 +72,85 @@ class DetailUser extends StatelessWidget {
               options: QueryOptions(document: gql(queryInfo)),
               builder: (result, {fetchMore, refetch}) {
                 final userInfo = result.data?['find_Account_dto']['data'];
-                print(result);
-                return ListView(
-                  padding: EdgeInsets.all(padding),
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(),
-                      padding: EdgeInsets.symmetric(vertical: padding),
-                      height: 180,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.grey.shade400,
-                        radius: 25,
-                        child: Icon(
-                          Icons.person,
-                          size: 130,
-                        ),
-                      ),
-                    ),
-                    buildUserInfoDisplay(
-                      userInfo['userName'],
-                      'Tài khoản:',
-                    ),
-                    buildUserInfoDisplay(
-                      userInfo['fullName'],
-                      'Họ và tên:',
-                    ),
-                    buildUserInfoDisplay(
-                      userInfo!['email'] != null
-                          ? userInfo['email']
-                          : 'chưa có email',
-                      'Email:',
-                    ),
-                    buildUserInfoDisplay(
-                        userInfo!['phoneNumber'] != null
-                            ? '0' + userInfo['phoneNumber']
-                            : 'chưa có số điện thoại',
-                        "Số điện thoại"),
-                    Center(
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: padding),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => UpdatePassord()));
-                              },
-                              style: TextButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor),
-                              child: Text(
-                                "Đổi mật khẩu",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .button
-                                    ?.copyWith(color: Colors.white),
-                              ))),
-                    )
-                  ],
-                );
+                print(userInfo);
+
+                return result.isLoading
+                    ? Center(
+                        child: Text('Loading...'),
+                      )
+                    : ListView(
+                        padding: EdgeInsets.all(padding),
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(),
+                            padding: EdgeInsets.symmetric(vertical: padding),
+                            height: 180,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey.shade400,
+                              radius: 25,
+                              child: Icon(
+                                Icons.person,
+                                size: 130,
+                              ),
+                            ),
+                          ),
+                          buildUserInfoDisplay(
+                            userInfo['userName'],
+                            'Tài khoản:',
+                          ),
+                          buildUserInfoDisplay(
+                            userInfo['fullName'],
+                            'Họ và tên:',
+                          ),
+                          buildUserInfoDisplay(
+                            userInfo!['email'] != null
+                                ? userInfo['email']
+                                : 'chưa có email',
+                            'Email:',
+                          ),
+                          buildUserInfoDisplay(
+                              userInfo!['phoneNumber'] != null
+                                  ? '0' + userInfo['phoneNumber']
+                                  : 'chưa có số điện thoại',
+                              "Số điện thoại"),
+                          if (userInfo.containsKey('roles'))
+                            buildUserInfoDisplay(
+                                userInfo['roles'][0]['display_name'] != null
+                                    ? userInfo['roles'][0]['display_name']
+                                    : 'chưa có chứu vụ',
+                                "Chức vụ"),
+                          Center(
+                            child: Padding(
+                                padding:
+                                    EdgeInsets.symmetric(vertical: padding),
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  UpdatePassword()));
+                                    },
+                                    style: TextButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor),
+                                    child: Text(
+                                      "Đổi mật khẩu",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .button
+                                          ?.copyWith(color: Colors.white),
+                                    ))),
+                          )
+                        ],
+                      );
               })),
     );
   }
 
   Widget buildUserInfoDisplay(String getValue, String title) => Center(
         child: Padding(
-            padding: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(bottom: 5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -168,11 +182,11 @@ class DetailUser extends StatelessWidget {
                                 getValue,
                                 style: TextStyle(fontSize: 16, height: 1.4),
                               ))),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.grey,
-                        size: 40.0,
-                      )
+                      // Icon(
+                      //   Icons.keyboard_arrow_right,
+                      //   color: Colors.grey,
+                      //   size: 40.0,
+                      // )
                     ]))
               ],
             )),

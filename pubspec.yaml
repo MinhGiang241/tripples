@@ -43,6 +43,7 @@ dependencies:
   fluttertoast: ^8.0.7
   flutter_native_splash: ^1.2.0
   pull_to_refresh: ^2.0.0
+  google_sign_in: ^5.4.0
 
 dev_dependencies:
   flutter_test:

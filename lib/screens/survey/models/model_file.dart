@@ -18,6 +18,7 @@ class ModelFile {
         onUploadProgress(sentBytes, totalBytes);
       },
     );
+    print(id);
   }
 
   close() async {

@@ -8,15 +8,16 @@ import 'package:survey/constants.dart';
 
 import '../../controllers/auth/auth_controller.dart';
 import '../../data_sources/api/constants.dart';
+import '../../generated/l10n.dart';
 import 'user_profile.dart';
 
-class UpdatePassord extends StatefulWidget {
-  UpdatePassord();
+class UpdatePassword extends StatefulWidget {
+  UpdatePassword();
   @override
-  State<UpdatePassord> createState() => _UpdatePassord();
+  State<UpdatePassword> createState() => _UpdatePassword();
 }
 
-class _UpdatePassord extends State<UpdatePassord> {
+class _UpdatePassword extends State<UpdatePassword> {
   final oldPasController = TextEditingController();
   final newPasCotroller = TextEditingController();
   final confirmNewPasCotroller = TextEditingController();
@@ -100,23 +101,36 @@ class _UpdatePassord extends State<UpdatePassord> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 TextFormField(
-                  decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
-                  controller: oldPasController,
-                ),
+                    decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
+                    controller: oldPasController,
+                    validator: (v) {
+                      if (v!.isEmpty) {
+                        return S.current.not_blank;
+                      } else {
+                        return null;
+                      }
+                    }),
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Mật khẩu mới",
-                    errorText: null,
-                  ),
-                  controller: newPasCotroller,
-                ),
+                    decoration: const InputDecoration(
+                      labelText: "Mật khẩu mới",
+                    ),
+                    controller: newPasCotroller,
+                    validator: (v) {
+                      if (v!.isEmpty) {
+                        return S.current.not_blank;
+                      } else {
+                        return null;
+                      }
+                    }),
                 TextFormField(
-                  validator: (val) {
+                  validator: (v) {
                     // ignore: unrelated_type_equality_checks
-                    if (val == newPasCotroller.text) {
-                      return null;
-                    } else {
+                    if (v!.isEmpty) {
+                      return S.current.not_blank;
+                    } else if (v != newPasCotroller.text) {
                       return 'mật khẩu không khớp';
+                    } else {
+                      return null;
                     }
                   },
                   decoration: const InputDecoration(

@@ -7,20 +7,26 @@ import 'package:survey/screens/survey/controllers/file_upload.dart';
 import 'package:survey/screens/survey/models/model_file.dart';
 import 'package:survey/utils/extentions/ex.dart';
 
+import '../../../data_sources/api/api_client.dart';
+import '../controllers/answer_controller.dart';
+
 class UploadDialog extends StatelessWidget {
   final List<ModelFile> files;
   final Function(List<ModelFile>) onUpload;
+
   const UploadDialog({
     Key? key,
     required this.files,
     required this.onUpload,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     List<ModelFile> listModelFile = filterList2(
         context.watch<FileUploadController>().listModelFile,
         context.read<ChooseFileController>().files);
     double height = 200 + 60 * listModelFile.length.toDouble();
+    var loading = false;
     return Container(
       height: double.infinity,
       width: double.infinity,
@@ -143,7 +149,55 @@ class UploadDialog extends StatelessWidget {
                                 .any((element) => element.progress != 0)
                             ? null
                             : () async {
+                                loading = true;
+                                // try {
+                                // onUpload(listModelFile);
+                                // context.read<FileUploadController>().;
+                                // var uploadGoogle = () async {
+                                //   var fileUpload = await ApiClient.signInGoogle(
+                                //       listModelFile[0].file);
+
+                                //   await Provider.of<AnswerController>(context,
+                                //           listen: false)
+                                //       .addFileAnswer(
+                                //           idFile: fileUpload.id,
+                                //           name: fileUpload.name,
+                                //           index: listModelFile[0].index);
+                                // };
+
                                 onUpload(listModelFile);
+                                // var fileUpload = await ApiClient.signInGoogle(
+                                //     listModelFile[0].file);
+
+                                // await Provider.of<AnswerController>(context,
+                                //         listen: false)
+                                //     .addFileAnswer(
+                                //         idFile: fileUpload.id,
+                                //         name: fileUpload.name,
+                                //         index: listModelFile[0].index);
+
+                                loading = false;
+                                // listModelFile[0].id = fileUpload.id;
+
+                                // } catch (e) {
+                                //   print(e);
+                                //   loading = false;
+                                //   await showDialog(
+                                //     context: context,
+                                //     builder: (ctx) => AlertDialog(
+                                //       title: Text('Có lỗi khi tải file'),
+                                //       content: Text('không tải lên file được.'),
+                                //       actions: <Widget>[
+                                //         TextButton(
+                                //           child: Text('Okay'),
+                                //           onPressed: () {
+                                //             Navigator.of(ctx).pop();
+                                //           },
+                                //         )
+                                //       ],
+                                //     ),
+                                //   );
+                                // }
                               },
                         child: Text(S.current.upload_file))
                   ],

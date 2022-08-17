@@ -103,6 +103,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                 TextFormField(
                     decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
                     controller: oldPasController,
+                    obscureText: true,
                     validator: (v) {
                       if (v!.isEmpty) {
                         return S.current.not_blank;
@@ -115,6 +116,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                       labelText: "Mật khẩu mới",
                     ),
                     controller: newPasCotroller,
+                    obscureText: true,
                     validator: (v) {
                       if (v!.isEmpty) {
                         return S.current.not_blank;
@@ -133,6 +135,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                       return null;
                     }
                   },
+                  obscureText: true,
                   decoration: const InputDecoration(
                     labelText: "Nhập lại mật khẩu mới",
                   ),

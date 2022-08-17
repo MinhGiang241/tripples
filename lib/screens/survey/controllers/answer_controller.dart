@@ -89,6 +89,7 @@ class AnswerController extends ChangeNotifier {
   addFileAnswer(
       {required String idFile, required String name, required int index}) {
     answer.resultsList![index].media!.add(Media(sId: idFile, name: name));
+    print('answer: ' + answer.toString());
   }
 
   removeFileAnswer({required String idFile, required int index}) {

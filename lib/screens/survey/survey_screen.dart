@@ -14,6 +14,7 @@ import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/file_upload.dart';
 
+import '../../data_sources/api/api_client.dart';
 import 'components/item_survey.dart';
 import 'models/model_file.dart';
 
@@ -35,7 +36,8 @@ class SurveyScreen extends StatelessWidget {
   final List<GlobalKey> listKey = [];
   @override
   Widget build(BuildContext context) {
-    final mutationData = """
+    final mutationData =
+        """
   mutation (\$campaign_id:String, \$schedule_id: String,  \$resultsList :  Dictionary){ 
 	question_result_save(campaignId : \$campaign_id, , scheduleId: \$schedule_id, resultsList: \$resultsList){
     message
@@ -45,15 +47,21 @@ class SurveyScreen extends StatelessWidget {
 } 
     """;
 
-    final String queryTemplate = """
+    final String queryTemplate =
+        """
  query(\$filter:GeneralCollectionFilterInput)
   {
     query_Schedules_dto(filter:\$filter)
     {
       data
       {
-        _id
-        question_result
+        _id 
+        appointment_date
+        appointment_time
+        ref_tenantId_CompanyDto{
+          _id
+          name
+        }
         ref_campaignId_CampaignDto{
           _id
           name
@@ -63,6 +71,35 @@ class SurveyScreen extends StatelessWidget {
         ref_departmentId_DepartmentDto{
           name
           address
+        }
+        ref_QuestionResult_scheduleIdDto {
+          campaignId
+          departmentId
+          creator
+          departmentId
+          display_name
+          follower_numb
+          media
+          updatedTime
+          note
+          score
+          task_numb
+          tenantId
+          values {
+            factor
+            label
+          }
+          question {
+            name
+            max_score
+            poll {
+              factor
+              icon
+              label
+            }
+            questID
+            type
+          }
         }
       }
     }
@@ -257,22 +294,43 @@ class SurveyScreen extends StatelessWidget {
                                             builder: (result,
                                                 {fetchMore, refetch}) {
                                               if (result.isLoading) {
-                                                return Scaffold(
-                                                  body: Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  ),
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
                                                 );
                                               } else {
                                                 ResponseListTemplate
                                                     responseListTemplate =
                                                     ResponseListTemplate
                                                         .fromJson(result.data!);
+                                                if (result.data!['response']
+                                                        ['code'] !=
+                                                    0) {
+                                                  // setState() {
+                                                  //   ScaffoldMessenger.of(
+                                                  //           context)
+                                                  //       .showSnackBar(SnackBar(
+                                                  //     content: const Text(
+                                                  //         'Không gửi được kết quả'),
+                                                  //     duration: const Duration(
+                                                  //         seconds: 1),
+                                                  //     action: SnackBarAction(
+                                                  //       label: 'Lỗi',
+                                                  //       onPressed: () {},
+                                                  //     ),
+                                                  //   ));
+                                                  // }
+
+                                                  Navigator.pop(context, true);
+                                                  return Center(
+                                                      child: Text(''));
+                                                }
                                                 var questionResult =
                                                     responseListTemplate
                                                         .querySchedulesDto!
                                                         .data![0]
                                                         .questionResultScheduleIdDto;
+                                                print(questionResult);
                                                 return SurveyScreen(
                                                     questions: questions,
                                                     campaignId: campaignId,
@@ -337,8 +395,21 @@ class SurveyScreen extends StatelessWidget {
                 !isCompleted)
               UploadDialog(
                 files: context.read<FileUploadController>().listModelFile,
-                onUpload: (listModelFile) {
-                  onUpload(context, listModelFile);
+                onUpload: (
+                  listModelFile,
+                ) {
+                  var uploadGoogle = () async {
+                    var fileUpload =
+                        await ApiClient.signInGoogle(listModelFile[0].file);
+
+                    await Provider.of<AnswerController>(context, listen: false)
+                        .addFileAnswer(
+                            idFile: fileUpload.id,
+                            name: fileUpload.name,
+                            index: listModelFile[0].index);
+                    return fileUpload;
+                  };
+                  onUpload(context, listModelFile, uploadGoogle);
                 },
               )
           ],
@@ -347,10 +418,11 @@ class SurveyScreen extends StatelessWidget {
     );
   }
 
-  onUpload(BuildContext context, List<ModelFile> listModelFile) async {
+  onUpload(BuildContext context, List<ModelFile> listModelFile,
+      Function uploadGoogle) {
     for (int i = 0; i < listModelFile.length; i++) {
-      await Provider.of<FileUploadController>(context, listen: false)
-          .uploadFile(context, listModelFile[i].file!);
+      Provider.of<FileUploadController>(context, listen: false)
+          .uploadFile(context, listModelFile[i].file!, uploadGoogle);
     }
   }
 

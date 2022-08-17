@@ -145,7 +145,9 @@ class RegisterForm extends StatelessWidget {
                     Provider.of<AuthController>(context, listen: false)
                         .unloading();
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(resultData["register"]["message"])));
+                        content: Text(resultData.containsKey("response")
+                            ? resultData["response"]["message"]
+                            : resultData["register"]["message"])));
                     if (resultData["register"]["code"] == 0) {
                       await Future.delayed(Duration(seconds: 1), () {
                         Navigator.pop(context);

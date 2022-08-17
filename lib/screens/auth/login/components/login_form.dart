@@ -21,6 +21,7 @@ class LoginForm extends StatelessWidget {
   final TextEditingController userNameEditingController;
   final TextEditingController passwordEditingController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var isLogin = false;
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -101,9 +102,7 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               Query(
-                options: QueryOptions(
-                    document: gql(
-                        """query {
+                options: QueryOptions(document: gql("""query {
                                     response:configuration{
                                               code
                                               message

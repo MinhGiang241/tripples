@@ -10,7 +10,9 @@ import '../login/components/header_login.dart';
 import 'component/reset_password_form.dart';
 
 class ResetPassword extends StatelessWidget {
-  ResetPassword({Key? key}) : super(key: key);
+  final String email;
+  ResetPassword({required this.email});
+
   final TextEditingController codelEditingController = TextEditingController();
   final TextEditingController newPasswordEditingController =
       TextEditingController();
@@ -34,6 +36,7 @@ class ResetPassword extends StatelessWidget {
               ),
             ),
             ResetPasswordForm(
+                email: email,
                 codeEditingController: codelEditingController,
                 newPasswordEditingController: newPasswordEditingController,
                 confirmNewPasswordEditingController:

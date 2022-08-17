@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../../../constants.dart';
 import '../../../../data_sources/api/constants.dart';
 import '../../../../generated/l10n.dart';
-import '../../../profile/edit_password.dart';
+
 import '../../components/auth_button.dart';
 import '../../components/auth_input.dart';
 import '../reset_password.dart';
@@ -87,8 +85,15 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                           if (_formKey.currentState!.validate()) {
                             runMutation(
                                 {'mailTo': widget.emailEditingController.text});
-
-                            if (result!.data?["authorization_generate_otp"]
+                            print(widget.emailEditingController.text);
+                            if (result!.hasException) {
+                              return Dialog(
+                                  child: Text(result.exception.toString()));
+                            } else if (result.isLoading) {
+                              return AuthButton(
+                                  onPress: () {}, title: "Loading...");
+                            } else if (result
+                                        .data?["authorization_generate_otp"]
                                     ['code'] ==
                                 0) {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -97,7 +102,9 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ResetPassword()));
+                                      builder: (_) => ResetPassword(
+                                          email: widget
+                                              .emailEditingController.text)));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

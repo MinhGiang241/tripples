@@ -112,13 +112,13 @@ class DetailUser extends StatelessWidget {
                               userInfo!['phoneNumber'] != null
                                   ? '0' + userInfo['phoneNumber']
                                   : 'chưa có số điện thoại',
-                              "Số điện thoại"),
+                              "Số điện thoại:"),
                           if (userInfo.containsKey('roles'))
                             buildUserInfoDisplay(
                                 userInfo['roles'][0]['display_name'] != null
                                     ? userInfo['roles'][0]['display_name']
                                     : 'chưa có chứu vụ',
-                                "Chức vụ"),
+                                "Chức vụ:"),
                           Center(
                             child: Padding(
                                 padding:

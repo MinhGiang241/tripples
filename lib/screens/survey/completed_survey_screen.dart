@@ -57,10 +57,10 @@ class CompletedSurveyScreen extends StatelessWidget {
     );
   }
 
-  onUpload(BuildContext context, List<ModelFile> listModelFile) async {
-    for (int i = 0; i < listModelFile.length; i++) {
-      await Provider.of<FileUploadController>(context, listen: false)
-          .uploadFile(context, listModelFile[i].file!);
-    }
-  }
+  // onUpload(BuildContext context, List<ModelFile> listModelFile) async {
+  //   for (int i = 0; i < listModelFile.length; i++) {
+  //     await Provider.of<FileUploadController>(context, listen: false)
+  //         .uploadFile(context, listModelFile[i].file!);
+  //   }
+  // }
 }

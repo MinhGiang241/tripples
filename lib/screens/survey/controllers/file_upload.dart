@@ -31,17 +31,24 @@ class FileUploadController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future uploadFile(BuildContext context, File file) async {
-    //
+  Future uploadFile(
+      BuildContext context, File file, Function uploadGoogle) async {
     isUploading = true;
     notifyListeners();
-    //
-    await listModelFile
-        .firstWhere((element) => element.file! == file)
-        .uploadFile((byte, totalByte) {
-      notifyListeners();
-    });
-    //
+
+    print(listModelFile);
+
+    var uploadFile =
+        listModelFile.firstWhere((element) => element.file! == file);
+    print(uploadFile);
+    try {
+      await uploadFile.uploadFile((byte, totalByte) {
+        notifyListeners();
+      }, uploadGoogle);
+    } catch (e) {
+      closeUpload(file);
+    }
+
     for (var i = 0; i < listModelFile.length; i++) {
       if (listModelFile[i].id.isNotEmpty) {
         if (listModelFile[i].file == file) {

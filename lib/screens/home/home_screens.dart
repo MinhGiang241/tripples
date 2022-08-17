@@ -16,16 +16,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
-  final String queryMe =
-      """mutation {
+  final String queryMe = """mutation {
     authorization_me{
       code
       message
       data
       }
     }""";
-  final String queryTemplate =
-      """
+  final String queryTemplate = """
   query(\$filter:GeneralCollectionFilterInput)
   {
     query_Schedules_dto(filter:\$filter)

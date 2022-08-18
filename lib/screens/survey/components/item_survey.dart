@@ -26,10 +26,10 @@ class ItemSurvey extends StatefulWidget {
   final QuestionResultScheduleIdDto? questionResultScheduleIdDto;
 
   @override
-  _ItemSurveyState createState() => _ItemSurveyState();
+  ItemSurveyState createState() => ItemSurveyState();
 }
 
-class _ItemSurveyState extends State<ItemSurvey> {
+class ItemSurveyState extends State<ItemSurvey> {
   late TextEditingController scoreController;
   late TextEditingController textAnswerController;
   late TextEditingController noteAnswerController;

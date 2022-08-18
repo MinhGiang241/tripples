@@ -31,8 +31,8 @@ class FileUploadController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future uploadFile(
-      BuildContext context, File file, Function uploadGoogle) async {
+  Future uploadFile(BuildContext context, File file, Function uploadGoogle,
+      Function stopUpload) async {
     isUploading = true;
     notifyListeners();
 
@@ -44,7 +44,7 @@ class FileUploadController extends ChangeNotifier {
     try {
       await uploadFile.uploadFile((byte, totalByte) {
         notifyListeners();
-      }, uploadGoogle);
+      }, uploadGoogle, stopUpload);
     } catch (e) {
       closeUpload(file);
     }

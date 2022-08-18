@@ -7,18 +7,28 @@ import 'package:survey/screens/survey/controllers/file_upload.dart';
 import 'package:survey/screens/survey/models/model_file.dart';
 import 'package:survey/utils/extentions/ex.dart';
 
-import '../../../data_sources/api/api_client.dart';
-import '../controllers/answer_controller.dart';
-
-class UploadDialog extends StatelessWidget {
+class UploadDialog extends StatefulWidget {
   final List<ModelFile> files;
   final Function(List<ModelFile>) onUpload;
 
-  const UploadDialog({
+  UploadDialog({
     Key? key,
     required this.files,
     required this.onUpload,
   }) : super(key: key);
+
+  @override
+  State<UploadDialog> createState() => UploadDialogState();
+}
+
+class UploadDialogState extends State<UploadDialog> {
+  bool uploadError = false;
+
+  void updateState() {
+    setState(() {
+      uploadError = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +86,14 @@ class UploadDialog extends StatelessWidget {
                                           child: LinearProgressIndicator(
                                             backgroundColor:
                                                 Colors.blue.shade50,
-                                            valueColor: e.progress != 1
+                                            valueColor: e.failUpload
                                                 ? AlwaysStoppedAnimation<Color>(
-                                                    Colors.blue)
-                                                // : e.id.isEmpty
-                                                //     ? AlwaysStoppedAnimation<
-                                                //         Color>(Colors.red)
-                                                : AlwaysStoppedAnimation<Color>(
-                                                    Colors.green),
+                                                    Colors.red)
+                                                : e.progress != 1
+                                                    ? AlwaysStoppedAnimation<
+                                                        Color>(Colors.blue)
+                                                    : AlwaysStoppedAnimation<
+                                                        Color>(Colors.green),
                                             value: e.progress,
                                           ),
                                         ),
@@ -165,7 +175,7 @@ class UploadDialog extends StatelessWidget {
                                 //           index: listModelFile[0].index);
                                 // };
 
-                                onUpload(listModelFile);
+                                widget.onUpload(listModelFile);
                                 // var fileUpload = await ApiClient.signInGoogle(
                                 //     listModelFile[0].file);
 

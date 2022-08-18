@@ -7,6 +7,7 @@ class ModelFile {
   final File? file;
   double? progress;
   final String? name;
+  bool failUpload = false;
   String id;
   final ApiClient apiClient = ApiClient();
   ModelFile(
@@ -15,8 +16,16 @@ class ModelFile {
       this.progress = 0,
       this.id = "",
       this.name});
+  onFailUpload() {
+    failUpload = true;
+  }
 
-  Future uploadFile(Function(int, int) onUploadProgress, googleUpload) async {
+  setId(String sid) {
+    id = sid;
+  }
+
+  Future uploadFile(
+      Function(int, int) onUploadProgress, googleUpload, stopUpload) async {
     id = await apiClient.upLoadFile(
         file: file!,
         onUploadProgress: (sentBytes, totalBytes) {
@@ -24,7 +33,9 @@ class ModelFile {
           onUploadProgress(sentBytes, totalBytes);
         },
         googleUpload: googleUpload,
-        close: close);
+        stopUpload: stopUpload,
+        onFailUpload: onFailUpload,
+        setId: setId);
     print(id);
   }
 

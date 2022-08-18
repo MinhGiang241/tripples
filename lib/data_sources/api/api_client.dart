@@ -10,6 +10,7 @@ import 'package:googleapis/drive/v3.dart' as ga;
 import 'package:path/path.dart' as p;
 import 'package:_discoveryapis_commons/_discoveryapis_commons.dart' as commons;
 import 'package:survey/screens/survey/models/model_file.dart';
+import '../../screens/survey/controllers/file_upload.dart';
 
 typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
 
@@ -77,7 +78,9 @@ class ApiClient {
       {required File file,
       OnUploadProgressCallback? onUploadProgress,
       googleUpload,
-      close}) async {
+      stopUpload,
+      onFailUpload,
+      setId}) async {
     // final url = 'http://api.triples.hoasao.demego.vn/headless/stream/upload';
     final url =
         "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart";
@@ -113,9 +116,12 @@ class ApiClient {
       new StreamTransformer.fromHandlers(
         handleData: (data, sink) async {
           sink.add(data);
+
           if (byteCount <= 0.7 * totalByteLength) {
             byteCount += data.length;
           }
+
+          byteCount += data.length;
           //  else {
           //   close();
           // }
@@ -128,8 +134,11 @@ class ApiClient {
               print(result.id);
               if (result.id != null) {
                 byteCount = totalByteLength;
+                setId(result.id);
               } else {
-                close();
+                // close();
+                onFailUpload();
+                stopUpload(file);
               }
             }
             onUploadProgress(byteCount, totalByteLength);

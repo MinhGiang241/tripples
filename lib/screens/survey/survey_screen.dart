@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:survey/generated/l10n.dart';
 import 'package:survey/models/question.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
+import 'package:survey/screens/survey/components/list_pinned_file.dart';
 import 'package:survey/screens/survey/components/select_file_dialog.dart';
 import 'package:survey/screens/survey/components/upload_dialog.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
@@ -18,7 +21,7 @@ import '../../data_sources/api/api_client.dart';
 import 'components/item_survey.dart';
 import 'models/model_file.dart';
 
-class SurveyScreen extends StatelessWidget {
+class SurveyScreen extends StatefulWidget {
   final List<Questions> questions;
   final String campaignId;
   final String scheduleId;
@@ -32,12 +35,22 @@ class SurveyScreen extends StatelessWidget {
     required this.questionResultScheduleIdDto,
     this.isCompleted = false,
   }) : super(key: key);
+
+  @override
+  State<SurveyScreen> createState() => _SurveyScreenState();
+}
+
+class _SurveyScreenState extends State<SurveyScreen> {
   final ScrollController scrollController = ScrollController();
+
   final List<GlobalKey> listKey = [];
+
+  final GlobalKey<UploadDialogState> DialogState =
+      GlobalKey<UploadDialogState>();
+
   @override
   Widget build(BuildContext context) {
-    final mutationData =
-        """
+    final mutationData = """
   mutation (\$campaign_id:String, \$schedule_id: String,  \$resultsList :  Dictionary){ 
 	question_result_save(campaignId : \$campaign_id, , scheduleId: \$schedule_id, resultsList: \$resultsList){
     message
@@ -47,12 +60,13 @@ class SurveyScreen extends StatelessWidget {
 } 
     """;
 
-    final String queryTemplate =
-        """
+    final String queryTemplate = """
  query(\$filter:GeneralCollectionFilterInput)
   {
     query_Schedules_dto(filter:\$filter)
     {
+      code
+      message
       data
       {
         _id 
@@ -118,18 +132,32 @@ class SurveyScreen extends StatelessWidget {
         cache: GraphQLCache(store: HiveStore()),
       ),
     );
+
+    var stopUpload = (File file) async {
+      // Provider.of<ChooseFileController>(context, listen: false)
+      //     .offUploadFile();
+      // Provider.of<ChooseFileController>(context, listen: false)
+      //     .removeFile(file);
+      // Provider.of<FileUploadController>(context, listen: false)
+      //     .closeUpload(file);
+
+      // DialogState.currentState?.updateState();
+    };
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ChooseFileController>(
             create: (_) => ChooseFileController()),
         ChangeNotifierProvider<FileUploadController>(
-            create: (_) => FileUploadController(questionResultScheduleIdDto)),
+            create: (_) =>
+                FileUploadController(widget.questionResultScheduleIdDto)),
         ChangeNotifierProvider<AnswerController>(
             create: (_) => AnswerController(
-                campaignId: campaignId,
-                scheduleId: scheduleId,
-                listQuestions: questions,
-                refQuestionResultScheduleIdDto: questionResultScheduleIdDto))
+                campaignId: widget.campaignId,
+                scheduleId: widget.scheduleId,
+                listQuestions: widget.questions,
+                refQuestionResultScheduleIdDto:
+                    widget.questionResultScheduleIdDto))
       ],
       builder: (context, child) => GraphQLProvider(
         client: client,
@@ -139,11 +167,11 @@ class SurveyScreen extends StatelessWidget {
             Scaffold(
               appBar: AppBar(
                 title: Text(
-                  isCompleted ? "Kết quả khảo sát" : S.current.survey,
+                  widget.isCompleted ? "Kết quả khảo sát" : S.current.survey,
                   style: Theme.of(context).textTheme.headline6,
                 ),
                 actions: [
-                  if (isCompleted)
+                  if (widget.isCompleted)
                     Padding(
                       padding: EdgeInsets.only(right: padding / 2),
                       child: TextButton.icon(
@@ -177,12 +205,12 @@ class SurveyScreen extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => SurveyScreen(
-                                        questions: questions,
-                                        campaignId: campaignId,
-                                        scheduleId: scheduleId,
+                                        questions: widget.questions,
+                                        campaignId: widget.campaignId,
+                                        scheduleId: widget.scheduleId,
                                         isCompleted: false,
                                         questionResultScheduleIdDto:
-                                            questionResultScheduleIdDto,
+                                            widget.questionResultScheduleIdDto,
                                       ),
                                     ),
                                   );
@@ -202,32 +230,37 @@ class SurveyScreen extends StatelessWidget {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height,
-                    child: questions.length > 0
+                    child: widget.questions.length > 0
                         ? SingleChildScrollView(
                             physics: BouncingScrollPhysics(),
                             controller: scrollController,
                             child: Padding(
                                 padding: EdgeInsets.only(bottom: padding * 4),
                                 child: Column(
-                                  children:
-                                      List.generate(questions.length, (index) {
+                                  children: List.generate(
+                                      widget.questions.length, (index) {
                                     listKey.add(GlobalKey());
-                                    var question = questions[index];
-                                    var questionResult =
-                                        questionResultScheduleIdDto.length > 0
-                                            ? questionResultScheduleIdDto
-                                                .firstWhere((element) =>
-                                                    element.question?.questID ==
+                                    var question = widget.questions[index];
+                                    var questionResult = widget
+                                                .questionResultScheduleIdDto
+                                                .length >
+                                            0
+                                        ? widget.questionResultScheduleIdDto
+                                            .firstWhere((element) =>
+                                                element.question?.questID ==
+                                                question.questID)
+                                        : null;
+                                    int questionIndex =
+                                        widget.questions.length > 0
+                                            ? widget.questions.indexWhere(
+                                                (element) =>
+                                                    element.questID ==
                                                     question.questID)
-                                            : null;
-                                    int questionIndex = questions.length > 0
-                                        ? questions.indexWhere((element) =>
-                                            element.questID == question.questID)
-                                        : -1;
+                                            : -1;
                                     return ItemSurvey(
                                       key: listKey[index],
                                       question: question,
-                                      isCompleted: isCompleted,
+                                      isCompleted: widget.isCompleted,
                                       questID: question.questID ?? "",
                                       questionResultScheduleIdDto:
                                           questionResult,
@@ -240,7 +273,9 @@ class SurveyScreen extends StatelessWidget {
                             child: Text("Không có câu hỏi nào"),
                           ),
                   ),
-                  if (showBtn && questions.length > 0 && !isCompleted)
+                  if (showBtn &&
+                      widget.questions.length > 0 &&
+                      !widget.isCompleted)
                     Mutation(
                       options: MutationOptions(
                           document: gql(mutationData),
@@ -285,7 +320,8 @@ class SurveyScreen extends StatelessWidget {
                                                       "children": [
                                                         {
                                                           "id": "_id",
-                                                          "value": scheduleId
+                                                          "value":
+                                                              widget.scheduleId
                                                         }
                                                       ]
                                                     }
@@ -303,7 +339,8 @@ class SurveyScreen extends StatelessWidget {
                                                     responseListTemplate =
                                                     ResponseListTemplate
                                                         .fromJson(result.data!);
-                                                if (result.data!['response']
+                                                if (result.data![
+                                                            "query_Schedules_dto"]
                                                         ['code'] !=
                                                     0) {
                                                   // setState() {
@@ -332,9 +369,11 @@ class SurveyScreen extends StatelessWidget {
                                                         .questionResultScheduleIdDto;
                                                 print(questionResult);
                                                 return SurveyScreen(
-                                                    questions: questions,
-                                                    campaignId: campaignId,
-                                                    scheduleId: scheduleId,
+                                                    questions: widget.questions,
+                                                    campaignId:
+                                                        widget.campaignId,
+                                                    scheduleId:
+                                                        widget.scheduleId,
                                                     isCompleted: true,
                                                     questionResultScheduleIdDto:
                                                         responseListTemplate
@@ -367,10 +406,11 @@ class SurveyScreen extends StatelessWidget {
                                       listen: false)
                                   .valid();
                               if (valid) {
-                                print(context
+                                var ans = context
                                     .read<AnswerController>()
                                     .answer
-                                    .toJson());
+                                    .toJson();
+                                print(ans);
                                 // return;
                                 runMutation(context
                                     .read<AnswerController>()
@@ -389,12 +429,14 @@ class SurveyScreen extends StatelessWidget {
               ),
             ),
             if (context.watch<ChooseFileController>().isSelectedFile &&
-                !isCompleted)
+                !widget.isCompleted)
               SelectFileDialog(),
             if (context.watch<ChooseFileController>().isUploadFile &&
-                !isCompleted)
+                !widget.isCompleted)
               UploadDialog(
+                key: DialogState,
                 files: context.read<FileUploadController>().listModelFile,
+                // uploadError: uploadError,
                 onUpload: (
                   listModelFile,
                 ) {
@@ -409,7 +451,7 @@ class SurveyScreen extends StatelessWidget {
                             index: listModelFile[0].index);
                     return fileUpload;
                   };
-                  onUpload(context, listModelFile, uploadGoogle);
+                  onUpload(context, listModelFile, uploadGoogle, stopUpload);
                 },
               )
           ],
@@ -419,10 +461,10 @@ class SurveyScreen extends StatelessWidget {
   }
 
   onUpload(BuildContext context, List<ModelFile> listModelFile,
-      Function uploadGoogle) {
+      Function uploadGoogle, Function stopUpload) {
     for (int i = 0; i < listModelFile.length; i++) {
-      Provider.of<FileUploadController>(context, listen: false)
-          .uploadFile(context, listModelFile[i].file!, uploadGoogle);
+      Provider.of<FileUploadController>(context, listen: false).uploadFile(
+          context, listModelFile[i].file!, uploadGoogle, stopUpload);
     }
   }
 

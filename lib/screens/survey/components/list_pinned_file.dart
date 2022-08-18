@@ -9,17 +9,32 @@ import 'package:survey/screens/survey/models/model_file.dart';
 import 'package:survey/screens/survey/show_file.dart';
 import 'package:survey/utils/extentions/ex.dart';
 
-class ListPinnedFile extends StatelessWidget {
+class ListPinnedFile extends StatefulWidget {
   const ListPinnedFile({
     Key? key,
     required this.questionIndex,
   }) : super(key: key);
 
   final int questionIndex;
+
+  @override
+  State<ListPinnedFile> createState() => ListPinnedFileState();
+}
+
+class ListPinnedFileState extends State<ListPinnedFile> {
+  var uploadError = false;
+
+  void updateState() {
+    setState(() {
+      uploadError = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<ModelFile> listModelFile = filterList(
-        context.watch<FileUploadController>().listModelFile, questionIndex);
+        context.watch<FileUploadController>().listModelFile,
+        widget.questionIndex);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: padding * 0.5),
       child: Column(
@@ -28,7 +43,7 @@ class ListPinnedFile extends StatelessWidget {
               (e) => ListTile(
                 onTap: () {
                   Provider.of<ChooseFileController>(context, listen: false)
-                      .showUploadFile(questionIndex);
+                      .showUploadFile(widget.questionIndex);
                 },
                 title: Text(
                   e.file!.path.split("/").last,
@@ -37,9 +52,11 @@ class ListPinnedFile extends StatelessWidget {
                 ),
                 subtitle: LinearProgressIndicator(
                   backgroundColor: Colors.blue.shade50,
-                  valueColor: e.progress != 1
-                      ? AlwaysStoppedAnimation<Color>(Colors.blue)
-                      : AlwaysStoppedAnimation<Color>(Colors.green),
+                  valueColor: e.failUpload
+                      ? AlwaysStoppedAnimation<Color>(Colors.red)
+                      : e.progress != 1
+                          ? AlwaysStoppedAnimation<Color>(Colors.blue)
+                          : AlwaysStoppedAnimation<Color>(Colors.green),
                   value: e.progress,
                 ),
                 trailing: Container(
@@ -65,7 +82,7 @@ class ListPinnedFile extends StatelessWidget {
                             Provider.of<AnswerController>(context,
                                     listen: false)
                                 .removeFileAnswer(
-                                    idFile: e.id, index: questionIndex);
+                                    idFile: e.id, index: widget.questionIndex);
                           }),
                     ],
                   ),

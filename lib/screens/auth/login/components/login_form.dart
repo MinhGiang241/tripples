@@ -130,28 +130,31 @@ class LoginForm extends StatelessWidget {
                                         MaterialPageRoute(
                                             builder: (_) => ForgetPassword()));
                                   },
-                                  child: Text(
-                                    'Quên mật khẩu',
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor),
-                                  )),
-                              Row(
-                                children: [
-                                  Text(S.current.noAccount),
-                                  TextButton(
-                                      style: TextButton.styleFrom(
-                                          primary:
+                                  child: Center(
+                                    child: Text(
+                                      'Quên mật khẩu',
+                                      style: TextStyle(
+                                          color:
                                               Theme.of(context).primaryColor),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    RegisterScreen()));
-                                      },
-                                      child: Text(S.current.signup))
-                                ],
-                              )
+                                    ),
+                                  )),
+                              // Row(
+                              //   children: [
+                              //     Text(S.current.noAccount),
+                              //     TextButton(
+                              //         style: TextButton.styleFrom(
+                              //             primary:
+                              //                 Theme.of(context).primaryColor),
+                              //         onPressed: () {
+                              //           Navigator.push(
+                              //               context,
+                              //               MaterialPageRoute(
+                              //                   builder: (_) =>
+                              //                       RegisterScreen()));
+                              //         },
+                              //         child: Text(S.current.signup))
+                              //   ],
+                              // )
                             ],
                           ),
                         )

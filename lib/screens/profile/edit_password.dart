@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import "package:flutter/material.dart";
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:survey/constants.dart';
 import '../../controllers/auth/auth_controller.dart';
 import '../../data_sources/api/constants.dart';
 import '../../generated/l10n.dart';
+import '../auth/components/auth_input.dart';
 import 'user_profile.dart';
 
 class UpdatePassword extends StatefulWidget {
@@ -19,12 +21,12 @@ class UpdatePassword extends StatefulWidget {
 
 class _UpdatePassword extends State<UpdatePassword> {
   final oldPasController = TextEditingController();
-  final newPasCotroller = TextEditingController();
+  final newPasController = TextEditingController();
   final confirmNewPasCotroller = TextEditingController();
 
   void submitData() {
     print(oldPasController.text);
-    print(newPasCotroller.text);
+    print(newPasController.text);
     print(confirmNewPasCotroller.text);
     Navigator.of(context).pop();
   }
@@ -43,7 +45,7 @@ class _UpdatePassword extends State<UpdatePassword> {
       print(result);
       // ignore: await_only_futures
       await runMutation(
-          {"oldpass": oldPasController.text, "newpass": newPasCotroller.text});
+          {"oldpass": oldPasController.text, "newpass": newPasController.text});
     }
   }
 
@@ -60,6 +62,7 @@ class _UpdatePassword extends State<UpdatePassword> {
   }
 
   final _formKey = GlobalKey<FormState>();
+  bool showValKey = false;
   @override
   Widget build(BuildContext context) {
     var changePassword = '''
@@ -86,7 +89,10 @@ class _UpdatePassword extends State<UpdatePassword> {
     return GraphQLProvider(
       client: client,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
           title: Text(
             "Đổi mật khẩu",
             style: Theme.of(context).textTheme.headline6,
@@ -100,47 +106,74 @@ class _UpdatePassword extends State<UpdatePassword> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                TextFormField(
-                    decoration: const InputDecoration(labelText: "Mật khẩu cũ"),
-                    controller: oldPasController,
-                    obscureText: true,
-                    validator: (v) {
-                      if (v!.isEmpty) {
-                        return S.current.not_blank;
-                      } else {
-                        return null;
-                      }
-                    }),
-                TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: "Mật khẩu mới",
-                    ),
-                    controller: newPasCotroller,
-                    obscureText: true,
-                    validator: (v) {
-                      if (v!.isEmpty) {
-                        return S.current.not_blank;
-                      } else {
-                        return null;
-                      }
-                    }),
-                TextFormField(
-                  validator: (v) {
-                    // ignore: unrelated_type_equality_checks
-                    if (v!.isEmpty) {
+                AuthInput(
+                  obscure: true,
+                  controller: oldPasController,
+                  hint: "Old Password",
+                  keyboardType: TextInputType.text,
+                  prefixIcon: Icon(Icons.lock),
+                  validator: (val) {
+                    if (val!.isEmpty) {
                       return S.current.not_blank;
-                    } else if (v != newPasCotroller.text) {
-                      return 'mật khẩu không khớp';
                     } else {
                       return null;
                     }
                   },
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Nhập lại mật khẩu mới",
+                ),
+                AuthInput(
+                  obscure: true,
+                  controller: newPasController,
+                  hint: "New Password",
+                  keyboardType: TextInputType.text,
+                  prefixIcon: Icon(Icons.lock),
+                  tab: () {
+                    setState(() {
+                      showValKey = true;
+                    });
+                  },
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return S.current.not_blank;
+                    } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
+                      return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
+                    } else if (!RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]")
+                        .hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 chữ cái , 1 số";
+                    } else if (!RegExp(r"(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]")
+                        .hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 ký tự đặc biệt";
+                    }
+                    return null;
+                  },
+                ),
+                if (showValKey)
+                  FlutterPwValidator(
+                    controller: newPasController,
+                    minLength: 6,
+                    uppercaseCharCount: 1,
+                    numericCharCount: 1,
+                    specialCharCount: 1,
+                    width: 400,
+                    height: 150,
+                    onSuccess: () {
+                      print("Matched");
+                    },
                   ),
+                AuthInput(
+                  obscure: true,
                   controller: confirmNewPasCotroller,
-                  // onSubmitted: (_) => submitData
+                  hint: S.current.confirm_pass,
+                  keyboardType: TextInputType.text,
+                  prefixIcon: Icon(Icons.lock),
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return S.current.not_blank;
+                    } else if (val != confirmNewPasCotroller.text) {
+                      return S.current.not_same;
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
                 Mutation(
                   options: MutationOptions(

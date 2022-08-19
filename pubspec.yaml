@@ -45,6 +45,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   google_sign_in: ^5.4.0
   googleapis: ^9.1.0
+  flutter_pw_validator: ^1.4.2
 
 dev_dependencies:
   flutter_test:

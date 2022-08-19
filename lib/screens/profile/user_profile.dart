@@ -65,8 +65,10 @@ class DetailUser extends StatelessWidget {
       client: client,
       child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: Text("Thông tin cá nhân",
                 style: Theme.of(context).textTheme.headline6),
+            elevation: 0,
           ),
           body: Query(
               options: QueryOptions(document: gql(queryInfo)),

@@ -7,8 +7,9 @@ import 'package:survey/data_sources/api/constants.dart';
 import 'package:survey/generated/l10n.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
 import 'package:survey/screens/auth/components/auth_input.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 
-class RegisterForm extends StatelessWidget {
+class RegisterForm extends StatefulWidget {
   RegisterForm({
     Key? key,
     required this.usernameController,
@@ -22,7 +23,15 @@ class RegisterForm extends StatelessWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmPassController;
   final TextEditingController phoneController;
+
+  @override
+  State<RegisterForm> createState() => _RegisterFormState();
+}
+
+class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool showValKey = false;
+
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -30,6 +39,7 @@ class RegisterForm extends StatelessWidget {
     final AuthLink authLink = AuthLink(getToken: () {
       return null;
     });
+
     final Link link = authLink.concat(httpLink);
     ValueNotifier<GraphQLClient> client = ValueNotifier(
       GraphQLClient(
@@ -55,7 +65,7 @@ class RegisterForm extends StatelessWidget {
                 height: padding / 2,
               ),
               AuthInput(
-                controller: usernameController,
+                controller: widget.usernameController,
                 hint: S.current.user_name,
                 keyboardType: TextInputType.name,
                 prefixIcon: Icon(Icons.person),
@@ -68,20 +78,23 @@ class RegisterForm extends StatelessWidget {
                 },
               ),
               AuthInput(
-                controller: emailController,
+                controller: widget.emailController,
                 hint: S.current.email,
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: Icon(Icons.abc),
+                prefixIcon: Icon(Icons.mail),
                 validator: (val) {
                   if (val!.isEmpty) {
                     return S.current.not_blank;
-                  } else {
-                    return null;
+                  } else if (!RegExp(
+                          r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
+                      .hasMatch(val)) {
+                    return "Không phải là email";
                   }
+                  return null;
                 },
               ),
               AuthInput(
-                controller: phoneController,
+                controller: widget.phoneController,
                 hint: S.current.phone,
                 keyboardType: TextInputType.number,
                 prefixIcon: Icon(Icons.phone),
@@ -95,26 +108,51 @@ class RegisterForm extends StatelessWidget {
               ),
               AuthInput(
                 obscure: true,
-                controller: passwordController,
+                controller: widget.passwordController,
                 hint: S.current.password,
                 keyboardType: TextInputType.text,
                 prefixIcon: Icon(Icons.lock),
+                tab: () {
+                  setState(() {
+                    showValKey = true;
+                  });
+                },
                 validator: (val) {
                   if (val!.isEmpty) {
                     return S.current.not_blank;
-                  } else {
-                    return null;
+                  } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
+                    return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
+                  } else if (!RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]")
+                      .hasMatch(val)) {
+                    return "Mật khẩu ít nhất 1 chữ cái , 1 số";
+                  } else if (!RegExp(r"(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]")
+                      .hasMatch(val)) {
+                    return "Mật khẩu ít nhất 1 ký tự đặc biệt";
                   }
+                  return null;
                 },
               ),
+              if (showValKey)
+                FlutterPwValidator(
+                  controller: widget.passwordController,
+                  minLength: 6,
+                  uppercaseCharCount: 1,
+                  numericCharCount: 1,
+                  specialCharCount: 1,
+                  width: 400,
+                  height: 150,
+                  onSuccess: () {
+                    print("Matched");
+                  },
+                ),
               AuthInput(
                 obscure: true,
-                controller: confirmPassController,
+                controller: widget.confirmPassController,
                 hint: S.current.confirm_pass,
                 keyboardType: TextInputType.text,
                 prefixIcon: Icon(Icons.lock),
                 validator: (val) {
-                  if (val != passwordController.text) {
+                  if (val != widget.passwordController.text) {
                     return S.current.not_same;
                   } else {
                     return null;
@@ -123,8 +161,7 @@ class RegisterForm extends StatelessWidget {
               ),
               Mutation(
                 options: MutationOptions(
-                  document: gql(
-                      """
+                  document: gql("""
               mutation (\$userName: String!, \$email: String!, \$password: String!, \$phoneNumber: String!){
                     register(data: {userName: \$userName,
                                     email: \$email, 
@@ -164,10 +201,10 @@ class RegisterForm extends StatelessWidget {
                           Provider.of<AuthController>(context, listen: false)
                               .loading();
                           runMutation({
-                            "userName": usernameController.text,
-                            "email": emailController.text,
-                            "password": passwordController.text,
-                            "phoneNumber": phoneController.text
+                            "userName": widget.usernameController.text,
+                            "email": widget.emailController.text,
+                            "password": widget.passwordController.text,
+                            "phoneNumber": widget.phoneController.text
                           });
                         }
                       });

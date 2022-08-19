@@ -10,6 +10,7 @@ class AuthInput extends StatelessWidget {
     required this.keyboardType,
     required this.prefixIcon,
     this.validator,
+    this.tab,
   }) : super(key: key);
   final TextEditingController controller;
   final String hint;
@@ -17,11 +18,17 @@ class AuthInput extends StatelessWidget {
   final TextInputType keyboardType;
   final Widget prefixIcon;
   final String? Function(String?)? validator;
+  final Function? tab;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: padding / 2),
       child: TextFormField(
+        onTap: () {
+          if (tab != null) {
+            tab!();
+          }
+        },
         obscureText: obscure,
         controller: controller,
         keyboardType: keyboardType,

@@ -10,12 +10,12 @@ class Questions {
 
   Questions({this.questID, this.title, this.type, this.poll});
 
-  Questions.fromJson(Map<String, dynamic> json) {
-    questID = json['questID'];
-    hint = json['hint'];
-    title = json['title'];
-    type = json['type'];
-    require = json['required'];
+  Questions.fromJson(json) {
+    questID = json['_id'];
+    // hint = json['hint'];
+    title = json['name'];
+    type = json['answer_type'];
+    // require = json['required'];
     maxScore = json['max_score'];
     if (json['poll'] != null) {
       poll = <Poll>[];

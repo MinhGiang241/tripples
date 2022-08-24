@@ -4,7 +4,7 @@ class RefDepartmentIdDepartmentDto {
 
   RefDepartmentIdDepartmentDto({this.name, this.address});
 
-  RefDepartmentIdDepartmentDto.fromJson(Map<String, dynamic> json) {
+  RefDepartmentIdDepartmentDto.fromJson(json) {
     name = json['name'];
     address = json['address'];
   }

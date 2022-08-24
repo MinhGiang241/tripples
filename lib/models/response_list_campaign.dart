@@ -1,4 +1,6 @@
+import 'package:googleapis/websecurityscanner/v1.dart';
 import 'package:survey/models/company.dart';
+import 'package:survey/models/question.dart';
 import 'package:survey/screens/survey/models/model_answer.dart';
 
 import 'campaign.dart';
@@ -10,38 +12,40 @@ class ResponseListTemplate {
   ResponseListTemplate({this.querySchedulesDto});
 
   ResponseListTemplate.fromJson(Map<String, dynamic> json) {
-    querySchedulesDto = json['query_Schedules_dto'] != null
-        ? new QuerySchedulesDto.fromJson(json['query_Schedules_dto'])
-        : null;
+    querySchedulesDto =
+        json['scheduleresult_get_questions_and_answers_by_schedule'] != null
+            ? new QuerySchedulesDto.fromJson(
+                json['scheduleresult_get_questions_and_answers_by_schedule'])
+            : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.querySchedulesDto != null) {
-      data['query_Schedules_dto'] = this.querySchedulesDto?.toJson();
+      data['scheduleresult_get_questions_and_answers_by_schedule'] =
+          this.querySchedulesDto?.toJson();
     }
     return data;
   }
 }
 
 class QuerySchedulesDto {
-  List<Campaign>? data;
+  List<ScheduleCampaign>? data;
   List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
   QuerySchedulesDto({this.data});
 
   QuerySchedulesDto.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
-      data = <Campaign>[];
+      data = <ScheduleCampaign>[];
       json['data'].forEach((v) {
-        data?.add(new Campaign.fromJson(v));
+        data?.add(new ScheduleCampaign.fromJson(v));
+        if (v['question_results'].length > 0) {
+          questionResultScheduleIdDto = v['question_results']?.forEach((v) {
+            questionResultScheduleIdDto
+                ?.add(new QuestionResultScheduleIdDto.fromJson(v));
+          });
+        }
       });
-      if (json['data'].length > 0) {
-        questionResultScheduleIdDto =
-            json['data'][0]['ref_QuestionResult_scheduleIdDto']?.forEach((v) {
-          questionResultScheduleIdDto
-              ?.add(new QuestionResultScheduleIdDto.fromJson(v));
-        });
-      }
     }
   }
 
@@ -54,43 +58,52 @@ class QuerySchedulesDto {
   }
 }
 
-class Campaign {
+class ScheduleCampaign {
   String? sId;
-  String? appoitmentDate;
-  String? appoitmentTime;
+  String? surveyDate;
+  String? surveyTime;
   RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   RefDepartmentIdDepartmentDto? refDepartmentIdDepartmentDto;
   RefCompanyIdCompanyDto? refCompanyIdCompanyDto;
   List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
-  Campaign(
+  List<Questions>? questions;
+  ScheduleCampaign(
       {this.sId,
-      this.appoitmentDate,
-      this.appoitmentTime,
+      this.surveyDate,
+      this.surveyTime,
       this.refCampaignIdCampaignDto,
       this.refDepartmentIdDepartmentDto,
       this.refCompanyIdCompanyDto,
-      this.questionResultScheduleIdDto});
+      this.questionResultScheduleIdDto,
+      this.questions});
 
-  Campaign.fromJson(Map<String, dynamic> json) {
+  ScheduleCampaign.fromJson(json) {
     sId = json['_id'];
-    appoitmentDate = json['appointment_date'];
-    appoitmentTime = json['appointment_time'];
+    surveyDate = json['survey_date'];
+    surveyTime = json['survey_time'];
 
-    refCampaignIdCampaignDto = json['ref_campaignId_CampaignDto'] != null
-        ? new RefCampaignIdCampaignDto.fromJson(
-            json['ref_campaignId_CampaignDto'])
+    refCampaignIdCampaignDto = json['campaign'] != null
+        ? new RefCampaignIdCampaignDto.fromJson(json['campaign'])
         : null;
-    refDepartmentIdDepartmentDto =
-        json['ref_departmentId_DepartmentDto'] != null
-            ? new RefDepartmentIdDepartmentDto.fromJson(
-                json['ref_departmentId_DepartmentDto'])
-            : null;
-    refCompanyIdCompanyDto = json['ref_companyId_CompanyDto'] != null
-        ? new RefCompanyIdCompanyDto.fromJson(json['ref_companyId_CompanyDto'])
+    refCompanyIdCompanyDto = json['company'] != null
+        ? new RefCompanyIdCompanyDto.fromJson(json['company'])
         : null;
-    if (json['ref_campaignId_CampaignDto'].length != 0) {
+    refDepartmentIdDepartmentDto = json['department'] != null
+        ? new RefDepartmentIdDepartmentDto.fromJson(json['department'])
+        : null;
+    if (json['campaign']['question_list'] != null &&
+        json['campaign']['question_list'].length > 0) {
+      questions = [];
+      json['campaign']['question_list'].forEach((v) {
+        print(v);
+
+        questions?.add(new Questions.fromJson(v));
+        print(questions);
+      });
+    }
+    if (json["question_results"] != null) {
       questionResultScheduleIdDto = <QuestionResultScheduleIdDto>[];
-      json['ref_QuestionResult_scheduleIdDto'].forEach((v) {
+      json['question_results'].forEach((v) {
         questionResultScheduleIdDto
             ?.add(new QuestionResultScheduleIdDto.fromJson(v));
       });
@@ -134,7 +147,7 @@ class QuestionResultScheduleIdDto {
       this.values,
       this.question});
 
-  QuestionResultScheduleIdDto.fromJson(Map<dynamic, dynamic> json) {
+  QuestionResultScheduleIdDto.fromJson(json) {
     sId = json['campaignId'];
     updatedTime = json['updatedTime'];
     score = json['score'];

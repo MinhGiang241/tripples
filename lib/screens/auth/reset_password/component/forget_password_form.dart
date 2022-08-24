@@ -28,7 +28,8 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
   mutation (\$mailTo: String) {
   authorization_generate_otp(mailTo: \$mailTo){
     code
-    
+    message
+    data
     }
   }
   ''';
@@ -71,12 +72,35 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                   validator: (v) {
                     if (v!.isEmpty) {
                       return S.current.not_blank;
+                    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(v)) {
+                      return "Không phải email";
                     } else {
                       return null;
                     }
                   }),
               Mutation(
-                  options: MutationOptions(document: gql(sendOtp)),
+                  options: MutationOptions(
+                      document: gql(sendOtp),
+                      onCompleted: (dynamic result) async {
+                        print(result);
+                        if (result['authorization_generate_otp']['code'] != 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "Gửi mã OTP không thành công" //result['authorization_generate_otp']['message']
+                                  )));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content:
+                                  Text("Đã gửi mã OTP vào email của bạn")));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => ResetPassword(
+                                      email:
+                                          widget.emailEditingController.text)));
+                        }
+                      }),
                   builder: ((runMutation, result) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: AuthButton(
@@ -86,31 +110,6 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                             runMutation(
                                 {'mailTo': widget.emailEditingController.text});
                             print(widget.emailEditingController.text);
-                            if (result!.hasException) {
-                              return Dialog(
-                                  child: Text(result.exception.toString()));
-                            } else if (result.isLoading) {
-                              return AuthButton(
-                                  onPress: () {}, title: "Loading...");
-                            } else if (result
-                                        .data?["authorization_generate_otp"]
-                                    ['code'] ==
-                                0) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      "hệ thống Đã gửi mã OTP vào email của bạn")));
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => ResetPassword(
-                                          email: widget
-                                              .emailEditingController.text)));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text("Gửi mã OTP không thành công")));
-                            }
                           }
                         },
                       ))))

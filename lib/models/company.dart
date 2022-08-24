@@ -3,7 +3,7 @@ class RefCompanyIdCompanyDto {
   String? name;
   RefCompanyIdCompanyDto({this.id, this.name});
 
-  RefCompanyIdCompanyDto.fromJson(Map<String, dynamic> json) {
+  RefCompanyIdCompanyDto.fromJson(json) {
     id = json['_id'];
     name = json['name'];
   }

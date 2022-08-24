@@ -18,23 +18,26 @@ import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/file_upload.dart';
 
 import '../../data_sources/api/api_client.dart';
+import '../../models/campaign.dart';
 import 'components/item_survey.dart';
 import 'models/model_file.dart';
 
 class SurveyScreen extends StatefulWidget {
-  final List<Questions> questions;
+  final List<Questions>? questions;
   final String campaignId;
   final String scheduleId;
   final bool isCompleted;
   final List<QuestionResultScheduleIdDto> questionResultScheduleIdDto;
-  SurveyScreen({
-    Key? key,
-    required this.questions,
-    required this.campaignId,
-    required this.scheduleId,
-    required this.questionResultScheduleIdDto,
-    this.isCompleted = false,
-  }) : super(key: key);
+  final RefCampaignIdCampaignDto? campaign;
+  SurveyScreen(
+      {Key? key,
+      this.questions,
+      required this.campaignId,
+      required this.scheduleId,
+      required this.questionResultScheduleIdDto,
+      this.isCompleted = false,
+      this.campaign})
+      : super(key: key);
 
   @override
   State<SurveyScreen> createState() => _SurveyScreenState();
@@ -50,6 +53,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.questions);
     final mutationData = """
   mutation (\$campaign_id:String, \$schedule_id: String,  \$resultsList :  Dictionary){ 
 	question_result_save(campaignId : \$campaign_id, , scheduleId: \$schedule_id, resultsList: \$resultsList){
@@ -155,7 +159,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             create: (_) => AnswerController(
                 campaignId: widget.campaignId,
                 scheduleId: widget.scheduleId,
-                listQuestions: widget.questions,
+                listQuestions: [], //widget.questions,
                 refQuestionResultScheduleIdDto:
                     widget.questionResultScheduleIdDto))
       ],
@@ -230,7 +234,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height,
-                    child: widget.questions.length > 0
+                    child: widget.questions != null &&
+                            widget.questions!.length > 0
                         ? SingleChildScrollView(
                             physics: BouncingScrollPhysics(),
                             controller: scrollController,
@@ -238,9 +243,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 padding: EdgeInsets.only(bottom: padding * 4),
                                 child: Column(
                                   children: List.generate(
-                                      widget.questions.length, (index) {
+                                      widget.questions!.length, (index) {
                                     listKey.add(GlobalKey());
-                                    var question = widget.questions[index];
+                                    var question = widget.questions![index];
                                     var questionResult = widget
                                                 .questionResultScheduleIdDto
                                                 .length >
@@ -251,9 +256,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                 question.questID)
                                         : null;
                                     int questionIndex =
-                                        widget.questions.length > 0
-                                            ? widget.questions.indexWhere(
-                                                (element) =>
+                                        widget.questions!.length > 0
+                                            ? widget
+                                                .questions!
+                                                .indexWhere((element) =>
                                                     element.questID ==
                                                     question.questID)
                                             : -1;
@@ -274,7 +280,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                           ),
                   ),
                   if (showBtn &&
-                      widget.questions.length > 0 &&
+                      widget.questions != null &&
+                      widget.questions!.length > 0 &&
                       !widget.isCompleted)
                     Mutation(
                       options: MutationOptions(

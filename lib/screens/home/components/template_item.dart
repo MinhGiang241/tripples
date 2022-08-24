@@ -11,9 +11,10 @@ class TemplateItem extends StatelessWidget {
     required this.isCompleted,
     required this.onBack,
   }) : super(key: key);
-  final Campaign campaign;
+  final ScheduleCampaign campaign;
   final bool isCompleted;
   final Function(bool) onBack;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -24,11 +25,13 @@ class TemplateItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (_) => DetailsScreen(
+                        questions: campaign.questions,
                         idSchedule: campaign.sId!,
                         idCampaign: campaign.refCampaignIdCampaignDto != null
-                            ? campaign.refCampaignIdCampaignDto!.id ?? ""
+                            ? campaign.refCampaignIdCampaignDto!.cid ?? ""
                             : "",
                         department: campaign.refDepartmentIdDepartmentDto!,
+                        campaign: campaign.refCampaignIdCampaignDto,
                         isCompleted: isCompleted,
                         questionResultScheduleIdDto:
                             campaign.questionResultScheduleIdDto,
@@ -40,7 +43,7 @@ class TemplateItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              campaign.refCampaignIdCampaignDto!.name ?? "",
+              campaign.refCompanyIdCompanyDto!.name ?? "",
               maxLines: 2,
               style: Theme.of(context).textTheme.bodyText1?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -100,7 +103,7 @@ class TemplateItem extends StatelessWidget {
                           style: Theme.of(context).textTheme.caption?.copyWith(
                               height: 1.5, fontWeight: FontWeight.bold)),
                       Text(
-                        "${campaign.appoitmentTime} - ${(campaign.appoitmentDate ?? DateTime.now().toIso8601String()).formatDateTimeDMY()}",
+                        "${campaign.surveyTime} - ${(campaign.surveyDate ?? DateTime.now().toIso8601String()).formatDateTimeDMY()}",
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
                       )

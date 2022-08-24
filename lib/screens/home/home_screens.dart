@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:survey/constants.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
 import 'package:survey/data_sources/api/constants.dart';
@@ -24,61 +25,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     }""";
   final String queryTemplate = """
-  query(\$filter:GeneralCollectionFilterInput)
-  {
-    query_Schedules_dto(filter:\$filter)
-    {
-      data
-      {
-        _id 
-        appointment_date
-        appointment_time
-        ref_tenantId_CompanyDto{
-          _id
-          name
-        }
-        ref_campaignId_CampaignDto{
-          _id
-          name
-          start_time
-          end_time
-        }
-        ref_departmentId_DepartmentDto{
-          name
-          address
-        }
-        ref_QuestionResult_scheduleIdDto {
-          campaignId
-          departmentId
-          creator
-          departmentId
-          display_name
-          follower_numb
-          media
-          updatedTime
-          note
-          score
-          task_numb
-          tenantId
-          values {
-            factor
-            label
-          }
-          question {
-            name
-            max_score
-            poll {
-              factor
-              icon
-              label
-            }
-            questID
-            type
-          }
-        }
-      }
+  mutation {
+     scheduleresult_get_questions_and_answers_by_schedule  {
+        code
+        message
+        data
     }
-  }
+}
+
+
   """;
   @override
   void initState() {
@@ -139,6 +94,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   meResult.data!['authorization_me']['data']['isRoot'] ?? false;
               context.read<AuthController>().idUser =
                   meResult.data!['authorization_me']['data']['_id'] as String;
+              var filter = {
+                "filter": {
+                  "withRecords": true,
+                  "group": {
+                    "children": [
+                      {
+                        "id": "agent",
+                        "value":
+                            meResult.data!['authorization_me']['data'] != null
+                                ? meResult.data!['authorization_me']['data']
+                                        ['userName'] ??
+                                    ""
+                                : ""
+                      },
+                      {
+                        "id": "survey_date",
+                        "value": DateTime(DateTime.now().year,
+                                DateTime.now().month, DateTime.now().day)
+                            .toUtc()
+                            .toString()
+                      }
+                    ]
+                  }
+                }
+              };
+
               return Column(
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
@@ -159,26 +140,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   HomeTabBar(tabController: tabController),
                   Expanded(
                       child: Query(
-                    options:
-                        QueryOptions(document: gql(queryTemplate), variables: {
-                      "filter": {
-                        "withRecords": true,
-                        "group": {
-                          "children": [
-                            {
-                              "id": isRoot == true ? "creator" : "agent",
-                              "value": meResult.data!['authorization_me']
-                                          ['data'] !=
-                                      null
-                                  ? meResult.data!['authorization_me']['data']
-                                          ['userName'] ??
-                                      ""
-                                  : ""
-                            }
-                          ]
-                        }
-                      }
-                    }),
+                    options: QueryOptions(
+                        document: gql(queryTemplate), variables: filter),
                     builder: (result, {fetchMore, refetch}) {
                       if (result.isLoading) {
                         return Center(
@@ -187,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       }
                       ResponseListTemplate responseListTemplate =
                           ResponseListTemplate.fromJson(result.data!);
-                      List<Campaign> listInprogress = [];
-                      List<Campaign> listCompleted = [];
+                      List<ScheduleCampaign> listInprogress = [];
+                      List<ScheduleCampaign> listCompleted = [];
                       for (int i = 0;
                           i <
                               responseListTemplate

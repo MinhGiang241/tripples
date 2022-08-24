@@ -14,7 +14,7 @@ class TemplateTabView extends StatefulWidget {
     required this.onLoading,
     required this.onRefresh,
   }) : super(key: key);
-  final List<Campaign> listCampaign;
+  final List<ScheduleCampaign> listCampaign;
   final bool isCompleted;
   final Function(bool) onBack;
   final Function() onLoading;
@@ -26,7 +26,7 @@ class TemplateTabView extends StatefulWidget {
 class _TemplateTabViewState extends State<TemplateTabView> {
   final TextEditingController searchController = TextEditingController();
   bool onSearch = false;
-  List<Campaign> listSearch = [];
+  List<ScheduleCampaign> listSearch = [];
   late RefCompanyIdCompanyDto selectedCompany;
   List<RefCompanyIdCompanyDto> companies = <RefCompanyIdCompanyDto>[
     RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')

@@ -12,24 +12,25 @@ class ListDetails extends StatelessWidget {
     required this.refCampaignIdCampaignDto,
     required this.department,
   }) : super(key: key);
-  final RefCampaignIdCampaignDto refCampaignIdCampaignDto;
+  final RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   final RefDepartmentIdDepartmentDto department;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: EdgeInsets.all(padding),
       children: [
         Text(
-          refCampaignIdCampaignDto.name ?? "",
+          refCampaignIdCampaignDto?.name ?? "",
           style: Theme.of(context).textTheme.headline6,
         ),
         SizedBox(
           height: padding,
         ),
-        if (refCampaignIdCampaignDto.description != null)
+        if (refCampaignIdCampaignDto?.description != null)
           ItemDetails(
               title: S.current.campaign_description,
-              description: refCampaignIdCampaignDto.description ?? ""),
+              description: refCampaignIdCampaignDto?.description ?? ""),
         ItemDetails(title: S.current.customer, description: "MB Bank"),
         ItemDetails(
             title: S.current.branch, description: department.name ?? ""),
@@ -40,12 +41,12 @@ class ListDetails extends StatelessWidget {
 
         ItemDetails(
             title: S.current.begin,
-            description:
-                (refCampaignIdCampaignDto.startTime ?? "").formatDateTimeDMY()),
+            description: (refCampaignIdCampaignDto?.startTime ?? "")
+                .formatDateTimeDMY()),
         ItemDetails(
             title: S.current.end,
             description:
-                (refCampaignIdCampaignDto.endTime ?? "").formatDateTimeDMY()),
+                (refCampaignIdCampaignDto?.endTime ?? "").formatDateTimeDMY()),
       ],
     );
   }

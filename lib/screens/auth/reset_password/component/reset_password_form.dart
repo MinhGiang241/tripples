@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:survey/screens/auth/login/login_screen.dart';
 
 import '../../../../constants.dart';
 import '../../../../data_sources/api/constants.dart';
 import '../../../../generated/l10n.dart';
-import '../../../profile/edit_password.dart';
 import '../../components/auth_button.dart';
 import '../../components/auth_input.dart';
 
@@ -39,7 +39,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     message
     data
   }
-}''';
+  }''';
+  bool showValKey = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +74,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               ),
               AuthInput(
                   controller: widget.codeEditingController,
-                  hint: "code",
-                  keyboardType: TextInputType.text,
+                  hint: "Mã OTP",
+                  keyboardType: TextInputType.number,
                   prefixIcon: Icon(Icons.mail),
                   validator: (v) {
                     if (v!.isEmpty) {
@@ -89,13 +90,37 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.abc),
                   obscure: true,
-                  validator: (v) {
-                    if (v!.isEmpty) {
+                  tab: () {
+                    setState(() {
+                      showValKey = true;
+                    });
+                  },
+                  validator: (val) {
+                    if (val!.isEmpty) {
                       return S.current.not_blank;
-                    } else {
-                      return null;
+                    } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
+                      return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
+                    } else if (!RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]")
+                        .hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 chữ cái , 1 số";
+                    } else if (!RegExp(r"(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]")
+                        .hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 ký tự đặc biệt";
                     }
+                    return null;
                   }),
+              if (showValKey)
+                FlutterPwValidator(
+                    controller: widget.newPasswordEditingController,
+                    minLength: 6,
+                    uppercaseCharCount: 1,
+                    numericCharCount: 1,
+                    specialCharCount: 1,
+                    width: 400,
+                    height: 150,
+                    onSuccess: () {
+                      print("Matched");
+                    }),
               AuthInput(
                   controller: widget.confirmNewPasswordEditingController,
                   hint: "Nhập lại mật khẩu mới",
@@ -112,7 +137,21 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     }
                   }),
               Mutation(
-                  options: MutationOptions(document: gql(changePassword)),
+                  options: MutationOptions(
+                      document: gql(changePassword),
+                      onCompleted: (dynamic result) async {
+                        if (result["authorization_forgot_password"]['code'] ==
+                            0) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Đã đổi mật khẩu thành công")));
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => LoginScreen()));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content:
+                                  Text("mã OTP không hợp lệ hoặc đã hết hạn")));
+                        }
+                      }),
                   builder: ((runMutation, result) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: AuthButton(
@@ -126,23 +165,23 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                                   widget.newPasswordEditingController.text,
                               "otp": widget.codeEditingController.text
                             });
-                            if (result!.data?["authorization_forgot_password"]
-                                    ['code'] ==
-                                0) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text("Đã đổi mật khẩu thành công")));
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => LoginScreen()));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          "mã OTP không đúng hoặc đã hết hạn")));
-                            }
+                            // if (result!.data?["authorization_forgot_password"]
+                            //         ['code'] ==
+                            //     0) {
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //       SnackBar(
+                            //           content:
+                            //               Text("Đã đổi mật khẩu thành công")));
+                            //   Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //           builder: (_) => LoginScreen()));
+                            // } else {
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //       SnackBar(
+                            //           content: Text(
+                            //               "mã OTP không đúng hoặc đã hết hạn")));
+                            // }
                           }
                         },
                       ))))

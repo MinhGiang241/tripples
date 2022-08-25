@@ -23,18 +23,20 @@ import 'components/item_survey.dart';
 import 'models/model_file.dart';
 
 class SurveyScreen extends StatefulWidget {
-  final List<Questions>? questions;
+  final List<Questions> questions;
   final String campaignId;
   final String scheduleId;
   final bool isCompleted;
   final List<QuestionResultScheduleIdDto> questionResultScheduleIdDto;
+  final QuestionResult questionResults;
   final RefCampaignIdCampaignDto? campaign;
   SurveyScreen(
       {Key? key,
-      this.questions,
+      required this.questions,
       required this.campaignId,
       required this.scheduleId,
       required this.questionResultScheduleIdDto,
+      required this.questionResults,
       this.isCompleted = false,
       this.campaign})
       : super(key: key);
@@ -159,7 +161,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
             create: (_) => AnswerController(
                 campaignId: widget.campaignId,
                 scheduleId: widget.scheduleId,
-                listQuestions: [], //widget.questions,
+                listQuestions: widget.questions,
+                questionResults: widget.questionResults, //widget.questions,
                 refQuestionResultScheduleIdDto:
                     widget.questionResultScheduleIdDto))
       ],
@@ -209,13 +212,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => SurveyScreen(
-                                        questions: widget.questions,
-                                        campaignId: widget.campaignId,
-                                        scheduleId: widget.scheduleId,
-                                        isCompleted: false,
-                                        questionResultScheduleIdDto:
-                                            widget.questionResultScheduleIdDto,
-                                      ),
+                                          questions: widget.questions,
+                                          campaignId: widget.campaignId,
+                                          scheduleId: widget.scheduleId,
+                                          isCompleted: false,
+                                          questionResultScheduleIdDto: widget
+                                              .questionResultScheduleIdDto,
+                                          questionResults:
+                                              widget.questionResults),
                                     ),
                                   );
                                 }
@@ -247,13 +251,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                     listKey.add(GlobalKey());
                                     var question = widget.questions![index];
                                     var questionResult = widget
-                                                .questionResultScheduleIdDto
-                                                .length >
-                                            0
-                                        ? widget.questionResultScheduleIdDto
-                                            .firstWhere((element) =>
-                                                element.question?.questID ==
-                                                question.questID)
+                                                .questionResults!.answers !=
+                                            null
+                                        ? widget.questionResults!.answers!
+                                                    .length >
+                                                0
+                                            ? widget.questionResults!.answers
+                                                ?.firstWhere((element) =>
+                                                    element
+                                                        .questionTemplateId ==
+                                                    question.questID)
+                                            : null
                                         : null;
                                     int questionIndex =
                                         widget.questions!.length > 0
@@ -268,8 +276,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                       question: question,
                                       isCompleted: widget.isCompleted,
                                       questID: question.questID ?? "",
-                                      questionResultScheduleIdDto:
-                                          questionResult,
+                                      // questionResultScheduleIdDto:
+                                      //     questionResultScheduleIdDto,
+                                      questionResult: questionResult,
                                       questionIndex: questionIndex,
                                     );
                                   }),
@@ -381,6 +390,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                         widget.campaignId,
                                                     scheduleId:
                                                         widget.scheduleId,
+                                                    questionResults:
+                                                        widget.questionResults,
                                                     isCompleted: true,
                                                     questionResultScheduleIdDto:
                                                         responseListTemplate
@@ -415,13 +426,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               if (valid) {
                                 var ans = context
                                     .read<AnswerController>()
-                                    .answer
+                                    .answer!
                                     .toJson();
                                 print(ans);
                                 // return;
                                 runMutation(context
                                     .read<AnswerController>()
-                                    .answer
+                                    .answer!
                                     .toJson());
                               } else {
                                 scrollToRequired(context);
@@ -478,14 +489,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
   scrollToRequired(BuildContext context) {
     int index = 0;
     for (var i = 0;
-        i < context.read<AnswerController>().answer.resultsList!.length;
+        i < context.read<AnswerController>().answer!.data!.length;
         i++) {
-      if (context
-          .read<AnswerController>()
-          .answer
-          .resultsList![i]
-          .values!
-          .isEmpty) {
+      if (context.read<AnswerController>().answer!.data![i].values!.isEmpty) {
         index = i;
         break;
       }

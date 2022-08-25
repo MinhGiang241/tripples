@@ -17,6 +17,7 @@ class ItemSurvey extends StatefulWidget {
     required this.questID,
     this.questionResultScheduleIdDto,
     required this.questionIndex,
+    this.questionResult,
     this.isCompleted = false,
   }) : super(key: key);
   final Questions question;
@@ -24,6 +25,7 @@ class ItemSurvey extends StatefulWidget {
   final bool isCompleted;
   final int questionIndex;
   final QuestionResultScheduleIdDto? questionResultScheduleIdDto;
+  final Answers? questionResult;
 
   @override
   ItemSurveyState createState() => ItemSurveyState();
@@ -37,14 +39,18 @@ class ItemSurveyState extends State<ItemSurvey> {
   void initState() {
     super.initState();
     scoreController = TextEditingController(
-        text: widget.questionResultScheduleIdDto != null
-            ? widget.questionResultScheduleIdDto!.score.toString()
+        text: widget.questionResult != null
+            ? widget.questionResult!.score.toString()
             : widget.question.maxScore.toString());
     textAnswerController = TextEditingController(
-        text: widget.questionResultScheduleIdDto?.values?[0].label ?? "");
+        text: widget.question.type == "TEXT"
+            ? widget.questionResult?.answer
+            : widget.question.type == "NUMBER"
+                ? widget.questionResult?.answer.toString()
+                : "");
     noteAnswerController = TextEditingController(
-        text: widget.questionResultScheduleIdDto != null
-            ? widget.questionResultScheduleIdDto!.note ?? ""
+        text: widget.questionResult != null
+            ? widget.questionResult!.note ?? ""
             : "");
   }
 
@@ -121,48 +127,48 @@ class ItemSurveyState extends State<ItemSurvey> {
                 widget.isCompleted
                     ? SinglechoiseCompleted(
                         polls: widget.question.poll!,
-                        values: widget.questionResultScheduleIdDto != null
-                            ? widget.questionResultScheduleIdDto!.values != null
-                                ? widget.questionResultScheduleIdDto!.values!
+                        values: widget.questionResult != null
+                            ? widget.questionResult!.answer != null
+                                ? widget.questionResult!.answer!
                                 : []
                             : [])
                     : SinglechoiseAnswer(
                         polls: widget.question.poll!,
                         questID: widget.questID,
-                        values: widget.questionResultScheduleIdDto != null
-                            ? widget.questionResultScheduleIdDto!.values != null
-                                ? widget.questionResultScheduleIdDto!.values!
-                                : []
-                            : [],
+                        values: widget.questionResult != null
+                            ? widget.questionResult!.answer != null
+                                ? widget.questionResult!.answer!
+                                : ""
+                            : "",
                       ),
               if (widget.question.type == "MULTIPLECHOOSE")
                 widget.isCompleted
                     ? MultichoiseCompleted(
                         polls: widget.question.poll!,
-                        values: widget.questionResultScheduleIdDto != null
-                            ? widget.questionResultScheduleIdDto!.values != null
-                                ? widget.questionResultScheduleIdDto!.values!
+                        values: widget.questionResult != null
+                            ? widget.questionResult!.answer != null
+                                ? widget.questionResult!.answer!.split(',')
                                 : []
                             : [])
                     : MultichoiseAnswer(
                         polls: widget.question.poll!,
                         questID: widget.questID,
-                        values: widget.questionResultScheduleIdDto != null
-                            ? widget.questionResultScheduleIdDto!.values != null
-                                ? widget.questionResultScheduleIdDto!.values!
-                                : []
-                            : [],
+                        values: widget.questionResult != null
+                            ? widget.questionResult!.answer is String
+                                ? widget.questionResult!.answer
+                                : ""
+                            : "",
                       ),
               Divider(
                 thickness: 1,
               ),
               ScoreSlider(
-                maxScore: widget.questionResultScheduleIdDto != null
-                    ? widget.questionResultScheduleIdDto!.score
-                    : widget.question.maxScore,
-                index: widget.questionIndex,
-                isReadOnly: widget.isCompleted,
-              ),
+                  maxScore: widget.questionResult != null
+                      ? widget.questionResult!.score
+                      : widget.question.maxScore,
+                  index: widget.questionIndex,
+                  isReadOnly: widget.isCompleted,
+                  questID: widget.questID),
               Divider(
                 thickness: 1,
               ),
@@ -175,7 +181,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                   maxLines: 5,
                   onChanged: (v) {
                     Provider.of<AnswerController>(context, listen: false)
-                        .updateNoteAnswer(note: v, index: widget.questionIndex);
+                        .updateNoteAnswer(note: v, questID: widget.questID);
                   },
                   decoration: InputDecoration(labelText: "Ghi chú"),
                 ),
@@ -197,17 +203,18 @@ class ItemSurveyState extends State<ItemSurvey> {
                       },
                       child: Text(S.current.choose_file)),
                 ),
-              widget.isCompleted
-                  ? widget.questionResultScheduleIdDto != null
-                      ? widget.questionResultScheduleIdDto!.media != null
-                          ? ListPinnedFileComplete(
-                              medias:
-                                  widget.questionResultScheduleIdDto!.media!)
-                          : Container()
-                      : Container()
-                  : ListPinnedFile(
-                      questionIndex: widget.questionIndex,
-                    ),
+              // widget.isCompleted
+              //     ? widget.questionResult != null
+              //         ? widget.questionResultScheduleIdDto!.media != null
+              //             ? ListPinnedFileComplete(
+              //                 medias:
+              //                     widget.questionResultScheduleIdDto!.media!)
+              //             : Container()
+              //         : Container()
+              //     :
+              ListPinnedFile(
+                questionIndex: widget.questionIndex,
+              ),
             ],
           ),
         ),
@@ -219,49 +226,56 @@ class ItemSurveyState extends State<ItemSurvey> {
   }
 
   bool valiation(BuildContext context) {
-    if (context.watch<AnswerController>().validation) {
-      switch (widget.question.type) {
-        case "TEXT":
-          if (textAnswerController.text.isEmpty) {
-            return true;
-          } else {
-            return false;
-          }
-        case "SINGLECHOICE":
-          if ((context
-                      .watch<AnswerController>()
-                      .answer
-                      .resultsList
-                      ?.firstWhere((element) =>
-                          element.question?.questID == widget.questID)
-                      .values
-                      ?.length ??
-                  0) >
-              0) {
-            return false;
-          } else {
-            return true;
-          }
+    // return true;
+    try {
+      print(context.watch<AnswerController>());
 
-        case "MULTIPLECHOICE":
-          if ((context
-                      .watch<AnswerController>()
-                      .answer
-                      .resultsList
-                      ?.firstWhere((element) =>
-                          element.question?.questID == widget.questID)
-                      .values
-                      ?.length ??
-                  0) >
-              0) {
+      if (context.watch<AnswerController>().validation) {
+        switch (widget.question.type) {
+          case "TEXT":
+            if (textAnswerController.text.isEmpty) {
+              return true;
+            } else {
+              return false;
+            }
+          case "SINGLECHOICE":
+            if ((context
+                        .watch<AnswerController>()
+                        .answer!
+                        .data
+                        ?.firstWhere((element) =>
+                            element.question?.questID == widget.questID)
+                        .values
+                        ?.length ??
+                    0) >
+                0) {
+              return false;
+            } else {
+              return true;
+            }
+
+          case "MULTIPLECHOICE":
+            if ((context
+                        .watch<AnswerController>()
+                        .answer!
+                        .data
+                        ?.firstWhere((element) =>
+                            element.question?.questID == widget.questID)
+                        .values
+                        ?.length ??
+                    0) >
+                0) {
+              return false;
+            } else {
+              return true;
+            }
+          default:
             return false;
-          } else {
-            return true;
-          }
-        default:
-          return false;
+        }
+      } else {
+        return false;
       }
-    } else {
+    } catch (error) {
       return false;
     }
   }
@@ -272,12 +286,14 @@ class ScoreSlider extends StatelessWidget {
       {Key? key,
       required this.maxScore,
       required this.index,
+      required this.questID,
       this.isReadOnly = false})
       : super(key: key);
 
   final maxScore;
   final int index;
   final bool isReadOnly;
+  final String questID;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SliderScoreController>(
@@ -312,7 +328,7 @@ class ScoreSlider extends StatelessWidget {
                               if (!isReadOnly) {
                                 Provider.of<SliderScoreController>(context,
                                         listen: false)
-                                    .changeValue(val, index, context);
+                                    .changeValue(val, index, context, questID);
                               }
                             }),
                       ),

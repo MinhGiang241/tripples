@@ -13,6 +13,7 @@ class Questions {
   Questions.fromJson(json, max, isRequired) {
     questID = json['_id'];
     // hint = json['hint'];
+    // note = json['note'];
     title = json['name'];
     type = json['answer_type'];
     required = isRequired != null ? true : false;

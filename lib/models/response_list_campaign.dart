@@ -42,9 +42,11 @@ class QuerySchedulesDto {
         if (v['question_results'].length > 0) {
           questionResultScheduleIdDto =
               v['question_results']?.asMap().forEach((i, a) {
-            questionResultScheduleIdDto?.add(
-                new QuestionResultScheduleIdDto.fromJson(
-                    a, v['campaign']['questions'][i]));
+            questionResultScheduleIdDto
+                ?.add(new QuestionResultScheduleIdDto.fromJson(
+              a,
+              v['campaign']['questions'][i],
+            ));
           });
         }
       });
@@ -67,6 +69,7 @@ class ScheduleCampaign {
   RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   RefDepartmentIdDepartmentDto? refDepartmentIdDepartmentDto;
   RefCompanyIdCompanyDto? refCompanyIdCompanyDto;
+  QuestionResult? questionResult;
   List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
   List<Questions>? questions;
   ScheduleCampaign(
@@ -76,7 +79,10 @@ class ScheduleCampaign {
       this.refCampaignIdCampaignDto,
       this.refDepartmentIdDepartmentDto,
       this.refCompanyIdCompanyDto,
+      this.questionResult,
+      // no use
       this.questionResultScheduleIdDto,
+      // no use
       this.questions});
 
   ScheduleCampaign.fromJson(json) {
@@ -91,7 +97,8 @@ class ScheduleCampaign {
         ? new RefCompanyIdCompanyDto.fromJson(json['company'])
         : null;
     refDepartmentIdDepartmentDto = json['department'] != null
-        ? new RefDepartmentIdDepartmentDto.fromJson(json['department'])
+        ? new RefDepartmentIdDepartmentDto.fromJson(
+            json['department'], refCompanyIdCompanyDto!.name)
         : null;
     if (json['campaign']['question_list'] != null &&
         json['campaign']['question_list'].length > 0) {
@@ -105,6 +112,11 @@ class ScheduleCampaign {
     }
 
     if (json["question_results"] != null) {
+      questionResult = new QuestionResult.fromJson(json['question_results'],
+          json['campaign']["questions"], json['campaign']["question_list"]);
+    }
+    // no use
+    if (json["question_results"] != null) {
       questionResultScheduleIdDto = <QuestionResultScheduleIdDto>[];
       json['question_results'].asMap().forEach((i, v) {
         questionResultScheduleIdDto?.add(
@@ -113,6 +125,7 @@ class ScheduleCampaign {
       });
     }
   }
+  // no use
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -125,18 +138,43 @@ class ScheduleCampaign {
       data['ref_departmentId_DepartmentDto'] =
           this.refDepartmentIdDepartmentDto?.toJson();
     }
-    if (this.questionResultScheduleIdDto != null) {
-      data['question_result'] =
-          this.questionResultScheduleIdDto?.map((v) => v.toJson()).toList();
+    if (this.questionResult != null) {
+      // data['question_results'] =
+      //     this.questionResultScheduleIdDto?.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class QuestionResult {
-  String? id;
+  List<Answers>? answers;
   String? schedualId;
-  Answer? data;
+  List<Questions>? questions;
+
+  QuestionResult({this.answers, this.questions, this.schedualId});
+  QuestionResult.fromJson(results, q, questionList) {
+    if (results != null && results.length > 0) {
+      answers = <Answers>[];
+      results.asMap().forEach((i, v) {
+        answers?.add(new Answers.fromJson(v));
+      });
+    }
+    if (results.length > 0) {
+      schedualId = results[0]['schedualId'];
+    }
+
+    if (questionList != null &&
+        q.length == questionList.length &&
+        questionList.length > 0) {
+      questions = <Questions>[];
+      questionList.asMap().forEach((i, v) {
+        questions?.add(
+            new Questions.fromJson(v, q[i]['max_score'], q[i]['required']));
+      });
+    }
+    print(questions);
+    print(answers);
+  }
 }
 
 class QuestionResultScheduleIdDto {
@@ -146,7 +184,7 @@ class QuestionResultScheduleIdDto {
   List<Answers>? answers;
   List<Media>? media;
   List<HValues>? values;
-  Question? question;
+  List<Questions>? questions;
 
   String? note;
 
@@ -154,7 +192,7 @@ class QuestionResultScheduleIdDto {
       {this.id,
       this.media,
       this.values,
-      this.question,
+      this.questions,
       this.answers,
       this.score});
 
@@ -170,8 +208,9 @@ class QuestionResultScheduleIdDto {
         answers?.add(new Answers.fromJson(v));
       });
     }
+    // if (json['']) {}
 
-    // question = Question.fromJson(json['campaign']['questions']);
+    // questions = Questions.fromJson(json['campaign']['questions']);
     // if (json['media'] != null) {
     //   media = <Media>[];
     //   json['media'].forEach((v) {
@@ -191,12 +230,12 @@ class QuestionResultScheduleIdDto {
     data['_id'] = this.id;
     // data['updatedTime'] = this.updatedTime;
 
-    if (this.media != null) {
-      data['media'] = this.media?.map((v) => v.toJson()).toList();
-    }
-    if (this.values != null) {
-      data['values'] = this.values?.map((v) => v.toJson()).toList();
-    }
+    // if (this.media != null) {
+    //   data['media'] = this.media?.map((v) => v.toJson()).toList();
+    // }
+    // if (this.values != null) {
+    //   data['values'] = this.values?.map((v) => v.toJson()).toList();
+    // }
     return data;
   }
 }
@@ -240,21 +279,23 @@ class Answers {
     score = json['score'];
     answer = json['answer'];
     gDriveLink = json['google_drive_ids'];
-    links = json['google_drive_ids'].split(',');
+    if (json['google_drive_ids'] != null) {
+      links = json['google_drive_ids'].split(',');
+    }
   }
 }
 
-class Question {
-  String? questID;
-  String? type;
-  String? name;
+// class Question {
+//   String? questID;
+//   String? type;
+//   String? name;
 
-  Question.fromJson(Map<dynamic, dynamic>? json) {
-    questID = json!['questID'];
-    type = json['type'];
-    name = json['name'];
-  }
-}
+//   Question.fromJson(Map<dynamic, dynamic>? json) {
+//     questID = json!['questID'];
+//     type = json['type'];
+//     name = json['name'];
+//   }
+// }
 
 class HValues {
   String? label;

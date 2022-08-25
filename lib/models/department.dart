@@ -1,10 +1,12 @@
 class RefDepartmentIdDepartmentDto {
+  String? company;
   String? name;
   String? address;
 
-  RefDepartmentIdDepartmentDto({this.name, this.address});
+  RefDepartmentIdDepartmentDto({this.name, this.address, this.company});
 
-  RefDepartmentIdDepartmentDto.fromJson(json) {
+  RefDepartmentIdDepartmentDto.fromJson(json, companyName) {
+    company = companyName;
     name = json['name'];
     address = json['address'];
   }

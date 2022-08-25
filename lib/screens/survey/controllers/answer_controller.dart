@@ -4,67 +4,54 @@ import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/survey/models/model_answer.dart';
 
 class AnswerController extends ChangeNotifier {
-  Answer answer = Answer();
-  List<ResultsList> _listResult = [];
+  Answer? answer = Answer();
+  List<ResultsList> listResult = [];
   bool validation = false;
   AnswerController(
       {required String campaignId,
       required String scheduleId,
       required List<Questions> listQuestions,
+      required QuestionResult questionResults,
       required List<QuestionResultScheduleIdDto>
           refQuestionResultScheduleIdDto}) {
-    for (var i = 0; i < listQuestions.length; i++) {
-      _listResult.add(ResultsList(
-          questionTemplateId: refQuestionResultScheduleIdDto.length > 0
-              ? refQuestionResultScheduleIdDto
-                  .firstWhere((element) =>
-                      element.question?.questID == listQuestions[i].questID)
-                  .id
-              : null,
-          // note: refQuestionResultScheduleIdDto.length > 0
-          //     ? refQuestionResultScheduleIdDto
-          //         .firstWhere((element) =>
-          //             element.question?.questID == listQuestions[i].questID)
-          //         .note
-          //     : "",
-          // score: refQuestionResultScheduleIdDto.length > 0
-          //     ? refQuestionResultScheduleIdDto
-          //         .firstWhere((element) =>
-          //             element.question?.questID == listQuestions[i].questID)
-          //         .score
-          //     : listQuestions[i].maxScore,
-          // media: refQuestionResultScheduleIdDto.length > 0
-          //     ? refQuestionResultScheduleIdDto
-          //         .firstWhere((element) =>
-          //             element.question?.questID == listQuestions[i].questID)
-          //         .media
-          //     : [],
-          values: refQuestionResultScheduleIdDto.length > 0
-              ? refQuestionResultScheduleIdDto
-                  .firstWhere((element) =>
-                      element.question?.questID == listQuestions[i].questID)
-                  .values
-                  ?.map((e) => Values(label: e.label))
-                  .toList()
-              : [],
-          question: AQuestion(
-              name: listQuestions[i].title,
-              questID: listQuestions[i].questID,
-              type: listQuestions[i].type,
-              poll: listQuestions[i]
-                  .poll
-                  ?.map((e) => APoll(label: e.label))
-                  .toList())));
+    if (questionResults.questions != null) {
+      for (var i = 0; i < questionResults.questions!.length; i++) {
+        var answer;
+        if (questionResults.answers != null) {
+          var answerIndex = questionResults.answers!.indexWhere((v) {
+            return v.questionTemplateId == listQuestions[i].questID;
+          });
+          answer = questionResults.answers![answerIndex];
+          listResult.add(new ResultsList(
+            id: answer.id != null ? answer.id : null,
+            questionTemplateId: listQuestions![i].questID,
+            score: answer.score != null ? answer.score : null,
+            answer: answer.answer != null ? answer.answer : null,
+            scheduleId: answer.scheduleId != null ? answer.scheduleId : null,
+            google_drive_ids:
+                answer.gDriveLink != null ? answer.gDriveLink : null,
+          ));
+        } else {
+          answer = new Answer();
+          listResult.add(new ResultsList(
+              id: '',
+              score: 0,
+              questionTemplateId: listQuestions[i].questID,
+              answer: '',
+              scheduleId: scheduleId,
+              google_drive_ids: ''));
+        }
+      }
     }
-    answer = Answer(
-        // campaignId: campaignId,
-        scheduleId: scheduleId,
-        resultsList: _listResult);
+    print(listResult);
   }
 
   updateLableAnswer(
       {required String lable, required String questID, required String type}) {
     switch (type) {
+      case "NUMBER":
+        _updateLableAnswerNumber(questID, lable);
+        break;
       case "TEXT":
         _updateLableAnswerText(questID, lable);
         break;
@@ -78,74 +65,101 @@ class AnswerController extends ChangeNotifier {
     }
   }
 
-  updateScoreAnswer({required var score, required int index}) {
-    answer.resultsList![index].score = score;
+  updateScoreAnswer({required var score, required int index, questId}) {
+    // print(score);
+    // print(index);
+    // print(questId);
+    if (questId != null && questId != '') {
+      var index = listResult!
+          .indexWhere((element) => element.questionTemplateId == questId);
+
+      listResult![index].score = score;
+    }
+    print(listResult![index].score);
   }
 
-  updateNoteAnswer({required String note, required int index}) {
-    answer.resultsList![index].note = note;
+  updateNoteAnswer({required String note, required questID}) {
+    if (note != '') {
+      var index = listResult!
+          .indexWhere((element) => element.questionTemplateId == questID);
+      if (index >= 0) {
+        listResult![index].note = note;
+        print(listResult![index].note);
+      }
+    }
+    // answer.data![index].note = note;
   }
 
   addFileAnswer(
       {required String idFile, required String name, required int index}) {
-    answer.resultsList![index].media!.add(Media(sId: idFile, name: name));
+    answer!.data![index].media!.add(Media(sId: idFile, name: name));
     print('answer: ' + answer.toString());
   }
 
   removeFileAnswer({required String idFile, required int index}) {
-    answer.resultsList![index].media!
-        .removeWhere((element) => element.sId == idFile);
+    answer!.data![index].media!.removeWhere((element) => element.sId == idFile);
   }
 
-  /// Update lable
-  void _updateLableAnswerText(String questID, String lable) {
-    if ((answer.resultsList
-                ?.firstWhere((element) => element.question?.questID == questID)
-                .values
-                ?.length ??
-            0) >
-        0) {
-      answer.resultsList!
-          .firstWhere((element) => element.question?.questID == questID)
-          .values![0]
-          .label = lable;
-    } else {
-      answer.resultsList
-          ?.firstWhere((element) => element.question?.questID == questID)
-          .values
-          ?.add(Values(label: lable));
+  void _updateLableAnswerNumber(String questID, String? lable) {
+    if (lable != null && lable != '') {
+      var index = listResult
+          .indexWhere((element) => element.questionTemplateId == questID);
+      if (index >= 0) {
+        listResult[index].answer = double.parse(lable);
+        print(listResult[index].answer);
+      }
     }
   }
 
-  void _updateLableAnswerSingleChoice(String questID, String lable) {
+  /// Update lable
+  void _updateLableAnswerText(String questID, String? lable) {
+    if (lable != null && lable != '') {
+      var index = listResult!
+          .indexWhere((element) => element.questionTemplateId == questID);
+      if (index >= 0) {
+        listResult![index].answer = lable;
+        print(listResult![index].answer);
+      }
+    }
+  }
+
+  void _updateLableAnswerSingleChoice(String questID, String? lable) {
     _updateLableAnswerText(questID, lable);
   }
 
-  void _updateLableMultiChoice(String questID, String lable) {
-    if (answer.resultsList!
-            .firstWhere((element) => element.question?.questID == questID)
-            .values!
-            .length >
-        0) {
-      if (answer.resultsList!
-          .firstWhere((element) => element.question?.questID == questID)
-          .values!
-          .any((element) => element.label == lable)) {
-        answer.resultsList!
-            .firstWhere((element) => element.question?.questID == questID)
-            .values!
-            .removeWhere((element) => element.label == lable);
+  void _updateLableMultiChoice(String questID, String? lable) {
+    if (lable != null && lable != '') {
+      var index = listResult!
+          .indexWhere((element) => element.questionTemplateId == questID);
+      var listChoiceAnswer;
+
+      listChoiceAnswer = listResult![index].answer.split(',');
+
+      var choiceIndex = listChoiceAnswer.indexWhere((v) => v == lable);
+
+      if (choiceIndex < 0) {
+        listChoiceAnswer.add(lable);
+        if (listChoiceAnswer.length == 1) {
+          listResult![index].answer = listChoiceAnswer[0];
+        } else {
+          listResult![index].answer = listChoiceAnswer.join(',');
+        }
       } else {
-        answer.resultsList!
-            .firstWhere((element) => element.question?.questID == questID)
-            .values!
-            .add(Values(label: lable));
+        listChoiceAnswer.removeWhere((v) => v == lable);
+        if (listChoiceAnswer != null) {
+          listResult![index].answer = listChoiceAnswer.join(',');
+        } else if (listChoiceAnswer.length == 1) {
+          listResult![index].answer = listChoiceAnswer[0];
+        } else {
+          listResult![index].answer = null;
+        }
       }
-    } else {
-      answer.resultsList!
-          .firstWhere((element) => element.question?.questID == questID)
-          .values!
-          .add(Values(label: lable));
+      if (listResult![index].answer.startsWith(',')) {
+        listResult![index].answer = listResult![index].answer.substring(
+              1,
+            );
+      }
+      print(listResult![index].answer);
     }
   }
 
@@ -153,14 +167,14 @@ class AnswerController extends ChangeNotifier {
     validation = true;
     notifyListeners();
     int v = 0;
-    for (var i = 0; i < answer.resultsList!.length; i++) {
-      if ((answer.resultsList?[i].values?.length ?? 0) > 0) {
-        if (answer.resultsList![i].values!
+    for (var i = 0; i < answer!.data!.length; i++) {
+      if ((answer!.data?[i].values?.length ?? 0) > 0) {
+        if (answer!.data![i].values!
             .every((element) => element.label!.isNotEmpty)) {
           v++;
         }
       }
     }
-    return v == answer.resultsList!.length;
+    return v == answer!.data!.length;
   }
 }

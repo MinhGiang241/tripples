@@ -10,10 +10,13 @@ class SliderScoreController extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeValue(double v, int index, BuildContext context) {
+  changeValue(double v, int index, BuildContext context, questId) {
     value = v;
+    // context
+    //     .watch<AnswerController>()
+    //     .updateScoreAnswer(score: value, index: index, questId: questId);
     Provider.of<AnswerController>(context, listen: false)
-        .updateScoreAnswer(score: value, index: index);
+        .updateScoreAnswer(score: value, index: index, questId: questId);
     notifyListeners();
   }
 }

@@ -3,17 +3,17 @@ class Answer {
   String? id;
   String? scheduleId;
   String? tenantId;
-  List<ResultsList>? resultsList;
+  List<ResultsList>? data;
 
-  Answer({this.scheduleId, this.resultsList});
+  Answer({this.scheduleId, this.data});
 
   Answer.fromJson(Map<String, dynamic> json) {
     // campaignId = json['campaign_id'];
     scheduleId = json['schedule_id'];
     if (json['resultsList'] != null) {
-      resultsList = <ResultsList>[];
+      data = <ResultsList>[];
       json['resultsList'].forEach((v) {
-        resultsList?.add(new ResultsList.fromJson(v));
+        data?.add(new ResultsList.fromJson(v));
       });
     }
   }
@@ -22,52 +22,67 @@ class Answer {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // data['campaign_id'] = this.campaignId;
     data['schedule_id'] = this.scheduleId;
-    if (this.resultsList != null) {
-      data['resultsList'] = this.resultsList?.map((v) => v.toJson()).toList();
+    if (this.data != null) {
+      data['resultsList'] = this.data?.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class ResultsList {
+  String? id;
   String? questionTemplateId;
+  String? scheduleId;
   var score;
   String? note;
-  String? GdriveLink;
-  List<Values>? values = [];
+  String? google_drive_ids;
   var answer;
+
+//no use
+  List<Values>? values = [];
   AQuestion? question;
   List<Media>? media;
+//no use
 
   ResultsList(
-      {this.questionTemplateId,
+      {this.id,
+      this.questionTemplateId,
       this.score,
       this.note,
-      this.values,
-      this.question,
-      this.media});
+      this.answer,
+      this.scheduleId,
+      this.google_drive_ids
+      //this.question,
+      //this.media
+      //this.values
+      });
 
   ResultsList.fromJson(Map<String, dynamic> json) {
-    questionTemplateId = json['_id'];
+    id = json['_id'];
+    questionTemplateId = json['questionTemplateId'];
     score = json['score'];
+    note = json['scheduleId'];
+    note = json['answer'];
     note = json['note'];
-    if (json['values'] != null) {
-      values = <Values>[];
-      json['values'].forEach((v) {
-        values?.add(new Values.fromJson(v));
-      });
-    }
+    note = json['google_drive_ids'];
 
-    question = json['question'] != null
-        ? new AQuestion.fromJson(json['question'])
-        : null;
+    // if (json['values'] != null) {
+    //   values = <Values>[];
+    //   json['values'].forEach((v) {
+    //     values?.add(new Values.fromJson(v));
+    //   });
+    // }
 
-    if (json['media'] != null) {
-      media = <Media>[];
-      json['media'].forEach((v) {
-        media?.add(new Media.fromJson(v));
-      });
-    }
+    // question = json['question'] != null
+    //     ? new AQuestion.fromJson(json['question'])
+    //     : null;
+
+    // if (json['media'] != null) {
+    //   media = <Media>[];
+    //   json['media'].forEach((v) {
+    //     media?.add(new Media.fromJson(v));
+    //   });
+    // }
   }
 
   Map<String, dynamic> toJson() {

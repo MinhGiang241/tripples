@@ -21,6 +21,7 @@ class DetailsScreen extends StatelessWidget {
   final bool isCompleted;
   final String idSchedule;
   final List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
+  final QuestionResult? questionResults;
   final RefCampaignIdCampaignDto? campaign;
   final List<Questions>? questions;
   const DetailsScreen(
@@ -30,7 +31,8 @@ class DetailsScreen extends StatelessWidget {
       required this.isCompleted,
       required this.idSchedule,
       required this.questions,
-      this.questionResultScheduleIdDto,
+      required this.questionResultScheduleIdDto,
+      required this.questionResults,
       this.campaign})
       : super(key: key);
 
@@ -75,7 +77,10 @@ class DetailsScreen extends StatelessWidget {
                                           scheduleId: idSchedule,
                                           isCompleted: isCompleted,
                                           campaign: campaign,
-                                          questions: questions,
+                                          questions:
+                                              questions as List<Questions>,
+                                          questionResults:
+                                              questionResults as QuestionResult,
                                           //     campaign
                                           //             .questions ??
                                           //         [],

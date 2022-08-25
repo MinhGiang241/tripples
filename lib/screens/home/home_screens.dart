@@ -158,10 +158,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   .querySchedulesDto!.data!.length;
                           i++) {
                         if (responseListTemplate.querySchedulesDto!.data![i]
-                                    .questionResultScheduleIdDto !=
+                                    .questionResult !=
                                 null &&
                             responseListTemplate.querySchedulesDto!.data![i]
-                                    .questionResultScheduleIdDto!.length >
+                                    .questionResult?.answers !=
+                                null &&
+                            responseListTemplate.querySchedulesDto!.data![i]
+                                    .questionResult?.answers!.length !=
                                 0) {
                           listCompleted.add(
                               responseListTemplate.querySchedulesDto!.data![i]);

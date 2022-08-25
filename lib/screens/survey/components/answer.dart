@@ -17,15 +17,22 @@ class MultichoiseAnswer extends StatelessWidget {
   }) : super(key: key);
   final List<Poll> polls;
   final String questID;
-  final List<HValues> values;
+  final String values;
+
   @override
   Widget build(BuildContext context) {
+    var listData;
+    try {
+      listData = context.read<MultichoiseController>().listData.length;
+    } catch (_) {
+      listData = 0;
+    }
     return ChangeNotifierProvider<MultichoiseController>(
       create: (context) => MultichoiseController(polls, values),
       builder: (context, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
-              context.read<MultichoiseController>().listData.length,
+              listData,
               (index) => CheckboxListTile(
                     activeColor: Theme.of(context).primaryColor,
                     value: context
@@ -62,7 +69,7 @@ class MultichoiseCompleted extends StatelessWidget {
     required this.values,
   }) : super(key: key);
   final List<Poll> polls;
-  final List<HValues> values;
+  final List<String> values;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -71,8 +78,7 @@ class MultichoiseCompleted extends StatelessWidget {
             polls.length,
             (index) => CheckboxListTile(
                   activeColor: Theme.of(context).primaryColor,
-                  value: values
-                      .any((element) => element.label == polls[index].label),
+                  value: values.any((element) => element == polls[index].label),
                   onChanged: (val) {},
                   title: Text(polls[index].label ?? ""),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -89,12 +95,12 @@ class SinglechoiseAnswer extends StatelessWidget {
   }) : super(key: key);
   final List<Poll> polls;
   final String questID;
-  final List<HValues> values;
+  final String values;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SingleChoiseController>(
       create: (_) =>
-          SingleChoiseController(polls, values.length > 0 ? values[0] : null),
+          SingleChoiseController(polls, values.length > 0 ? values : null),
       builder: (context, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
@@ -155,7 +161,7 @@ class SinglechoiseCompleted extends StatefulWidget {
     required this.values,
   }) : super(key: key);
   final List<Poll> polls;
-  final List<HValues> values;
+  final String? values;
 
   @override
   _SinglechoiseCompletedState createState() => _SinglechoiseCompletedState();
@@ -163,23 +169,13 @@ class SinglechoiseCompleted extends StatefulWidget {
 
 class _SinglechoiseCompletedState extends State<SinglechoiseCompleted> {
   late List<Poll> polls;
+  var choice = [];
   @override
   void initState() {
     super.initState();
+
     polls = widget.polls;
     int x = 0;
-    for (var i = 0; i < widget.polls.length; i++) {
-      if (widget.values.length > 0) {
-        if (widget.polls[i].label == widget.values[0].label) {
-          x++;
-        }
-      }
-    }
-    if (x == 0) {
-      if (widget.values.length > 0) {
-        polls.add(Poll(label: widget.values[0].label));
-      }
-    }
   }
 
   @override
@@ -189,9 +185,9 @@ class _SinglechoiseCompletedState extends State<SinglechoiseCompleted> {
         children: List.generate(polls.length, (index) {
           return RadioListTile<Poll>(
             activeColor: Theme.of(context).primaryColor,
-            groupValue: widget.values.length > 0
-                ? widget.polls.firstWhere(
-                    (element) => element.label == widget.values[0].label)
+            groupValue: widget.values!.length > 0
+                ? widget.polls
+                    .firstWhere((element) => element.label == widget.values)
                 : Poll(),
             value: widget.polls[index],
             onChanged: (val) {},

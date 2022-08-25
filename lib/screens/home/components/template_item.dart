@@ -35,6 +35,7 @@ class TemplateItem extends StatelessWidget {
                         isCompleted: isCompleted,
                         questionResultScheduleIdDto:
                             campaign.questionResultScheduleIdDto,
+                        questionResults: campaign.questionResult,
                       ))).then((value) {
             onBack(true);
           });
@@ -84,7 +85,7 @@ class TemplateItem extends StatelessWidget {
                       ),
                       isCompleted
                           ? Text(
-                              "${campaign.questionResultScheduleIdDto![0].answers?[0].updatedTime!.formatDateTimeHmDMY()}",
+                              "${campaign.questionResult?.answers?[0].updatedTime!.formatDateTimeHmDMY()}",
                               style: Theme.of(context)
                                   .textTheme
                                   .caption

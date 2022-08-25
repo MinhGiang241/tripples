@@ -6,13 +6,13 @@ class SingleChoiseController extends ChangeNotifier {
   FocusNode otherNode = FocusNode();
   List<Poll> listData = [];
   Poll data = Poll();
-  SingleChoiseController(List<Poll> list, [HValues? value]) {
+  SingleChoiseController(List<Poll> list, value) {
     listData = list;
     // if (!list.any((element) => element.label == "Khác")) {
     //   listData.add(Poll(label: "Khác"));
     // }
     if (value != null) {
-      data = listData.firstWhere((element) => element.label == value.label);
+      data = listData.firstWhere((element) => element.label == value);
     }
     notifyListeners();
   }

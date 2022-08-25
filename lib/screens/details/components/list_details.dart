@@ -31,7 +31,8 @@ class ListDetails extends StatelessWidget {
           ItemDetails(
               title: S.current.campaign_description,
               description: refCampaignIdCampaignDto?.description ?? ""),
-        ItemDetails(title: S.current.customer, description: "MB Bank"),
+        ItemDetails(
+            title: S.current.customer, description: department.company ?? ''),
         ItemDetails(
             title: S.current.branch, description: department.name ?? ""),
         ItemDetails(

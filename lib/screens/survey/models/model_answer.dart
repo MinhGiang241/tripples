@@ -35,7 +35,7 @@ class ResultsList {
   String? scheduleId;
   var score;
   String? note;
-  String? google_drive_ids;
+  String? google_drive_ids = '';
   var answer;
 
 //no use
@@ -61,44 +61,32 @@ class ResultsList {
     id = json['_id'];
     questionTemplateId = json['questionTemplateId'];
     score = json['score'];
-    note = json['scheduleId'];
-    note = json['answer'];
+    scheduleId = json['scheduleId'];
+    answer = json['answer'];
     note = json['note'];
-    note = json['google_drive_ids'];
-
-    // if (json['values'] != null) {
-    //   values = <Values>[];
-    //   json['values'].forEach((v) {
-    //     values?.add(new Values.fromJson(v));
-    //   });
-    // }
-
-    // question = json['question'] != null
-    //     ? new AQuestion.fromJson(json['question'])
-    //     : null;
-
-    // if (json['media'] != null) {
-    //   media = <Media>[];
-    //   json['media'].forEach((v) {
-    //     media?.add(new Media.fromJson(v));
-    //   });
-    // }
+    google_drive_ids = json['google_drive_ids'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.questionTemplateId != null) data['_id'] = this.questionTemplateId;
+    data['_id'] = this.id;
+    data['questionTemplateId'] = this.questionTemplateId;
     data['score'] = this.score;
+    data['scheduleId'] = this.scheduleId;
     data['note'] = this.note;
-    if (this.values != null) {
-      data['values'] = this.values?.map((v) => v.toJson()).toList();
-    }
-    if (this.question != null) {
-      data['question'] = this.question?.toJson();
-    }
-    if (this.media != null) {
-      data['media'] = this.media?.map((v) => v.toJson()).toList();
-    }
+    data['google_drive_ids'] = this.google_drive_ids;
+    // if (this.questionTemplateId != null) data['_id'] = this.questionTemplateId;
+    // data['score'] = this.score;
+    // data['note'] = this.note;
+    // if (this.values != null) {
+    //   data['values'] = this.values?.map((v) => v.toJson()).toList();
+    // }
+    // if (this.question != null) {
+    //   data['question'] = this.question?.toJson();
+    // }
+    // if (this.media != null) {
+    //   data['media'] = this.media?.map((v) => v.toJson()).toList();
+    // }
     return data;
   }
 }

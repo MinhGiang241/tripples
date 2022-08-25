@@ -199,7 +199,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                       onPressed: () {
                         Provider.of<ChooseFileController>(context,
                                 listen: false)
-                            .showSelectedFile(widget.questionIndex);
+                            .showSelectedFile(
+                                widget.questionIndex, widget.questID);
                       },
                       child: Text(S.current.choose_file)),
                 ),
@@ -213,8 +214,7 @@ class ItemSurveyState extends State<ItemSurvey> {
               //         : Container()
               //     :
               ListPinnedFile(
-                questionIndex: widget.questionIndex,
-              ),
+                  questionIndex: widget.questionIndex, questId: widget.questID),
             ],
           ),
         ),

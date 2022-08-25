@@ -13,10 +13,11 @@ class ListPinnedFile extends StatefulWidget {
   const ListPinnedFile({
     Key? key,
     required this.questionIndex,
+    required this.questId,
   }) : super(key: key);
 
   final int questionIndex;
-
+  final String questId;
   @override
   State<ListPinnedFile> createState() => ListPinnedFileState();
 }
@@ -82,7 +83,9 @@ class ListPinnedFileState extends State<ListPinnedFile> {
                             Provider.of<AnswerController>(context,
                                     listen: false)
                                 .removeFileAnswer(
-                                    idFile: e.id, index: widget.questionIndex);
+                                    idFile: e.id,
+                                    index: widget.questionIndex,
+                                    questId: widget.questId);
                           }),
                     ],
                   ),

@@ -11,11 +11,13 @@ enum TypeOfFile { media, file }
 class ChooseFileController extends ChangeNotifier {
   List<ModelFile> listPinnedFile = [];
   List<ModelFile> files = [];
+  String? questID;
   int? currentIndex;
   bool isSelectedFile = false;
   bool isUploadFile = false;
 
-  showSelectedFile(int index) {
+  showSelectedFile(int index, questIditem) {
+    questID = questIditem;
     currentIndex = index;
     isSelectedFile = true;
     notifyListeners();
@@ -47,9 +49,7 @@ class ChooseFileController extends ChangeNotifier {
     if (result != null) {
       files = result.paths
           .map((path) => ModelFile(
-                index: currentIndex!,
-                file: File(path!),
-              ))
+              index: currentIndex!, file: File(path!), questID: questID))
           .toList();
       Provider.of<FileUploadController>(context, listen: false).addFile(files);
       showUploadFile(currentIndex!);

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -57,73 +58,23 @@ class _SurveyScreenState extends State<SurveyScreen> {
   Widget build(BuildContext context) {
     print(widget.questions);
     final mutationData = """
-  mutation (\$campaign_id:String, \$schedule_id: String,  \$resultsList :  Dictionary){ 
-	question_result_save(campaignId : \$campaign_id, , scheduleId: \$schedule_id, resultsList: \$resultsList){
-    message
-    code
-    data
+  mutation (\$data:Dictionary){
+   scheduleresult_save_schedule_result (data: \$data ) {
+        code
+        message
+        data
+    }
   }
-} 
     """;
 
     final String queryTemplate = """
- query(\$filter:GeneralCollectionFilterInput)
-  {
-    query_Schedules_dto(filter:\$filter)
-    {
-      code
-      message
-      data
-      {
-        _id 
-        appointment_date
-        appointment_time
-        ref_tenantId_CompanyDto{
-          _id
-          name
-        }
-        ref_campaignId_CampaignDto{
-          _id
-          name
-          start_time
-          end_time
-        }
-        ref_departmentId_DepartmentDto{
-          name
-          address
-        }
-        ref_QuestionResult_scheduleIdDto {
-          campaignId
-          departmentId
-          creator
-          departmentId
-          display_name
-          follower_numb
-          media
-          updatedTime
-          note
-          score
-          task_numb
-          tenantId
-          values {
-            factor
-            label
-          }
-          question {
-            name
-            max_score
-            poll {
-              factor
-              icon
-              label
-            }
-            questID
-            type
-          }
-        }
+    mutation {
+     scheduleresult_get_questions_and_answers_by_schedule  {
+        code
+        message
+        data
       }
     }
-  }
   """;
     final bool showBtn = MediaQuery.of(context).viewInsets.bottom == 0.0;
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -239,7 +190,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   Container(
                     height: MediaQuery.of(context).size.height,
                     child: widget.questions != null &&
-                            widget.questions!.length > 0
+                            widget.questions.length > 0
                         ? SingleChildScrollView(
                             physics: BouncingScrollPhysics(),
                             controller: scrollController,
@@ -247,16 +198,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 padding: EdgeInsets.only(bottom: padding * 4),
                                 child: Column(
                                   children: List.generate(
-                                      widget.questions!.length, (index) {
+                                      widget.questions.length, (index) {
                                     listKey.add(GlobalKey());
-                                    var question = widget.questions![index];
+                                    var question = widget.questions[index];
                                     var questionResult = widget
-                                                .questionResults!.answers !=
+                                                .questionResults.answers !=
                                             null
-                                        ? widget.questionResults!.answers!
+                                        ? widget.questionResults.answers!
                                                     .length >
                                                 0
-                                            ? widget.questionResults!.answers
+                                            ? widget.questionResults.answers
                                                 ?.firstWhere((element) =>
                                                     element
                                                         .questionTemplateId ==
@@ -264,10 +215,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                             : null
                                         : null;
                                     int questionIndex =
-                                        widget.questions!.length > 0
-                                            ? widget
-                                                .questions!
-                                                .indexWhere((element) =>
+                                        widget.questions.length > 0
+                                            ? widget.questions.indexWhere(
+                                                (element) =>
                                                     element.questID ==
                                                     question.questID)
                                             : -1;
@@ -290,7 +240,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                   if (showBtn &&
                       widget.questions != null &&
-                      widget.questions!.length > 0 &&
+                      widget.questions.length > 0 &&
                       !widget.isCompleted)
                     Mutation(
                       options: MutationOptions(
@@ -301,13 +251,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               builder: (_) => AlertDialog(
                                 title: Text("Thông báo"),
                                 content: Text(
-                                    data!["question_result_save"]["code"] == 0
+                                    data!["scheduleresult_save_schedule_result"]
+                                                ["code"] ==
+                                            0
                                         ? "Thành công"
                                         : "Thất bại"),
                                 actions: [
                                   TextButton(
                                       onPressed: () {
-                                        if (data["question_result_save"]
+                                        if (data["scheduleresult_save_schedule_result"]
                                                 ["code"] !=
                                             0) {
                                           Navigator.pop(context);
@@ -321,6 +273,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             ).then((value) {
                               if (value != null) {
                                 if (value == true) {
+                                  // var json = jsonEncode(
+                                  //     ans.map((e) => e.toJson()).toList());
+
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
@@ -328,21 +283,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                           client: client,
                                           child: Query(
                                             options: QueryOptions(
-                                                document: gql(queryTemplate),
-                                                variables: {
-                                                  "filter": {
-                                                    "withRecords": true,
-                                                    "group": {
-                                                      "children": [
-                                                        {
-                                                          "id": "_id",
-                                                          "value":
-                                                              widget.scheduleId
-                                                        }
-                                                      ]
-                                                    }
-                                                  }
-                                                }),
+                                              document: gql(queryTemplate),
+                                            ),
                                             builder: (result,
                                                 {fetchMore, refetch}) {
                                               if (result.isLoading) {
@@ -356,7 +298,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                     ResponseListTemplate
                                                         .fromJson(result.data!);
                                                 if (result.data![
-                                                            "query_Schedules_dto"]
+                                                            'scheduleresult_get_questions_and_answers_by_schedule']
                                                         ['code'] !=
                                                     0) {
                                                   // setState() {
@@ -424,16 +366,19 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                       listen: false)
                                   .valid();
                               if (valid) {
-                                var ans = context
-                                    .read<AnswerController>()
-                                    .answer!
-                                    .toJson();
-                                print(ans);
+                                var ans =
+                                    context.read<AnswerController>().listResult;
+                                var a = [];
+                                ans.forEach((v) {
+                                  a.add(v.toJson());
+                                });
+                                print(a);
+
+                                // var json = jsonEncode(
+                                //     ans.map((e) => e.toJson()).toList());
+
                                 // return;
-                                runMutation(context
-                                    .read<AnswerController>()
-                                    .answer!
-                                    .toJson());
+                                runMutation({"data": a});
                               } else {
                                 scrollToRequired(context);
                               }
@@ -464,9 +409,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
                     await Provider.of<AnswerController>(context, listen: false)
                         .addFileAnswer(
-                            idFile: fileUpload.id,
-                            name: fileUpload.name,
-                            index: listModelFile[0].index);
+                      idFile: fileUpload.id,
+                      name: fileUpload.name,
+                      index: listModelFile[0].index,
+                      questID: listModelFile[0].questID,
+                    );
+
                     return fileUpload;
                   };
                   onUpload(context, listModelFile, uploadGoogle, stopUpload);

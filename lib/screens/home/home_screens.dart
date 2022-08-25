@@ -32,8 +32,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         data
     }
 }
-
-
   """;
   @override
   void initState() {

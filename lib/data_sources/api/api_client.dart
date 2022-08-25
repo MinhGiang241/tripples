@@ -132,7 +132,7 @@ class ApiClient {
             if (a == 1) {
               var result = await googleUpload();
               print(result.id);
-              if (result.containsKey('id') && result.id != null) {
+              if (result.id != null && result.id != null) {
                 byteCount = totalByteLength;
                 setId(result.id);
               } else {

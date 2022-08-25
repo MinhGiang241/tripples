@@ -8,10 +8,12 @@ class ModelFile {
   double? progress;
   final String? name;
   bool failUpload = false;
+  String? questID;
   String id;
   final ApiClient apiClient = ApiClient();
   ModelFile(
       {required this.index,
+      this.questID,
       this.file,
       this.progress = 0,
       this.id = "",

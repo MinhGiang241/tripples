@@ -23,13 +23,14 @@ class AnswerController extends ChangeNotifier {
           });
           answer = questionResults.answers![answerIndex];
           listResult.add(new ResultsList(
-            id: answer.id != null ? answer.id : null,
-            questionTemplateId: listQuestions![i].questID,
-            score: answer.score != null ? answer.score : null,
-            answer: answer.answer != null ? answer.answer : null,
-            scheduleId: answer.scheduleId != null ? answer.scheduleId : null,
+            id: answer.id != null ? answer.id : "",
+            questionTemplateId: listQuestions[i].questID,
+            score: answer.score != null ? answer.score : 0,
+            note: answer.note != null ? answer.note : "",
+            answer: answer.answer != null ? answer.answer : "",
+            scheduleId: answer.scheduleId != null ? answer.scheduleId : "",
             google_drive_ids:
-                answer.gDriveLink != null ? answer.gDriveLink : null,
+                answer.gDriveLink != null ? answer.gDriveLink : "",
           ));
         } else {
           answer = new Answer();
@@ -38,6 +39,7 @@ class AnswerController extends ChangeNotifier {
               score: 0,
               questionTemplateId: listQuestions[i].questID,
               answer: '',
+              note: '',
               scheduleId: scheduleId,
               google_drive_ids: ''));
         }
@@ -70,34 +72,69 @@ class AnswerController extends ChangeNotifier {
     // print(index);
     // print(questId);
     if (questId != null && questId != '') {
-      var index = listResult!
+      var index = listResult
           .indexWhere((element) => element.questionTemplateId == questId);
 
-      listResult![index].score = score;
+      listResult[index].score = score;
     }
-    print(listResult![index].score);
+    print(listResult[index].score);
   }
 
   updateNoteAnswer({required String note, required questID}) {
     if (note != '') {
-      var index = listResult!
+      var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       if (index >= 0) {
-        listResult![index].note = note;
-        print(listResult![index].note);
+        listResult[index].note = note;
+        print(listResult[index].note);
       }
     }
     // answer.data![index].note = note;
   }
 
   addFileAnswer(
-      {required String idFile, required String name, required int index}) {
-    answer!.data![index].media!.add(Media(sId: idFile, name: name));
-    print('answer: ' + answer.toString());
+      {required String idFile,
+      required String name,
+      required int index,
+      questID}) {
+    // answer!.data![index].media!.add(Media(sId: idFile, name: name));
+    if (questID != null && questID != '') {
+      var indexQuest = listResult
+          .indexWhere((element) => element.questionTemplateId == questID);
+      if (listResult[indexQuest].google_drive_ids != null) {
+        listResult[indexQuest].google_drive_ids =
+            listResult[indexQuest].google_drive_ids! +
+                ',' +
+                'https://drive.google.com/file/d/' +
+                idFile;
+      }
+
+      if (listResult[index].google_drive_ids!.startsWith(',')) {
+        listResult[index].google_drive_ids =
+            listResult[index].google_drive_ids!.substring(
+                  1,
+                );
+      }
+    }
+    print(listResult[index].google_drive_ids);
   }
 
-  removeFileAnswer({required String idFile, required int index}) {
-    answer!.data![index].media!.removeWhere((element) => element.sId == idFile);
+  removeFileAnswer({required String idFile, required int index, questId}) {
+    if (idFile != '') {
+      var indexQuest = listResult
+          .indexWhere((element) => element.questionTemplateId == questId);
+      var linkList = listResult[indexQuest].google_drive_ids!.split(',');
+      linkList.removeWhere((element) => element.contains(idFile));
+      listResult[indexQuest].google_drive_ids = linkList.join(',');
+      if (listResult[indexQuest].google_drive_ids!.startsWith(',')) {
+        listResult[indexQuest].google_drive_ids!.substring(
+              1,
+            );
+      }
+      print(listResult[indexQuest].google_drive_ids);
+    }
+
+    // answer!.data![index].media!.removeWhere((element) => element.sId == idFile);
   }
 
   void _updateLableAnswerNumber(String questID, String? lable) {
@@ -114,11 +151,11 @@ class AnswerController extends ChangeNotifier {
   /// Update lable
   void _updateLableAnswerText(String questID, String? lable) {
     if (lable != null && lable != '') {
-      var index = listResult!
+      var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       if (index >= 0) {
-        listResult![index].answer = lable;
-        print(listResult![index].answer);
+        listResult[index].answer = lable;
+        print(listResult[index].answer);
       }
     }
   }
@@ -129,52 +166,53 @@ class AnswerController extends ChangeNotifier {
 
   void _updateLableMultiChoice(String questID, String? lable) {
     if (lable != null && lable != '') {
-      var index = listResult!
+      var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       var listChoiceAnswer;
 
-      listChoiceAnswer = listResult![index].answer.split(',');
+      listChoiceAnswer = listResult[index].answer.split(',');
 
       var choiceIndex = listChoiceAnswer.indexWhere((v) => v == lable);
 
       if (choiceIndex < 0) {
         listChoiceAnswer.add(lable);
         if (listChoiceAnswer.length == 1) {
-          listResult![index].answer = listChoiceAnswer[0];
+          listResult[index].answer = listChoiceAnswer[0];
         } else {
-          listResult![index].answer = listChoiceAnswer.join(',');
+          listResult[index].answer = listChoiceAnswer.join(',');
         }
       } else {
         listChoiceAnswer.removeWhere((v) => v == lable);
         if (listChoiceAnswer != null) {
-          listResult![index].answer = listChoiceAnswer.join(',');
+          listResult[index].answer = listChoiceAnswer.join(',');
         } else if (listChoiceAnswer.length == 1) {
-          listResult![index].answer = listChoiceAnswer[0];
+          listResult[index].answer = listChoiceAnswer[0];
         } else {
-          listResult![index].answer = null;
+          listResult[index].answer = null;
         }
       }
-      if (listResult![index].answer.startsWith(',')) {
-        listResult![index].answer = listResult![index].answer.substring(
+      if (listResult[index].answer.startsWith(',')) {
+        listResult[index].answer = listResult[index].answer.substring(
               1,
             );
       }
-      print(listResult![index].answer);
+      print(listResult[index].answer);
     }
   }
 
   bool valid() {
-    validation = true;
-    notifyListeners();
-    int v = 0;
-    for (var i = 0; i < answer!.data!.length; i++) {
-      if ((answer!.data?[i].values?.length ?? 0) > 0) {
-        if (answer!.data![i].values!
-            .every((element) => element.label!.isNotEmpty)) {
-          v++;
-        }
-      }
-    }
-    return v == answer!.data!.length;
+    return true;
+    // validation = true;
+    // notifyListeners();
+    // int v = 0;
+    // for (var i = 0; i < answer!.data!.length; i++) {
+    //   if ((answer!.data?[i].values?.length ?? 0) > 0) {
+    //     if (answer!.data![i].values!
+    //         .every((element) => element.label!.isNotEmpty)) {
+    //       v++;
+    //     }
+    //   }
+    // }
+    // return v == answer!.data!.length;
   }
 }

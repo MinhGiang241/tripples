@@ -8,9 +8,9 @@ class SingleChoiseController extends ChangeNotifier {
   Poll data = Poll();
   SingleChoiseController(List<Poll> list, [HValues? value]) {
     listData = list;
-    if (!list.any((element) => element.label == "Khác")) {
-      listData.add(Poll(label: "Khác"));
-    }
+    // if (!list.any((element) => element.label == "Khác")) {
+    //   listData.add(Poll(label: "Khác"));
+    // }
     if (value != null) {
       data = listData.firstWhere((element) => element.label == value.label);
     }

@@ -54,10 +54,10 @@ class _TemplateTabViewState extends State<TemplateTabView> {
   Widget build(BuildContext context) {
     if (widget.listCampaign.length > 0) {
       if (widget.isCompleted) {
-        widget.listCampaign.sort((a, b) =>
-            DateTime.parse(b.questionResultScheduleIdDto![0].updatedTime!)
-                .compareTo(DateTime.parse(
-                    a.questionResultScheduleIdDto![0].updatedTime!)));
+        widget.listCampaign.sort((a, b) => DateTime.parse(
+                b.questionResultScheduleIdDto![0].answers![0].updatedTime!)
+            .compareTo(DateTime.parse(
+                a.questionResultScheduleIdDto![0].answers![0].updatedTime!)));
       } else {
         widget.listCampaign.sort((a, b) => DateTime.parse(
                 a.refCampaignIdCampaignDto!.endTime ??
@@ -106,10 +106,14 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                   }
 
                   if (widget.isCompleted) {
-                    listSearch.sort((a, b) => DateTime.parse(
-                            b.questionResultScheduleIdDto![0].updatedTime!)
-                        .compareTo(DateTime.parse(
-                            a.questionResultScheduleIdDto![0].updatedTime!)));
+                    listSearch.sort((a, b) => DateTime.parse(b
+                            .questionResultScheduleIdDto![0]
+                            .answers![0]
+                            .updatedTime!)
+                        .compareTo(DateTime.parse(a
+                            .questionResultScheduleIdDto![0]
+                            .answers![0]
+                            .updatedTime!)));
                   } else {
                     listSearch.sort((a, b) =>
                         DateTime.parse(a.refCampaignIdCampaignDto!.endTime!)

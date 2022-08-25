@@ -84,7 +84,7 @@ class TemplateItem extends StatelessWidget {
                       ),
                       isCompleted
                           ? Text(
-                              "${campaign.questionResultScheduleIdDto![0].updatedTime!.formatDateTimeHmDMY()}",
+                              "${campaign.questionResultScheduleIdDto![0].answers?[0].updatedTime!.formatDateTimeHmDMY()}",
                               style: Theme.of(context)
                                   .textTheme
                                   .caption

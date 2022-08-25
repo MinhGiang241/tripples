@@ -100,7 +100,24 @@ class ItemSurveyState extends State<ItemSurvey> {
                     },
                   ),
                 ),
-              if (widget.question.type == "SINGLECHOICE")
+              if (widget.question.type == "NUMBER")
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                  child: TextField(
+                    controller: textAnswerController,
+                    readOnly: widget.isCompleted,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: "Trả lời"),
+                    onChanged: (v) {
+                      Provider.of<AnswerController>(context, listen: false)
+                          .updateLableAnswer(
+                              lable: v,
+                              questID: widget.questID,
+                              type: widget.question.type!);
+                    },
+                  ),
+                ),
+              if (widget.question.type == "ONECHOOSE")
                 widget.isCompleted
                     ? SinglechoiseCompleted(
                         polls: widget.question.poll!,
@@ -118,7 +135,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                                 : []
                             : [],
                       ),
-              if (widget.question.type == "MULTIPLECHOICE")
+              if (widget.question.type == "MULTIPLECHOOSE")
                 widget.isCompleted
                     ? MultichoiseCompleted(
                         polls: widget.question.poll!,

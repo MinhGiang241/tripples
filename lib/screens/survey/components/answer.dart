@@ -114,29 +114,30 @@ class SinglechoiseAnswer extends StatelessWidget {
                               questID: questID,
                               type: "SINGLECHOICE");
                     },
-                    title: context
-                                .watch<SingleChoiseController>()
-                                .listData[index]
-                                .label ==
-                            "Khác"
-                        ? TextField(
-                            focusNode: context
-                                .watch<SingleChoiseController>()
-                                .otherNode,
-                            onChanged: (v) {
-                              Provider.of<SingleChoiseController>(context,
-                                      listen: false)
-                                  .changeLableAnother(v);
-                              Provider.of<AnswerController>(context,
-                                      listen: false)
-                                  .updateLableAnswer(
-                                      lable: v,
-                                      questID: questID,
-                                      type: "SINGLECHOICE");
-                            },
-                            decoration: InputDecoration(hintText: "Khác"),
-                          )
-                        : Text(context
+                    title:
+                        // context
+                        //             .watch<SingleChoiseController>()
+                        //             .listData[index]
+                        //             .label ==
+                        //         "Khác"
+                        //     ? TextField(
+                        //         focusNode: context
+                        //             .watch<SingleChoiseController>()
+                        //             .otherNode,
+                        //         onChanged: (v) {
+                        //           Provider.of<SingleChoiseController>(context,
+                        //                   listen: false)
+                        //               .changeLableAnother(v);
+                        //           Provider.of<AnswerController>(context,
+                        //                   listen: false)
+                        //               .updateLableAnswer(
+                        //                   lable: v,
+                        //                   questID: questID,
+                        //                   type: "SINGLECHOICE");
+                        //         },
+                        //         decoration: InputDecoration(hintText: "Khác"),
+                        //       ):
+                        Text(context
                                 .watch<SingleChoiseController>()
                                 .listData[index]
                                 .label ??

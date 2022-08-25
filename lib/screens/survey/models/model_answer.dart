@@ -1,12 +1,14 @@
 class Answer {
-  String? campaignId;
+  // String? campaignId;
+  String? id;
   String? scheduleId;
+  String? tenantId;
   List<ResultsList>? resultsList;
 
-  Answer({this.campaignId, this.scheduleId, this.resultsList});
+  Answer({this.scheduleId, this.resultsList});
 
   Answer.fromJson(Map<String, dynamic> json) {
-    campaignId = json['campaign_id'];
+    // campaignId = json['campaign_id'];
     scheduleId = json['schedule_id'];
     if (json['resultsList'] != null) {
       resultsList = <ResultsList>[];
@@ -18,7 +20,7 @@ class Answer {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['campaign_id'] = this.campaignId;
+    // data['campaign_id'] = this.campaignId;
     data['schedule_id'] = this.scheduleId;
     if (this.resultsList != null) {
       data['resultsList'] = this.resultsList?.map((v) => v.toJson()).toList();
@@ -28,15 +30,17 @@ class Answer {
 }
 
 class ResultsList {
-  String? sId;
+  String? questionTemplateId;
   var score;
   String? note;
+  String? GdriveLink;
   List<Values>? values = [];
+  var answer;
   AQuestion? question;
   List<Media>? media;
 
   ResultsList(
-      {this.sId,
+      {this.questionTemplateId,
       this.score,
       this.note,
       this.values,
@@ -44,7 +48,7 @@ class ResultsList {
       this.media});
 
   ResultsList.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
+    questionTemplateId = json['_id'];
     score = json['score'];
     note = json['note'];
     if (json['values'] != null) {
@@ -68,7 +72,7 @@ class ResultsList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.sId != null) data['_id'] = this.sId;
+    if (this.questionTemplateId != null) data['_id'] = this.questionTemplateId;
     data['score'] = this.score;
     data['note'] = this.note;
     if (this.values != null) {
@@ -90,12 +94,12 @@ class Values {
   Values({this.label});
 
   Values.fromJson(Map<String, dynamic> json) {
-    label = json['label'];
+    label = json['title'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
+    data['title'] = this.label;
     return data;
   }
 }

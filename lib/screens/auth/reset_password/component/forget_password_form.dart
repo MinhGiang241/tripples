@@ -16,6 +16,7 @@ class ForgetPasswordForm extends StatefulWidget {
     required this.emailEditingController,
   }) : super(key: key);
   final TextEditingController emailEditingController;
+  var disabled = false;
 
   @override
   State<ForgetPasswordForm> createState() => _ForgetPasswordFormState();
@@ -84,6 +85,9 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                       document: gql(sendOtp),
                       onCompleted: (dynamic result) async {
                         print(result);
+                        setState(() {
+                          widget.disabled = false;
+                        });
                         if (result['authorization_generate_otp']['code'] != 0) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
@@ -104,9 +108,13 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                   builder: ((runMutation, result) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: AuthButton(
+                        disabled: widget.disabled,
                         title: 'Gửi Mã OTP',
                         onPress: () async {
                           if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              widget.disabled = true;
+                            });
                             runMutation(
                                 {'mailTo': widget.emailEditingController.text});
                             print(widget.emailEditingController.text);

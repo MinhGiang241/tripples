@@ -40,9 +40,11 @@ class QuerySchedulesDto {
       json['data'].forEach((v) {
         data?.add(new ScheduleCampaign.fromJson(v));
         if (v['question_results'].length > 0) {
-          questionResultScheduleIdDto = v['question_results']?.forEach((v) {
-            questionResultScheduleIdDto
-                ?.add(new QuestionResultScheduleIdDto.fromJson(v));
+          questionResultScheduleIdDto =
+              v['question_results']?.asMap().forEach((i, a) {
+            questionResultScheduleIdDto?.add(
+                new QuestionResultScheduleIdDto.fromJson(
+                    a, v['campaign']['questions'][i]));
           });
         }
       });
@@ -94,18 +96,20 @@ class ScheduleCampaign {
     if (json['campaign']['question_list'] != null &&
         json['campaign']['question_list'].length > 0) {
       questions = [];
-      json['campaign']['question_list'].forEach((v) {
-        print(v);
-
-        questions?.add(new Questions.fromJson(v));
-        print(questions);
+      json['campaign']['question_list'].asMap().forEach((i, v) {
+        questions?.add(new Questions.fromJson(
+            v,
+            json['campaign']['questions'][i]['max_score'],
+            json['campaign']['questions'][i]['required']));
       });
     }
+
     if (json["question_results"] != null) {
       questionResultScheduleIdDto = <QuestionResultScheduleIdDto>[];
-      json['question_results'].forEach((v) {
-        questionResultScheduleIdDto
-            ?.add(new QuestionResultScheduleIdDto.fromJson(v));
+      json['question_results'].asMap().forEach((i, v) {
+        questionResultScheduleIdDto?.add(
+            new QuestionResultScheduleIdDto.fromJson(
+                v, json['campaign']["questions"][i]));
       });
     }
   }
@@ -129,50 +133,64 @@ class ScheduleCampaign {
   }
 }
 
+class QuestionResult {
+  String? id;
+  String? schedualId;
+  Answer? data;
+}
+
 class QuestionResultScheduleIdDto {
-  String? sId;
-  String? updatedTime;
-  var score;
-  String? note;
+  String? id;
+
+  int? score;
+  List<Answers>? answers;
   List<Media>? media;
   List<HValues>? values;
   Question? question;
 
+  String? note;
+
   QuestionResultScheduleIdDto(
-      {this.sId,
-      this.updatedTime,
-      this.score,
-      this.note,
+      {this.id,
       this.media,
       this.values,
-      this.question});
+      this.question,
+      this.answers,
+      this.score});
 
-  QuestionResultScheduleIdDto.fromJson(json) {
-    sId = json['campaignId'];
-    updatedTime = json['updatedTime'];
-    score = json['score'];
-    note = json['note'] != null ? json['note'] : null;
-    question = Question.fromJson(json['question']);
-    if (json['media'] != null) {
-      media = <Media>[];
-      json['media'].forEach((v) {
-        media?.add(new Media.fromJson(v));
+  QuestionResultScheduleIdDto.fromJson(json, q) {
+    id = json['_id'];
+
+    score = q['max_score'];
+
+    if (json["question_results"] != null &&
+        json["question_results"].length > 0) {
+      answers = <Answers>[];
+      json["question_results"].forEach((v) {
+        answers?.add(new Answers.fromJson(v));
       });
     }
-    if (json['values'] != null) {
-      values = <HValues>[];
-      json['values'].forEach((v) {
-        values?.add(new HValues.fromJson(v));
-      });
-    }
+
+    // question = Question.fromJson(json['campaign']['questions']);
+    // if (json['media'] != null) {
+    //   media = <Media>[];
+    //   json['media'].forEach((v) {
+    //     media?.add(new Media.fromJson(v));
+    //   });
+    // }
+    // if (json['values'] != null) {
+    //   values = <HValues>[];
+    //   json['values'].forEach((v) {
+    //     values?.add(new HValues.fromJson(v));
+    //   });
+    // }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['updatedTime'] = this.updatedTime;
-    data['score'] = this.score;
-    data['note'] = this.note;
+    data['_id'] = this.id;
+    // data['updatedTime'] = this.updatedTime;
+
     if (this.media != null) {
       data['media'] = this.media?.map((v) => v.toJson()).toList();
     }
@@ -183,13 +201,56 @@ class QuestionResultScheduleIdDto {
   }
 }
 
+class Answers {
+  String? id;
+  String? scheduleId;
+  String? questionTemplateId;
+  String? note;
+  String? createdTime;
+  String? updatedTime;
+  String? creator;
+  String? updater;
+  int? score;
+  var answer;
+  String? gDriveLink;
+  List<String>? links;
+  Answers(
+      {this.id,
+      this.answer,
+      this.note,
+      this.questionTemplateId,
+      this.score,
+      this.gDriveLink,
+      this.links,
+      this.scheduleId,
+      this.createdTime,
+      this.updatedTime,
+      this.creator,
+      this.updater});
+
+  Answers.fromJson(json) {
+    id = json['_id'];
+    createdTime = json['createdTime'];
+    updatedTime = json['updatedTime'];
+    creator = json['creator'];
+    updater = json['updater'];
+    scheduleId = json['scheduleId'];
+    questionTemplateId = json['questionTemplateId'];
+    note = json['note'];
+    score = json['score'];
+    answer = json['answer'];
+    gDriveLink = json['google_drive_ids'];
+    links = json['google_drive_ids'].split(',');
+  }
+}
+
 class Question {
   String? questID;
   String? type;
   String? name;
 
-  Question.fromJson(Map<dynamic, dynamic> json) {
-    questID = json['questID'];
+  Question.fromJson(Map<dynamic, dynamic>? json) {
+    questID = json!['questID'];
     type = json['type'];
     name = json['name'];
   }

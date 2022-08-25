@@ -15,30 +15,30 @@ class AnswerController extends ChangeNotifier {
           refQuestionResultScheduleIdDto}) {
     for (var i = 0; i < listQuestions.length; i++) {
       _listResult.add(ResultsList(
-          sId: refQuestionResultScheduleIdDto.length > 0
+          questionTemplateId: refQuestionResultScheduleIdDto.length > 0
               ? refQuestionResultScheduleIdDto
                   .firstWhere((element) =>
                       element.question?.questID == listQuestions[i].questID)
-                  .sId
+                  .id
               : null,
-          note: refQuestionResultScheduleIdDto.length > 0
-              ? refQuestionResultScheduleIdDto
-                  .firstWhere((element) =>
-                      element.question?.questID == listQuestions[i].questID)
-                  .note
-              : "",
-          score: refQuestionResultScheduleIdDto.length > 0
-              ? refQuestionResultScheduleIdDto
-                  .firstWhere((element) =>
-                      element.question?.questID == listQuestions[i].questID)
-                  .score
-              : listQuestions[i].maxScore,
-          media: refQuestionResultScheduleIdDto.length > 0
-              ? refQuestionResultScheduleIdDto
-                  .firstWhere((element) =>
-                      element.question?.questID == listQuestions[i].questID)
-                  .media
-              : [],
+          // note: refQuestionResultScheduleIdDto.length > 0
+          //     ? refQuestionResultScheduleIdDto
+          //         .firstWhere((element) =>
+          //             element.question?.questID == listQuestions[i].questID)
+          //         .note
+          //     : "",
+          // score: refQuestionResultScheduleIdDto.length > 0
+          //     ? refQuestionResultScheduleIdDto
+          //         .firstWhere((element) =>
+          //             element.question?.questID == listQuestions[i].questID)
+          //         .score
+          //     : listQuestions[i].maxScore,
+          // media: refQuestionResultScheduleIdDto.length > 0
+          //     ? refQuestionResultScheduleIdDto
+          //         .firstWhere((element) =>
+          //             element.question?.questID == listQuestions[i].questID)
+          //         .media
+          //     : [],
           values: refQuestionResultScheduleIdDto.length > 0
               ? refQuestionResultScheduleIdDto
                   .firstWhere((element) =>
@@ -57,7 +57,7 @@ class AnswerController extends ChangeNotifier {
                   .toList())));
     }
     answer = Answer(
-        campaignId: campaignId,
+        // campaignId: campaignId,
         scheduleId: scheduleId,
         resultsList: _listResult);
   }

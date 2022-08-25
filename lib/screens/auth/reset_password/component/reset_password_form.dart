@@ -24,7 +24,7 @@ class ResetPasswordForm extends StatefulWidget {
   final TextEditingController codeEditingController;
   final TextEditingController newPasswordEditingController;
   final TextEditingController confirmNewPasswordEditingController;
-
+  var disabled = false;
   @override
   State<ResetPasswordForm> createState() => _ResetPasswordFormState();
 }
@@ -140,6 +140,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   options: MutationOptions(
                       document: gql(changePassword),
                       onCompleted: (dynamic result) async {
+                        setState(() {
+                          widget.disabled = false;
+                        });
                         if (result["authorization_forgot_password"]['code'] ==
                             0) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -155,8 +158,12 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   builder: ((runMutation, result) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: AuthButton(
+                        disabled: widget.disabled,
                         title: 'Đổi mật khẩu',
                         onPress: () {
+                          setState(() {
+                            widget.disabled = true;
+                          });
                           if (_formKey.currentState!.validate()) {
                             print('submit');
                             runMutation({

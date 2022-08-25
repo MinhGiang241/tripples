@@ -23,7 +23,7 @@ class _UpdatePassword extends State<UpdatePassword> {
   final oldPasController = TextEditingController();
   final newPasController = TextEditingController();
   final confirmNewPasCotroller = TextEditingController();
-
+  var disabled = false;
   void submitData() {
     print(oldPasController.text);
     print(newPasController.text);
@@ -42,6 +42,9 @@ class _UpdatePassword extends State<UpdatePassword> {
   void onSubmit(runMutation, result) async {
     if (_formKey.currentState!.validate()) {
       print('validated');
+      setState(() {
+        disabled = true;
+      });
       print(result);
       // ignore: await_only_futures
       await runMutation(
@@ -50,6 +53,9 @@ class _UpdatePassword extends State<UpdatePassword> {
   }
 
   void onCompleteMutation(data) {
+    setState(() {
+      disabled = false;
+    });
     var message = data["authorization_change_password"]["message"];
     if (message == null) {
       final snackBar = createSnackBar("Đã đổi mật khẩu thành công");
@@ -183,10 +189,13 @@ class _UpdatePassword extends State<UpdatePassword> {
                   builder: ((runMutation, result) => Padding(
                         padding: EdgeInsets.symmetric(vertical: padding),
                         child: ElevatedButton(
-                            onPressed: () => onSubmit(runMutation, result),
+                            onPressed: disabled
+                                ? null
+                                : () => onSubmit(runMutation, result),
                             style: TextButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).primaryColor),
+                                backgroundColor: disabled
+                                    ? Colors.grey
+                                    : Theme.of(context).primaryColor),
                             child: Text(
                               "Đổi mật khẩu",
                               style: Theme.of(context)

@@ -1,4 +1,6 @@
-class Questions {
+import 'package:flutter/foundation.dart';
+
+class Questions extends ChangeNotifier {
   String? questID;
   String? hint;
   String? title;
@@ -41,7 +43,7 @@ class Questions {
   }
 }
 
-class Poll {
+class Poll extends ChangeNotifier {
   String? label;
   int? factor;
   bool? isSelected;
@@ -51,6 +53,7 @@ class Poll {
   Poll.fromJson(json, index) {
     label = json['title'];
     factor = index;
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {

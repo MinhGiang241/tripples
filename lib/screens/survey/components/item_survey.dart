@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/slider_score_controller.dart';
+import 'gdrive_link.dart';
 import 'list_pinned_file.dart';
 import 'package:survey/models/response_list_campaign.dart';
 
@@ -130,8 +131,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                         values: widget.questionResult != null
                             ? widget.questionResult!.answer != null
                                 ? widget.questionResult!.answer!
-                                : []
-                            : [])
+                                : ""
+                            : "")
                     : SinglechoiseAnswer(
                         polls: widget.question.poll!,
                         questID: widget.questID,
@@ -186,6 +187,9 @@ class ItemSurveyState extends State<ItemSurvey> {
                   decoration: InputDecoration(labelText: "Ghi chú"),
                 ),
               ),
+              Divider(
+                thickness: 1,
+              ),
               SizedBox(
                 height: padding / 2,
               ),
@@ -213,8 +217,18 @@ class ItemSurveyState extends State<ItemSurvey> {
               //             : Container()
               //         : Container()
               //     :
+              Divider(
+                thickness: 1,
+              ),
+              GdriveLinkListPin(
+                questId: widget.questID,
+                Index: widget.questionIndex,
+                questionResult: widget.questionResult,
+              ),
               ListPinnedFile(
-                  questionIndex: widget.questionIndex, questId: widget.questID),
+                  questionResult: widget.questionResult,
+                  questionIndex: widget.questionIndex,
+                  questId: widget.questID),
             ],
           ),
         ),

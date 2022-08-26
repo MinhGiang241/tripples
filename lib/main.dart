@@ -6,6 +6,7 @@ import 'package:survey/controllers/auth/auth_controller.dart';
 import 'package:survey/screens/root/root_screen.dart';
 
 import 'generated/l10n.dart';
+import 'models/response_list_campaign.dart';
 
 void main() async {
   await initHiveForFlutter();
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider<AuthController>(
               create: (_) => AuthController()),
+          ChangeNotifierProvider<ResponseListTemplate>(
+              create: (_) => ResponseListTemplate())
         ],
         builder: (context, child) {
           return MaterialApp(

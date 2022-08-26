@@ -11,6 +11,7 @@ import 'package:survey/generated/l10n.dart';
 import 'package:survey/models/question.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
+import 'package:survey/screens/home/home_screens.dart';
 import 'package:survey/screens/survey/components/list_pinned_file.dart';
 import 'package:survey/screens/survey/components/select_file_dialog.dart';
 import 'package:survey/screens/survey/components/upload_dialog.dart';
@@ -295,8 +296,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                               } else {
                                                 ResponseListTemplate
                                                     responseListTemplate =
-                                                    ResponseListTemplate
-                                                        .fromJson(result.data!);
+                                                    ResponseListTemplate.from(
+                                                        result.data!);
                                                 if (result.data![
                                                             'scheduleresult_get_questions_and_answers_by_schedule']
                                                         ['code'] !=
@@ -315,8 +316,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                   //     ),
                                                   //   ));
                                                   // }
-
-                                                  Navigator.pop(context, true);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              HomeScreen(
+                                                                  listTemplate:
+                                                                      responseListTemplate)));
+                                                  // Navigator.pop(context, true);
                                                   return Center(
                                                       child: Text(''));
                                                 }
@@ -326,24 +333,27 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                         .data![0]
                                                         .questionResultScheduleIdDto;
                                                 print(questionResult);
-                                                return SurveyScreen(
-                                                    questions: widget.questions,
-                                                    campaignId:
-                                                        widget.campaignId,
-                                                    scheduleId:
-                                                        widget.scheduleId,
-                                                    questionResults:
-                                                        widget.questionResults,
-                                                    isCompleted: true,
-                                                    questionResultScheduleIdDto:
-                                                        responseListTemplate
-                                                                    .querySchedulesDto!
-                                                                    .data![0]
-                                                                    .questionResultScheduleIdDto !=
-                                                                null
-                                                            ? questionResult ??
-                                                                []
-                                                            : []);
+                                                return HomeScreen(
+                                                    listTemplate:
+                                                        responseListTemplate);
+                                                // SurveyScreen(
+                                                //     questions: widget.questions,
+                                                //     campaignId:
+                                                //         widget.campaignId,
+                                                //     scheduleId:
+                                                //         widget.scheduleId,
+                                                //     questionResults:
+                                                //         widget.questionResults,
+                                                //     isCompleted: true,
+                                                //     questionResultScheduleIdDto:
+                                                //         responseListTemplate
+                                                //                     .querySchedulesDto!
+                                                //                     .data![0]
+                                                //                     .questionResultScheduleIdDto !=
+                                                //                 null
+                                                //             ? questionResult ??
+                                                //                 []
+                                                //             : []);
                                               }
                                             },
                                           ),
@@ -378,7 +388,25 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 //     ans.map((e) => e.toJson()).toList());
 
                                 // return;
-                                runMutation({"data": a});
+                                try {
+                                  runMutation({"data": a});
+                                } catch (e) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (ctxt) => new AlertDialog(
+                                            title: Text("Có lỗi xảy ra"),
+                                            content:
+                                                Text("Không gửi được kết quả"),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context, true);
+                                                  },
+                                                  child: Text("Đóng")),
+                                            ],
+                                          ));
+                                }
                               } else {
                                 scrollToRequired(context);
                               }

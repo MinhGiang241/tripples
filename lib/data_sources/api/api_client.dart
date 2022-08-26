@@ -122,27 +122,28 @@ class ApiClient {
           }
 
           byteCount += data.length;
-          //  else {
-          //   close();
-          // }
 
-          if (onUploadProgress != null) {
-            ++a;
-            // throw ('Không tải được file');
-            if (a == 1) {
-              var result = await googleUpload();
-              print(result.id);
-              if (result.id != null && result.id != null) {
-                byteCount = totalByteLength;
-                setId(result.id);
-              } else {
-                // close();
-                onFailUpload();
-                stopUpload(file);
+          try {
+            if (onUploadProgress != null) {
+              ++a;
+              // throw ('Không tải được file');
+              if (a == 1) {
+                var result = await googleUpload();
+                print(result.id);
+                if (result.id != null && result.id != null) {
+                  byteCount = totalByteLength;
+                  setId(result.id);
+                } else {
+                  // close();
+                  onFailUpload();
+                  stopUpload(file);
+                }
               }
+              onUploadProgress(byteCount, totalByteLength);
+              print("a: " + a.toString());
             }
-            onUploadProgress(byteCount, totalByteLength);
-            print("a: " + a.toString());
+          } catch (_) {
+            onFailUpload();
           }
         },
         handleError: (error, stack, sink) {

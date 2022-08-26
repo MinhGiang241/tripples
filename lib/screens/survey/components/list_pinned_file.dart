@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:survey/constants.dart';
 import 'package:provider/provider.dart';
+import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/file_upload.dart';
@@ -14,9 +15,11 @@ class ListPinnedFile extends StatefulWidget {
     Key? key,
     required this.questionIndex,
     required this.questId,
+    this.questionResult,
   }) : super(key: key);
 
   final int questionIndex;
+  final Answers? questionResult;
   final String questId;
   @override
   State<ListPinnedFile> createState() => ListPinnedFileState();
@@ -33,9 +36,16 @@ class ListPinnedFileState extends State<ListPinnedFile> {
 
   @override
   Widget build(BuildContext context) {
-    final List<ModelFile> listModelFile = filterList(
+    List<ModelFile> listModelFile = filterList(
         context.watch<FileUploadController>().listModelFile,
         widget.questionIndex);
+
+    // if (widget.questionResult != null &&
+    //     widget.questionResult!.gDriveLink != "" &&
+    //     widget.questionResult!.gDriveLink != null) {
+    //   // widget.questionResult!.answer
+
+    // }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: padding * 0.5),
       child: Column(

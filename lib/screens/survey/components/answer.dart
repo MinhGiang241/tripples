@@ -21,18 +21,21 @@ class MultichoiseAnswer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var listData;
-    try {
-      listData = context.read<MultichoiseController>().listData.length;
-    } catch (_) {
-      listData = 0;
-    }
+    // var listData;
+    // try {
+    // listData = context.read<MultichoiseController>().listData.length;
+    // } catch (_) {
+    //   listData = 0;
+    // }
+    // print(polls);
+    // print(questID);
+    // print(values);
     return ChangeNotifierProvider<MultichoiseController>(
       create: (context) => MultichoiseController(polls, values),
       builder: (context, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
-              listData,
+              context.read<MultichoiseController>().listData.length,
               (index) => CheckboxListTile(
                     activeColor: Theme.of(context).primaryColor,
                     value: context

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:googleapis/websecurityscanner/v1.dart';
 import 'package:survey/models/company.dart';
 import 'package:survey/models/question.dart';
@@ -6,17 +7,25 @@ import 'package:survey/screens/survey/models/model_answer.dart';
 import 'campaign.dart';
 import 'department.dart';
 
-class ResponseListTemplate {
+class ResponseListTemplate extends ChangeNotifier {
   QuerySchedulesDto? querySchedulesDto;
 
   ResponseListTemplate({this.querySchedulesDto});
-
-  ResponseListTemplate.fromJson(Map<String, dynamic> json) {
+  ResponseListTemplate.from(json) {
     querySchedulesDto =
         json['scheduleresult_get_questions_and_answers_by_schedule'] != null
             ? new QuerySchedulesDto.fromJson(
                 json['scheduleresult_get_questions_and_answers_by_schedule'])
             : null;
+  }
+
+  fromJson(json) {
+    querySchedulesDto =
+        json['scheduleresult_get_questions_and_answers_by_schedule'] != null
+            ? new QuerySchedulesDto.fromJson(
+                json['scheduleresult_get_questions_and_answers_by_schedule'])
+            : null;
+    // notifyListeners();
   }
 
   Map<String, dynamic> toJson() {
@@ -29,7 +38,7 @@ class ResponseListTemplate {
   }
 }
 
-class QuerySchedulesDto {
+class QuerySchedulesDto extends ChangeNotifier {
   List<ScheduleCampaign>? data;
   List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
   QuerySchedulesDto({this.data});
@@ -62,7 +71,7 @@ class QuerySchedulesDto {
   }
 }
 
-class ScheduleCampaign {
+class ScheduleCampaign extends ChangeNotifier {
   String? sId;
   String? surveyDate;
   String? surveyTime;
@@ -172,8 +181,6 @@ class QuestionResult {
             new Questions.fromJson(v, q[i]['max_score'], q[i]['required']));
       });
     }
-    print(questions);
-    print(answers);
   }
 }
 
@@ -249,7 +256,7 @@ class Answers {
   String? updatedTime;
   String? creator;
   String? updater;
-  int? score;
+  var score;
   var answer;
   String? gDriveLink;
   List<String>? links;

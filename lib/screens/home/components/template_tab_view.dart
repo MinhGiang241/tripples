@@ -6,7 +6,7 @@ import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/home/components/template_item.dart';
 
 class TemplateTabView extends StatefulWidget {
-  const TemplateTabView({
+  TemplateTabView({
     Key? key,
     required this.listCampaign,
     required this.isCompleted,
@@ -14,7 +14,7 @@ class TemplateTabView extends StatefulWidget {
     required this.onLoading,
     required this.onRefresh,
   }) : super(key: key);
-  final List<ScheduleCampaign> listCampaign;
+  List<ScheduleCampaign> listCampaign;
   final bool isCompleted;
   final Function(bool) onBack;
   final Function() onLoading;
@@ -53,18 +53,18 @@ class _TemplateTabViewState extends State<TemplateTabView> {
   @override
   Widget build(BuildContext context) {
     if (widget.listCampaign.length > 0) {
-      if (widget.isCompleted) {
-        widget.listCampaign.sort((a, b) => DateTime.parse(
-                b.questionResultScheduleIdDto![0].answers![0].updatedTime!)
-            .compareTo(DateTime.parse(
-                a.questionResultScheduleIdDto![0].answers![0].updatedTime!)));
-      } else {
-        widget.listCampaign.sort((a, b) => DateTime.parse(
-                a.refCampaignIdCampaignDto!.endTime ??
-                    DateTime.now().toIso8601String())
-            .compareTo(DateTime.parse(b.refCampaignIdCampaignDto!.endTime ??
-                DateTime.now().toIso8601String())));
-      }
+      // if (widget.isCompleted) {
+      //   widget.listCampaign.sort((a, b) => DateTime.parse(
+      //           b.questionResultScheduleIdDto![0].answers![0].updatedTime!)
+      //       .compareTo(DateTime.parse(
+      //           a.questionResultScheduleIdDto![0].answers![0].updatedTime!)));
+      // } else {
+      //   widget.listCampaign.sort((a, b) => DateTime.parse(
+      //           a.refCampaignIdCampaignDto!.endTime ??
+      //               DateTime.now().toIso8601String())
+      //       .compareTo(DateTime.parse(b.refCampaignIdCampaignDto!.endTime ??
+      //           DateTime.now().toIso8601String())));
+      // }
       return SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,

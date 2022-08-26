@@ -5,16 +5,16 @@ import 'package:survey/models/response_list_campaign.dart';
 class MultichoiseController extends ChangeNotifier {
   List<Poll> listData = [];
   MultichoiseController(List<Poll> list, values) {
-    list.forEach((element) {
-      listData.add(Poll(
-          factor: element.factor, isSelected: false, label: element.label));
+    list.asMap().forEach((i, element) {
+      listData.add(Poll(factor: i, isSelected: false, label: element.label));
     });
     var lisChoices = values.split(',');
-    if (lisChoices.length > 0) {
+    if (values != '' && lisChoices != '' && lisChoices != null) {
       lisChoices.forEach((element) {
         listData.firstWhere((e) => e.label == element).isSelected = true;
       });
     }
+    print(listData);
     notifyListeners();
   }
   onChange(int index, bool val) {

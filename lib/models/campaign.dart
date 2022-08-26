@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import 'company.dart';
 import 'question.dart';
 
-class RefCampaignIdCampaignDto {
+class RefCampaignIdCampaignDto extends ChangeNotifier {
   String? cid;
   String? name;
   String? description;
@@ -20,7 +22,6 @@ class RefCampaignIdCampaignDto {
       this.questions});
 
   RefCampaignIdCampaignDto.fromJson(json) {
-    print(json);
     cid = json['_id'];
     name = json['name'];
     // description = json['description'];

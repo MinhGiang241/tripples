@@ -11,6 +11,8 @@ import 'components/template_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
+  final ResponseListTemplate? listTemplate;
+  HomeScreen({this.listTemplate});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -33,9 +35,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 }
   """;
+
+  List<ScheduleCampaign> listInprogress = [];
+  List<ScheduleCampaign> listCompleted = [];
   @override
   void initState() {
+    // responseListTemplate = widget.listTemplate;
+    // if (responseListTemplate != null) {
+    //   for (int i = 0;
+    //       i < responseListTemplate!.querySchedulesDto!.data!.length;
+    //       i++) {
+    //     if (responseListTemplate!.querySchedulesDto!.data![i].questionResult !=
+    //             null &&
+    //         responseListTemplate!
+    //                 .querySchedulesDto!.data![i].questionResult?.answers !=
+    //             null &&
+    //         responseListTemplate!.querySchedulesDto!.data![i].questionResult
+    //                 ?.answers!.length !=
+    //             0) {
+    //       listCompleted.add(responseListTemplate!.querySchedulesDto!.data![i]);
+    //     } else {
+    //       listInprogress.add(responseListTemplate!.querySchedulesDto!.data![i]);
+    //     }
+    //   }
+    // }
+
     super.initState();
+
     tabController = TabController(length: 2, vsync: this);
   }
 
@@ -46,13 +72,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final AuthLink authLink = AuthLink(
         getToken: () => 'Bearer ${context.read<AuthController>().token}');
     final Link link = authLink.concat(httpLink);
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
-      GraphQLClient(
-        link: link,
-        // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
-      ),
+    final cl = GraphQLClient(
+      link: link,
+      // The default store is the InMemoryStore, which does NOT persist to disk
+      cache: GraphQLCache(store: HiveStore()),
     );
+    ValueNotifier<GraphQLClient> client = ValueNotifier(cl);
+    setState(() {
+      listInprogress = [];
+      listCompleted = [];
+    });
     return GraphQLProvider(
       client: client,
       child: GestureDetector(
@@ -64,8 +93,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           body: Query(
             options: QueryOptions(document: gql(queryMe)),
             builder: (meResult, {fetchMore, refetch}) {
-              print(meResult);
-
               if (meResult.isLoading) {
                 return Center(
                   child: CircularProgressIndicator(),
@@ -147,9 +174,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         );
                       }
                       ResponseListTemplate responseListTemplate =
-                          ResponseListTemplate.fromJson(result.data!);
-                      List<ScheduleCampaign> listInprogress = [];
-                      List<ScheduleCampaign> listCompleted = [];
+                          ResponseListTemplate.from(result.data);
+
                       for (int i = 0;
                           i <
                               responseListTemplate
@@ -171,23 +197,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               responseListTemplate.querySchedulesDto!.data![i]);
                         }
                       }
+
                       return TabBarView(
                           controller: tabController,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
                             TemplateTabView(
-                              listCampaign: listInprogress,
-                              isCompleted: false,
-                              onBack: (val) {
-                                if (val == true) setState(() {});
-                              },
-                              onLoading: _onLoading,
-                              onRefresh: _onRefresh,
-                            ),
+                                listCampaign: listInprogress,
+                                isCompleted: false,
+                                onBack: (val) {
+                                  print('onback');
+                                  if (val == true) setState(() {});
+                                },
+                                onLoading: _onLoading,
+                                onRefresh: () {
+                                  _onRefresh(cl, filter, queryTemplate);
+                                }),
                             TemplateTabView(
                               listCampaign: listCompleted,
                               onLoading: _onLoading,
-                              onRefresh: _onRefresh,
+                              onRefresh: () =>
+                                  _onRefresh(cl, filter, queryTemplate),
                               isCompleted: true,
                               onBack: (val) {
                                 if (val == true) setState(() {});
@@ -205,13 +235,58 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _onRefresh() async {
-    // monitor network fetch
-    // if failed,use refreshFailed()
+// void refresh = useMutation(
+//       MutationOptions(
+//         document: gql(query), // this is the mutation string you just created
+//         // you can update the cache based on results
+//         // update: (GraphQLDataProxy cache, QueryResult result)  {
+//         //   return cache;
+//         // },
+//         // or do something with the result.data on completion
+
+//         onCompleted: (dynamic resultData) {
+//           setState(() {
+//             ResponseListTemplate responseListTemplate =
+//                 ResponseListTemplate.from(resultData.data);
+
+//             for (int i = 0;
+//                 i < responseListTemplate.querySchedulesDto!.data!.length;
+//                 i++) {
+//               if (responseListTemplate
+//                           .querySchedulesDto!.data![i].questionResult !=
+//                       null &&
+//                   responseListTemplate.querySchedulesDto!.data![i]
+//                           .questionResult?.answers !=
+//                       null &&
+//                   responseListTemplate.querySchedulesDto!.data![i]
+//                           .questionResult?.answers!.length !=
+//                       0) {
+//                 listCompleted
+//                     .add(responseListTemplate.querySchedulesDto!.data![i]);
+//               } else {
+//                 listInprogress
+//                     .add(responseListTemplate.querySchedulesDto!.data![i]);
+//               }
+//             }
+//           });
+//         },
+
+//       ),
+//     )
+
+  void _onRefresh(
+      GraphQLClient client, Map<String, Object> filter, String mutation) async {
+    var query = QueryOptions(document: gql(mutation), variables: filter);
+
+    var result = await client.query(query);
+    print(result);
+    setState(() {});
+
     if (mounted) setState(() {});
   }
 
-  void _onLoading() async {
+  void _onLoading() {
+    print('onloading');
     if (mounted) setState(() {});
   }
 }

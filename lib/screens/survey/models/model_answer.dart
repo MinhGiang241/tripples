@@ -69,7 +69,10 @@ class ResultsList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.id;
+    if (this.id != null || this.id != "") {
+      data['_id'] = this.id;
+    }
+
     data['questionTemplateId'] = this.questionTemplateId;
     data['score'] = this.score;
     data['scheduleId'] = this.scheduleId;

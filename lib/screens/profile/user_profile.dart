@@ -27,8 +27,8 @@ class DetailUser extends StatelessWidget {
       ),
     );
     final queryInfo = '''
-              query {
-    find_Account_dto(_id: "${userId}"){
+              query (\$userId : String!) {
+    find_Account_dto(_id: \$userId){
       data {
         _id
         avatar
@@ -71,7 +71,8 @@ class DetailUser extends StatelessWidget {
             elevation: 0,
           ),
           body: Query(
-              options: QueryOptions(document: gql(queryInfo)),
+              options: QueryOptions(
+                  document: gql(queryInfo), variables: {"userId": userId}),
               builder: (result, {fetchMore, refetch}) {
                 final userInfo = result.data?['find_Account_dto']['data'];
                 print(userInfo);
@@ -112,7 +113,7 @@ class DetailUser extends StatelessWidget {
                           ),
                           buildUserInfoDisplay(
                               userInfo!['phoneNumber'] != null
-                                  ? '0' + userInfo['phoneNumber']
+                                  ? userInfo['phoneNumber']
                                   : 'chưa có số điện thoại',
                               "Số điện thoại:"),
                           if (userInfo.containsKey('roles'))

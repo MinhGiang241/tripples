@@ -5,6 +5,8 @@ import 'package:survey/models/company.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/home/components/template_item.dart';
 
+import '../../../models/department.dart';
+
 class TemplateTabView extends StatefulWidget {
   TemplateTabView({
     Key? key,
@@ -27,25 +29,26 @@ class _TemplateTabViewState extends State<TemplateTabView> {
   final TextEditingController searchController = TextEditingController();
   bool onSearch = false;
   List<ScheduleCampaign> listSearch = [];
-  late RefCompanyIdCompanyDto selectedCompany;
-  List<RefCompanyIdCompanyDto> companies = <RefCompanyIdCompanyDto>[
-    RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
+  late RefDepartmentIdDepartmentDto selectedDepartment;
+  List<RefDepartmentIdDepartmentDto> departments =
+      <RefDepartmentIdDepartmentDto>[
+    RefDepartmentIdDepartmentDto(id: '-1', name: '-- Tất cả --')
   ];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    selectedCompany = companies[0];
-    var resultCompanies = widget.listCampaign
-        .where((element) => element.refCompanyIdCompanyDto != null)
-        .map((element) => element.refCompanyIdCompanyDto!)
+    selectedDepartment = departments[0];
+    var resultDepartments = widget.listCampaign
+        .where((element) => element.refDepartmentIdDepartmentDto != null)
+        .map((element) => element.refDepartmentIdDepartmentDto!)
         .toSet()
         .toList();
     var idSet = <String?>{};
-    for (var d in resultCompanies) {
+    for (var d in resultDepartments) {
       if (idSet.add(d.id)) {
-        companies.add(RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
+        departments.add(RefDepartmentIdDepartmentDto(id: d.id!, name: d.name!));
       }
     }
   }
@@ -86,19 +89,20 @@ class _TemplateTabViewState extends State<TemplateTabView> {
           padding: EdgeInsets.only(top: padding, bottom: padding),
           physics: BouncingScrollPhysics(),
           children: [
-            DropdownButton<RefCompanyIdCompanyDto>(
+            DropdownButton<RefDepartmentIdDepartmentDto>(
               isExpanded: true,
-              value: selectedCompany,
-              onChanged: (RefCompanyIdCompanyDto? value) {
+              value: selectedDepartment,
+              onChanged: (RefDepartmentIdDepartmentDto? value) {
                 setState(() {
-                  selectedCompany = value!;
+                  selectedDepartment = value!;
                   // listSearch = widget.listCampaign;
                   if (value.id == '-1') {
                     onSearch = false;
                   } else {
                     listSearch.clear();
                     widget.listCampaign.forEach((element) {
-                      if (element.refCompanyIdCompanyDto!.id == value.id) {
+                      if (element.refDepartmentIdDepartmentDto!.id ==
+                          value.id) {
                         listSearch.add(element);
                       }
                     });
@@ -122,12 +126,12 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                   }
                 });
               },
-              items: companies.map((RefCompanyIdCompanyDto company) {
-                return DropdownMenuItem<RefCompanyIdCompanyDto>(
-                  value: company,
+              items: departments.map((RefDepartmentIdDepartmentDto department) {
+                return DropdownMenuItem<RefDepartmentIdDepartmentDto>(
+                  value: department,
                   child: Center(
                     child: new Text(
-                      company.name!,
+                      department.name!,
                       style: new TextStyle(color: Colors.black),
                     ),
                   ),

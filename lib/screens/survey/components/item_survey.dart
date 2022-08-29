@@ -38,6 +38,7 @@ class ItemSurvey extends StatefulWidget {
 class ItemSurveyState extends State<ItemSurvey> {
   late TextEditingController scoreController;
   late TextEditingController textAnswerController;
+  late TextEditingController numberAnswerController;
   late TextEditingController noteAnswerController;
   @override
   void initState() {
@@ -48,14 +49,16 @@ class ItemSurveyState extends State<ItemSurvey> {
             : widget.question.maxScore.toString());
     textAnswerController = TextEditingController(
         text: widget.question.type == "TEXT"
-            ? widget.questionResult?.answer != null
-                ? widget.questionResult?.answer
+            ? widget.questionResult?.answerText != null
+                ? widget.questionResult?.answerText
                 : ""
-            : widget.question.type == "NUMBER"
-                ? widget.questionResult?.answer != null
-                    ? widget.questionResult?.answer.toString()
-                    : ""
-                : "");
+            : "");
+    numberAnswerController = TextEditingController(
+        text: widget.question.type == "NUMBER"
+            ? widget.questionResult?.answerNumber != null
+                ? widget.questionResult?.answerNumber.toString()
+                : ""
+            : "");
     noteAnswerController = TextEditingController(
         text: widget.questionResult != null
             ? widget.questionResult!.note != null
@@ -119,13 +122,11 @@ class ItemSurveyState extends State<ItemSurvey> {
                       return null;
                     },
                     onChanged: (v) {
-                      if (widget.formKey!.currentState!.validate()) {
-                        Provider.of<AnswerController>(context, listen: false)
-                            .updateLableAnswer(
-                                lable: v,
-                                questID: widget.questID,
-                                type: widget.question.type!);
-                      }
+                      Provider.of<AnswerController>(context, listen: false)
+                          .updateLableAnswer(
+                              lable: v,
+                              questID: widget.questID,
+                              type: widget.question.type!);
                     },
                   ),
                 ),
@@ -133,7 +134,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
                   child: TextFormField(
-                    controller: textAnswerController,
+                    controller: numberAnswerController,
                     readOnly: widget.isCompleted,
                     keyboardType: TextInputType.number,
                     validator: (value) {
@@ -154,13 +155,11 @@ class ItemSurveyState extends State<ItemSurvey> {
                     },
                     decoration: InputDecoration(labelText: "Trả lời"),
                     onChanged: (v) {
-                      if (widget.formKey!.currentState!.validate()) {
-                        Provider.of<AnswerController>(context, listen: false)
-                            .updateLableAnswer(
-                                lable: v,
-                                questID: widget.questID,
-                                type: widget.question.type!);
-                      }
+                      Provider.of<AnswerController>(context, listen: false)
+                          .updateLableAnswer(
+                              lable: v,
+                              questID: widget.questID,
+                              type: widget.question.type!);
                     },
                   ),
                 ),
@@ -169,8 +168,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                     ? SinglechoiseCompleted(
                         polls: widget.question.poll!,
                         values: widget.questionResult != null
-                            ? widget.questionResult!.answer != null
-                                ? widget.questionResult!.answer!
+                            ? widget.questionResult!.answerText != null
+                                ? widget.questionResult!.answerText!
                                 : ""
                             : "")
                     : SinglechoiseAnswer(
@@ -179,8 +178,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                         polls: widget.question.poll!,
                         questID: widget.questID,
                         values: widget.questionResult != null
-                            ? widget.questionResult!.answer != null
-                                ? widget.questionResult!.answer!
+                            ? widget.questionResult!.answerText != null
+                                ? widget.questionResult!.answerText!
                                 : ""
                             : "",
                       ),
@@ -189,8 +188,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                     ? MultichoiseCompleted(
                         polls: widget.question.poll!,
                         values: widget.questionResult != null
-                            ? widget.questionResult!.answer != null
-                                ? widget.questionResult!.answer!.split(',')
+                            ? widget.questionResult!.answerText != null
+                                ? widget.questionResult!.answerText!.split(',')
                                 : []
                             : [])
                     : MultichoiseAnswer(
@@ -199,8 +198,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                         polls: widget.question.poll!,
                         questID: widget.questID,
                         values: widget.questionResult != null
-                            ? widget.questionResult!.answer is String
-                                ? widget.questionResult!.answer
+                            ? widget.questionResult!.answerText is String
+                                ? widget.questionResult!.answerText
                                 : ""
                             : "",
                       ),
@@ -301,7 +300,7 @@ class ItemSurveyState extends State<ItemSurvey> {
           if (listResult
                   .where((element) =>
                       element.questionTemplateId == widget.questID &&
-                      element.answer != "")
+                      element.answerText != "")
                   .length <=
               0) {
             widget.question.valid = false;
@@ -315,7 +314,7 @@ class ItemSurveyState extends State<ItemSurvey> {
           if (listResult
                   .where((element) =>
                       element.questionTemplateId == widget.questID &&
-                      element.answer != "")
+                      element.answerText != "")
                   .length <=
               0) {
             widget.question.valid = false;

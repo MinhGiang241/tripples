@@ -24,6 +24,7 @@ class GdriveLinkListPin extends StatefulWidget {
   final String questId;
   final int Index;
   bool edit = false;
+
   @override
   State<GdriveLinkListPin> createState() => _GdriveLinkListPinState();
 }
@@ -41,57 +42,51 @@ class _GdriveLinkListPinState extends State<GdriveLinkListPin> {
 
     void removeLink(item) {
       gDriveLinkList.removeWhere((element) => element == item);
+      widget.questionResult!.gDriveLink = gDriveLinkList.join(',');
     }
 
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: padding * 0.5),
         child: Column(
-            children: gDriveLinkList == null
-                ? []
-                : gDriveLinkList
-                    .map<Widget>((e) => ListTile(
-                          onTap: () {},
-                          title: GestureDetector(
-                            onTap: () async {},
-                            child: InkWell(
-                              onTap: () => launchUrl(Uri.parse(e)),
-                              child: Text(
-                                e.split("/").last,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ),
+            children: gDriveLinkList
+                .map<Widget>((e) => ListTile(
+                      onTap: () {},
+                      title: GestureDetector(
+                        onTap: () async {},
+                        child: InkWell(
+                          onTap: () => launchUrl(Uri.parse(e)),
+                          child: Text(
+                            e.split("/").last,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.blue),
                           ),
-                          trailing: Container(
-                              width: 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  if (widget.edit)
-                                    IconButton(
-                                        icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          // gDriveLink.removeWhere(
-                                          //     (element) => element == e);
-                                          // print(gDriveLink);
-                                          removeLink(e);
-                                          setState(() {
-                                            removeLink(e);
-                                            Provider.of<AnswerController>(
-                                                    context,
-                                                    listen: false)
-                                                .removeFileAnswer(
-                                                    idFile: e.split("/").last,
-                                                    index: widget.Index,
-                                                    questId: widget.questId);
+                        ),
+                      ),
+                      trailing: Container(
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (widget.edit)
+                                IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () {
+                                      setState(() {
+                                        removeLink(e);
+                                        Provider.of<AnswerController>(context,
+                                                listen: false)
+                                            .removeFileAnswer(
+                                                idFile: e.split("/").last,
+                                                index: widget.Index,
+                                                questId: widget.questId);
 
-                                            print(gDriveLinks);
-                                          });
-                                        }),
-                                ],
-                              )),
-                        ))
-                    .toList()));
+                                        print(gDriveLinkList);
+                                      });
+                                    }),
+                            ],
+                          )),
+                    ))
+                .toList()));
   }
 }

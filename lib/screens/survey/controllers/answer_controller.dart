@@ -27,7 +27,9 @@ class AnswerController extends ChangeNotifier {
             questionTemplateId: listQuestions[i].questID,
             score: answer.score != null ? answer.score : 0,
             note: answer.note != null ? answer.note : "",
-            answer: answer.answer != null ? answer.answer : "",
+            answerText: answer.answerText != null ? answer.answerText : "",
+            answerNumber:
+                answer.answerNumber != null ? answer.answerNumber : "",
             scheduleId: answer.scheduleId != null ? answer.scheduleId : "",
             google_drive_ids:
                 answer.gDriveLink != null ? answer.gDriveLink : "",
@@ -38,7 +40,8 @@ class AnswerController extends ChangeNotifier {
               id: '',
               score: 0,
               questionTemplateId: listQuestions[i].questID,
-              answer: '',
+              answerText: '',
+              answerNumber: null,
               note: '',
               scheduleId: scheduleId,
               google_drive_ids: ''));
@@ -142,8 +145,8 @@ class AnswerController extends ChangeNotifier {
       var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       if (index >= 0 && double.tryParse(lable) != null) {
-        listResult[index].answer = double.parse(lable);
-        print(listResult[index].answer);
+        listResult[index].answerNumber = double.parse(lable);
+        print(listResult[index].answerNumber);
       }
     }
   }
@@ -154,8 +157,8 @@ class AnswerController extends ChangeNotifier {
       var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       if (index >= 0) {
-        listResult[index].answer = lable;
-        print(listResult[index].answer);
+        listResult[index].answerText = lable;
+        print(listResult[index].answerText);
       }
     }
   }
@@ -170,33 +173,33 @@ class AnswerController extends ChangeNotifier {
           .indexWhere((element) => element.questionTemplateId == questID);
       var listChoiceAnswer;
 
-      listChoiceAnswer = listResult[index].answer.split(',');
+      listChoiceAnswer = listResult[index].answerText!.split(',');
 
       var choiceIndex = listChoiceAnswer.indexWhere((v) => v == lable);
 
       if (choiceIndex < 0) {
         listChoiceAnswer.add(lable);
         if (listChoiceAnswer.length == 1) {
-          listResult[index].answer = listChoiceAnswer[0];
+          listResult[index].answerText = listChoiceAnswer[0];
         } else {
-          listResult[index].answer = listChoiceAnswer.join(',');
+          listResult[index].answerText = listChoiceAnswer.join(',');
         }
       } else {
         listChoiceAnswer.removeWhere((v) => v == lable);
         if (listChoiceAnswer != null) {
-          listResult[index].answer = listChoiceAnswer.join(',');
+          listResult[index].answerText = listChoiceAnswer.join(',');
         } else if (listChoiceAnswer.length == 1) {
-          listResult[index].answer = listChoiceAnswer[0];
+          listResult[index].answerText = listChoiceAnswer[0];
         } else {
-          listResult[index].answer = null;
+          listResult[index].answerText = null;
         }
       }
-      if (listResult[index].answer.startsWith(',')) {
-        listResult[index].answer = listResult[index].answer.substring(
+      if (listResult[index].answerText!.startsWith(',')) {
+        listResult[index].answerText = listResult[index].answerText!.substring(
               1,
             );
       }
-      print(listResult[index].answer);
+      print(listResult[index].answerText);
     }
   }
 

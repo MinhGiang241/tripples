@@ -266,12 +266,14 @@ class Answers {
   String? creator;
   String? updater;
   var score;
-  var answer;
+  String? answerText;
+  double? answerNumber;
   String? gDriveLink;
   List<String>? links;
   Answers(
       {this.id,
-      this.answer,
+      this.answerText,
+      this.answerNumber,
       this.note,
       this.questionTemplateId,
       this.score,
@@ -293,7 +295,8 @@ class Answers {
     questionTemplateId = json['questionTemplateId'];
     note = json['note'];
     score = json['score'];
-    answer = json['answer'];
+    answerText = json['answer_text'];
+    answerNumber = double.parse(json['answer_number'].toString());
     gDriveLink = json['google_drive_ids'];
     if (json['google_drive_ids'] != null) {
       links = json['google_drive_ids'].split(',');

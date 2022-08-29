@@ -73,8 +73,8 @@ class S {
   /// `Log In`
   String get login {
     return Intl.message(
-      'Log In',
-      name: 'login',
+      'Đăng nhập',
+      name: 'log_in',
       desc: '',
       args: [],
     );
@@ -83,7 +83,7 @@ class S {
   /// `Sign Up`
   String get signup {
     return Intl.message(
-      'Sign Up',
+      'Đăng ký',
       name: 'signup',
       desc: '',
       args: [],
@@ -93,7 +93,7 @@ class S {
   /// `Log Out`
   String get logout {
     return Intl.message(
-      'Log Out',
+      'Đăng xuất',
       name: 'logout',
       desc: '',
       args: [],
@@ -113,7 +113,7 @@ class S {
   /// `Password`
   String get password {
     return Intl.message(
-      'Password',
+      'Mật khẩu',
       name: 'password',
       desc: '',
       args: [],
@@ -123,7 +123,7 @@ class S {
   /// `You don't have an account?`
   String get noAccount {
     return Intl.message(
-      'You don\'t have an account?',
+      'Bạn không có mật khẩu',
       name: 'noAccount',
       desc: '',
       args: [],
@@ -133,7 +133,7 @@ class S {
   /// `Name`
   String get name {
     return Intl.message(
-      'Name',
+      'Tên',
       name: 'name',
       desc: '',
       args: [],
@@ -143,7 +143,7 @@ class S {
   /// `Confirm Password`
   String get confirm_pass {
     return Intl.message(
-      'Confirm Password',
+      'Xác nhận mật khẩu',
       name: 'confirm_pass',
       desc: '',
       args: [],
@@ -163,7 +163,7 @@ class S {
   /// `Processing`
   String get templates {
     return Intl.message(
-      'Processing',
+      'Đang xử lý',
       name: 'templates',
       desc: '',
       args: [],
@@ -173,7 +173,7 @@ class S {
   /// `Completed`
   String get inprogress_complete {
     return Intl.message(
-      'Completed',
+      'Hoàn thành',
       name: 'inprogress_complete',
       desc: '',
       args: [],
@@ -183,7 +183,7 @@ class S {
   /// `Search`
   String get search {
     return Intl.message(
-      'Search',
+      'Tìm kiếm',
       name: 'search',
       desc: '',
       args: [],
@@ -213,7 +213,7 @@ class S {
   /// `Details`
   String get details {
     return Intl.message(
-      'Details',
+      'Chi tiết',
       name: 'details',
       desc: '',
       args: [],
@@ -223,7 +223,7 @@ class S {
   /// `Campaign description`
   String get campaign_description {
     return Intl.message(
-      'Campaign description',
+      'Mô tả chiến dịch',
       name: 'campaign_description',
       desc: '',
       args: [],
@@ -233,7 +233,7 @@ class S {
   /// `Customer`
   String get customer {
     return Intl.message(
-      'Customer',
+      'Khách hàng',
       name: 'customer',
       desc: '',
       args: [],
@@ -243,7 +243,7 @@ class S {
   /// `Department`
   String get branch {
     return Intl.message(
-      'Department',
+      'Chi nhánh',
       name: 'branch',
       desc: '',
       args: [],
@@ -253,7 +253,7 @@ class S {
   /// `Address`
   String get address {
     return Intl.message(
-      'Address',
+      'Địa chỉ',
       name: 'address',
       desc: '',
       args: [],
@@ -273,7 +273,7 @@ class S {
   /// `Begin`
   String get begin {
     return Intl.message(
-      'Begin',
+      'Bắt đầu',
       name: 'begin',
       desc: '',
       args: [],
@@ -283,7 +283,7 @@ class S {
   /// `End`
   String get end {
     return Intl.message(
-      'End',
+      'Kết thúc',
       name: 'end',
       desc: '',
       args: [],
@@ -293,7 +293,7 @@ class S {
   /// `Select file`
   String get select_file {
     return Intl.message(
-      'Select file',
+      'Chọn file',
       name: 'select_file',
       desc: '',
       args: [],
@@ -313,7 +313,7 @@ class S {
   /// `Image/Video`
   String get image_video {
     return Intl.message(
-      'Image/Video',
+      'Hình ảnh/Video',
       name: 'image_video',
       desc: '',
       args: [],
@@ -333,7 +333,7 @@ class S {
   /// `Choose File`
   String get choose_file {
     return Intl.message(
-      'Choose File',
+      'Chọn file',
       name: 'choose_file',
       desc: '',
       args: [],
@@ -343,7 +343,7 @@ class S {
   /// `Send`
   String get send {
     return Intl.message(
-      'Send',
+      'Gửi',
       name: 'send',
       desc: '',
       args: [],
@@ -353,7 +353,7 @@ class S {
   /// `User Name`
   String get user_name {
     return Intl.message(
-      'User Name',
+      'Tên tài khoản',
       name: 'user_name',
       desc: '',
       args: [],
@@ -363,7 +363,7 @@ class S {
   /// `Result`
   String get result {
     return Intl.message(
-      'Result',
+      'Kết quả',
       name: 'result',
       desc: '',
       args: [],
@@ -373,7 +373,7 @@ class S {
   /// `Survey`
   String get survey {
     return Intl.message(
-      'Survey',
+      'Khảo sát',
       name: 'survey',
       desc: '',
       args: [],
@@ -383,7 +383,7 @@ class S {
   /// `Can not be empty!`
   String get not_blank {
     return Intl.message(
-      'Can not be empty!',
+      'Không để trống trường này',
       name: 'not_blank',
       desc: '',
       args: [],
@@ -393,7 +393,7 @@ class S {
   /// `Password does not match.`
   String get not_same {
     return Intl.message(
-      'Password does not match.',
+      'Mật khẩu không trùng khớp.',
       name: 'not_same',
       desc: '',
       args: [],
@@ -403,7 +403,7 @@ class S {
   /// `Phone Number`
   String get phone {
     return Intl.message(
-      'Phone Number',
+      'Số điện thoại',
       name: 'phone',
       desc: '',
       args: [],

@@ -47,8 +47,11 @@ class _UpdatePassword extends State<UpdatePassword> {
       });
       print(result);
       // ignore: await_only_futures
-      await runMutation(
-          {"oldpass": oldPasController.text, "newpass": newPasController.text});
+      await runMutation({
+        "oldpass": oldPasController.text.trim(),
+        "newpass": newPasController.text.trim(),
+        "renewpw": confirmNewPasCotroller.text.trim()
+      });
     }
   }
 
@@ -72,8 +75,8 @@ class _UpdatePassword extends State<UpdatePassword> {
   @override
   Widget build(BuildContext context) {
     var changePassword = '''
-      mutation  (\$oldpass: String, \$newpass: String){
-    authorization_change_password (old_pw:\$oldpass , new_pw:\$newpass){
+      mutation  (\$oldpass: String, \$newpass: String, \$re_new_pw){
+    authorization_change_password (old_pw:\$oldpass , new_pw:\$newpass, re_new_pw:\$renewpw){
   	  message
     }
     }
@@ -88,7 +91,9 @@ class _UpdatePassword extends State<UpdatePassword> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            // store: HiveStore()
+            ),
       ),
     );
 
@@ -109,13 +114,14 @@ class _UpdatePassword extends State<UpdatePassword> {
           padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
           child: Form(
             key: _formKey,
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 AuthInput(
                   obscure: true,
                   controller: oldPasController,
-                  hint: "Old Password",
+                  hint: "Mật khẩu cũ",
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
                   validator: (val) {
@@ -129,7 +135,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                 AuthInput(
                   obscure: true,
                   controller: newPasController,
-                  hint: "New Password",
+                  hint: "Mật khẩu mới",
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
                   tab: () {

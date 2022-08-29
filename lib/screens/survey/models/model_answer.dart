@@ -36,7 +36,8 @@ class ResultsList {
   var score;
   String? note;
   String? google_drive_ids = '';
-  var answer;
+  String? answerText;
+  double? answerNumber;
 
 //no use
   List<Values>? values = [];
@@ -49,7 +50,8 @@ class ResultsList {
       this.questionTemplateId,
       this.score,
       this.note,
-      this.answer,
+      this.answerText,
+      this.answerNumber,
       this.scheduleId,
       this.google_drive_ids
       //this.question,
@@ -62,7 +64,8 @@ class ResultsList {
     questionTemplateId = json['questionTemplateId'];
     score = json['score'];
     scheduleId = json['scheduleId'];
-    answer = json['answer'];
+    answerText = json['answer_text'];
+    answerNumber = double.parse(json['answer_number']);
     note = json['note'];
     google_drive_ids = json['google_drive_ids'];
   }
@@ -72,7 +75,8 @@ class ResultsList {
     if (this.id != null || this.id != "") {
       data['_id'] = this.id;
     }
-    data['answer'] = this.answer;
+    data['answer_text'] = this.answerText;
+    data['answer_number'] = this.answerNumber;
     data['questionTemplateId'] = this.questionTemplateId;
     data['score'] = this.score;
     data['scheduleId'] = this.scheduleId;

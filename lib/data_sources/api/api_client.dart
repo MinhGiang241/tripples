@@ -57,7 +57,7 @@ class ApiClient {
         uploadMedia: ga.Media(file.openRead(), file.lengthSync()),
         ignoreDefaultVisibility: true,
         includePermissionsForView: 'published',
-        uploadOptions: commons.ResumableUploadOptions(),
+        // uploadOptions: commons.ResumableUploadOptions(),
       )
           .whenComplete(() {
         print('complete');
@@ -142,7 +142,7 @@ class ApiClient {
               onUploadProgress(byteCount, totalByteLength);
               print("a: " + a.toString());
             }
-          } catch (_) {
+          } catch (e) {
             onFailUpload();
           }
         },

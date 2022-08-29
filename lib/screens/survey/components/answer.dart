@@ -21,7 +21,7 @@ class MultichoiseAnswer extends StatelessWidget {
   }) : super(key: key);
   final List<Poll> polls;
   final String questID;
-  final String values;
+  final String? values;
   final Function validation;
   final Questions question;
 

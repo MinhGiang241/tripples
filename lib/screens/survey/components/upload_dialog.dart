@@ -160,54 +160,10 @@ class UploadDialogState extends State<UploadDialog> {
                             ? null
                             : () async {
                                 loading = true;
-                                // try {
-                                // onUpload(listModelFile);
-                                // context.read<FileUploadController>().;
-                                // var uploadGoogle = () async {
-                                //   var fileUpload = await ApiClient.signInGoogle(
-                                //       listModelFile[0].file);
 
-                                //   await Provider.of<AnswerController>(context,
-                                //           listen: false)
-                                //       .addFileAnswer(
-                                //           idFile: fileUpload.id,
-                                //           name: fileUpload.name,
-                                //           index: listModelFile[0].index);
-                                // };
-
-                                widget.onUpload(listModelFile);
-                                // var fileUpload = await ApiClient.signInGoogle(
-                                //     listModelFile[0].file);
-
-                                // await Provider.of<AnswerController>(context,
-                                //         listen: false)
-                                //     .addFileAnswer(
-                                //         idFile: fileUpload.id,
-                                //         name: fileUpload.name,
-                                //         index: listModelFile[0].index);
+                                await widget.onUpload(listModelFile);
 
                                 loading = false;
-                                // listModelFile[0].id = fileUpload.id;
-
-                                // } catch (e) {
-                                //   print(e);
-                                //   loading = false;
-                                //   await showDialog(
-                                //     context: context,
-                                //     builder: (ctx) => AlertDialog(
-                                //       title: Text('Có lỗi khi tải file'),
-                                //       content: Text('không tải lên file được.'),
-                                //       actions: <Widget>[
-                                //         TextButton(
-                                //           child: Text('Okay'),
-                                //           onPressed: () {
-                                //             Navigator.of(ctx).pop();
-                                //           },
-                                //         )
-                                //       ],
-                                //     ),
-                                //   );
-                                // }
                               },
                         child: Text(S.current.upload_file))
                   ],

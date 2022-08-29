@@ -188,6 +188,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 ],
               ),
               body: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKey,
                 child: Stack(
                   children: [
@@ -379,8 +380,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 listResult.forEach((v) {
                                   data.add(v.toJson());
                                 });
+                                print(data);
                                 try {
                                   validation(context, widget.questions);
+
                                   if (_formKey.currentState!.validate() &&
                                       validationForm(context)) {
                                     runMutation({"data": data});
@@ -451,6 +454,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       index: listModelFile[0].index,
                       questID: listModelFile[0].questID,
                     );
+                    Provider.of<ChooseFileController>(context, listen: false)
+                        .offUploadFile();
 
                     return fileUpload;
                   };
@@ -475,7 +480,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             if (listResult
                     .where((element) =>
                         element.questionTemplateId == question.questID &&
-                        element.answer != "")
+                        element.answerText != "")
                     .length <=
                 0) {
               question.valid = false;
@@ -489,7 +494,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             if (listResult
                     .where((element) =>
                         element.questionTemplateId == question.questID &&
-                        element.answer != "")
+                        element.answerText != "")
                     .length <=
                 0) {
               question.valid = false;
@@ -510,9 +515,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
     var valid = true;
     for (var e in widget.questions) {
       var result = listResult
-          .firstWhere((element) => element.question?.questID == e.questID);
-      if ((result.answer == null || result.answer == "") && e.required)
+          .firstWhere((element) => element.questionTemplateId == e.questID);
+      if ((result.answerText == null || result.answerText == "") &&
+          e.required &&
+          (e.type == "TEXT" ||
+              e.type == "ONECHOOSE" ||
+              e.type == "MULTIPLECHOOSE")) valid = false;
+      if (result.answerNumber == null && e.required && e.type == "NUMBER") {
         valid = false;
+      }
       break;
     }
     return valid;

@@ -56,7 +56,7 @@ class LoginForm extends StatelessWidget {
               ),
               AuthInput(
                   controller: userNameEditingController,
-                  hint: S.current.user_name,
+                  hint: 'Tên tài khoản', //S.current.user_name,
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.person),
                   validator: (v) {
@@ -68,7 +68,7 @@ class LoginForm extends StatelessWidget {
                   }),
               AuthInput(
                   controller: passwordEditingController,
-                  hint: S.current.password,
+                  hint: 'Mật khẩu', //S.current.password,
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
                   obscure: true,
@@ -102,7 +102,9 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               Query(
-                options: QueryOptions(document: gql("""query {
+                options: QueryOptions(
+                    document: gql(
+                        """query {
                                     response:configuration{
                                               code
                                               message

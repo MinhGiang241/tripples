@@ -101,6 +101,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
       // DialogState.currentState?.updateState();
     };
+    bool disabled = false;
 
     return MultiProvider(
       providers: [
@@ -320,9 +321,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (_) =>
-                                                              HomeScreen(
-                                                                  listTemplate:
-                                                                      responseListTemplate)));
+                                                              HomeScreen()));
                                                   // Navigator.pop(context, true);
                                                   return Center(
                                                       child: Text(''));
@@ -333,9 +332,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                         .data![0]
                                                         .questionResultScheduleIdDto;
                                                 print(questionResult);
-                                                return HomeScreen(
-                                                    listTemplate:
-                                                        responseListTemplate);
+                                                return HomeScreen();
                                                 // SurveyScreen(
                                                 //     questions: widget.questions,
                                                 //     campaignId:
@@ -370,7 +367,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
                           left: MediaQuery.of(context).size.width / 4,
                           right: MediaQuery.of(context).size.width / 4,
                           child: AuthButton(
+                            disabled: disabled,
                             onPress: () {
+                              setState(() {
+                                disabled = true;
+                              });
                               bool valid = Provider.of<AnswerController>(
                                       context,
                                       listen: false)

@@ -45,16 +45,23 @@ class ItemSurveyState extends State<ItemSurvey> {
             : widget.question.maxScore.toString());
     textAnswerController = TextEditingController(
         text: widget.question.type == "TEXT"
-            ? widget.questionResult?.answer
+            ? widget.questionResult?.answer != null
+                ? widget.questionResult?.answer
+                : ""
             : widget.question.type == "NUMBER"
-                ? widget.questionResult?.answer.toString()
+                ? widget.questionResult?.answer != null
+                    ? widget.questionResult?.answer.toString()
+                    : ""
                 : "");
     noteAnswerController = TextEditingController(
         text: widget.questionResult != null
-            ? widget.questionResult!.note ?? ""
+            ? widget.questionResult!.note != null
+                ? widget.questionResult!.note
+                : ""
             : "");
   }
 
+  bool edit = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -165,8 +172,13 @@ class ItemSurveyState extends State<ItemSurvey> {
               ),
               ScoreSlider(
                   maxScore: widget.questionResult != null
-                      ? widget.questionResult!.score
-                      : widget.question.maxScore,
+                      ? widget.question.maxScore
+                      : 10,
+                  score: widget.questionResult != null
+                      ? widget.questionResult!.score != null
+                          ? widget.questionResult!.score
+                          : 0
+                      : 0,
                   index: widget.questionIndex,
                   isReadOnly: widget.isCompleted,
                   questID: widget.questID),
@@ -221,6 +233,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                 thickness: 1,
               ),
               GdriveLinkListPin(
+                edit: !widget.isCompleted,
                 questId: widget.questID,
                 Index: widget.questionIndex,
                 questionResult: widget.questionResult,
@@ -296,15 +309,17 @@ class ItemSurveyState extends State<ItemSurvey> {
 }
 
 class ScoreSlider extends StatelessWidget {
-  const ScoreSlider(
+  ScoreSlider(
       {Key? key,
       required this.maxScore,
       required this.index,
       required this.questID,
+      this.score,
       this.isReadOnly = false})
       : super(key: key);
 
   final maxScore;
+  var score;
   final int index;
   final bool isReadOnly;
   final String questID;
@@ -312,7 +327,7 @@ class ScoreSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SliderScoreController>(
         create: (_) => SliderScoreController(
-            double.parse(maxScore != null ? maxScore.toString() : "0")),
+            double.parse(score != null ? score.toString() : "0")),
         builder: (context, child) {
           double value = context.watch<SliderScoreController>().value;
           return Column(
@@ -336,7 +351,7 @@ class ScoreSlider extends StatelessWidget {
                             value: value,
                             divisions: 20,
                             label: "$value",
-                            max: 10,
+                            max: double.parse(maxScore.toString()),
                             min: 0,
                             onChanged: (val) {
                               if (!isReadOnly) {

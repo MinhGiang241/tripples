@@ -141,7 +141,7 @@ class AnswerController extends ChangeNotifier {
     if (lable != null && lable != '') {
       var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
-      if (index >= 0) {
+      if (index >= 0 && double.tryParse(lable) != null) {
         listResult[index].answer = double.parse(lable);
         print(listResult[index].answer);
       }

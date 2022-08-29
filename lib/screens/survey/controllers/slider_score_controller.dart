@@ -5,8 +5,11 @@ import 'answer_controller.dart';
 
 class SliderScoreController extends ChangeNotifier {
   double value = 0;
+
   SliderScoreController(var val) {
     value = val;
+    // print(value);
+    // print(val);
     notifyListeners();
   }
 

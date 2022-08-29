@@ -8,7 +8,16 @@ import 'campaign.dart';
 import 'department.dart';
 
 class ResponseListTemplate extends ChangeNotifier {
-  QuerySchedulesDto? querySchedulesDto;
+  QuerySchedulesDto? querySchedulesDto = new QuerySchedulesDto(data: [
+    new ScheduleCampaign(
+        refCampaignIdCampaignDto: RefCampaignIdCampaignDto(),
+        refCompanyIdCompanyDto: RefCompanyIdCompanyDto(),
+        refDepartmentIdDepartmentDto: RefDepartmentIdDepartmentDto(),
+        questionResult: QuestionResult(answers: [], questions: []),
+        sId: "",
+        surveyDate: "",
+        surveyTime: "")
+  ]);
 
   ResponseListTemplate({this.querySchedulesDto});
   ResponseListTemplate.from(json) {

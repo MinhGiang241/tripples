@@ -72,7 +72,7 @@ class ResultsList {
     if (this.id != null || this.id != "") {
       data['_id'] = this.id;
     }
-
+    data['answer'] = this.answer;
     data['questionTemplateId'] = this.questionTemplateId;
     data['score'] = this.score;
     data['scheduleId'] = this.scheduleId;

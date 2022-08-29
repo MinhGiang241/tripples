@@ -32,7 +32,7 @@ class DetailUser extends StatelessWidget {
       data {
         _id
         avatar
-        companyId
+  
         createdTime
         display_name
         creator

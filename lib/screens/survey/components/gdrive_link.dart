@@ -13,15 +13,17 @@ import '../controllers/file_upload.dart';
 import '../models/model_file.dart';
 
 class GdriveLinkListPin extends StatefulWidget {
-  const GdriveLinkListPin(
+  GdriveLinkListPin(
       {Key? key,
       required this.questId,
       this.questionResult,
+      required this.edit,
       required this.Index})
       : super(key: key);
   final Answers? questionResult;
   final String questId;
   final int Index;
+  bool edit = false;
   @override
   State<GdriveLinkListPin> createState() => _GdriveLinkListPinState();
 }
@@ -29,48 +31,36 @@ class GdriveLinkListPin extends StatefulWidget {
 class _GdriveLinkListPinState extends State<GdriveLinkListPin> {
   @override
   Widget build(BuildContext context) {
-    var gDriveLink = Provider.of<AnswerController>(context, listen: false)
-        .listResult
-        .firstWhere((e) => e.questionTemplateId == widget.questId)
-        .google_drive_ids;
-    var listGdriveLink;
-    if (gDriveLink != null && gDriveLink != '') {
-      listGdriveLink = gDriveLink.split(',');
+    var gDriveLinks = widget.questionResult != null
+        ? widget.questionResult!.gDriveLink != null
+            ? widget.questionResult!.gDriveLink
+            : ''
+        : '';
+
+    var gDriveLinkList = gDriveLinks == '' ? [] : gDriveLinks!.split(',');
+
+    void removeLink(item) {
+      gDriveLinkList.removeWhere((element) => element == item);
     }
 
-    // if (widget.questionResult != null &&
-    //     widget.questionResult!.gDriveLink != '' &&
-    //     widget.questionResult!.gDriveLink != null) {
-    //   gDriveLink = widget.questionResult!.gDriveLink!.split(',');
-    // }
-    // var modelFiles = [];
-    // gDriveLink.asMap().forEach((i, v) {
-    //   modelFiles.add(ModelFile(index: i, name: v.split(',').last));
-    // });
-    // Provider.of<FileUploadController>(context, listen: false).addFile(
-    //   gDriveLink.asMap().map((i,v)=> new ModelFile())
-    //   );
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: padding * 0.5),
         child: Column(
-            children: listGdriveLink == null
+            children: gDriveLinkList == null
                 ? []
-                : listGdriveLink
+                : gDriveLinkList
                     .map<Widget>((e) => ListTile(
                           onTap: () {},
                           title: GestureDetector(
-                            onTap: () async {
-                              // print(e);
-                              // if (await canLaunch(e)) {
-                              //   launchUrl(Uri.parse(e));
-                              // }
-
-                              // if (await canLaunch(e)) launch(e);
-                            },
-                            child: Text(
-                              e.split("/").last,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            onTap: () async {},
+                            child: InkWell(
+                              onTap: () => launchUrl(Uri.parse(e)),
+                              child: Text(
+                                e.split("/").last,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.blue),
+                              ),
                             ),
                           ),
                           trailing: Container(
@@ -78,23 +68,27 @@ class _GdriveLinkListPinState extends State<GdriveLinkListPin> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  IconButton(
-                                      icon: Icon(Icons.close),
-                                      onPressed: () async {
-                                        setState(() {
+                                  if (widget.edit)
+                                    IconButton(
+                                        icon: Icon(Icons.close),
+                                        onPressed: () {
                                           // gDriveLink.removeWhere(
                                           //     (element) => element == e);
                                           // print(gDriveLink);
-                                        });
-                                        await Provider.of<AnswerController>(
-                                                context,
-                                                listen: false)
-                                            .removeFileAnswer(
-                                                idFile: e.split("/").last,
-                                                index: widget.Index,
-                                                questId: widget.questId);
-                                        print(listGdriveLink);
-                                      }),
+                                          removeLink(e);
+                                          setState(() {
+                                            removeLink(e);
+                                            Provider.of<AnswerController>(
+                                                    context,
+                                                    listen: false)
+                                                .removeFileAnswer(
+                                                    idFile: e.split("/").last,
+                                                    index: widget.Index,
+                                                    questId: widget.questId);
+
+                                            print(gDriveLinks);
+                                          });
+                                        }),
                                 ],
                               )),
                         ))

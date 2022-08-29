@@ -5,14 +5,14 @@ import 'package:survey/constants.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
 import 'package:survey/data_sources/api/constants.dart';
 import 'package:survey/models/response_list_campaign.dart';
+import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'components/home_appbar.dart';
 import 'components/home_tabbar.dart';
 import 'components/template_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  final ResponseListTemplate? listTemplate;
-  HomeScreen({this.listTemplate});
+  HomeScreen();
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -40,26 +40,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<ScheduleCampaign> listCompleted = [];
   @override
   void initState() {
-    // responseListTemplate = widget.listTemplate;
-    // if (responseListTemplate != null) {
-    //   for (int i = 0;
-    //       i < responseListTemplate!.querySchedulesDto!.data!.length;
-    //       i++) {
-    //     if (responseListTemplate!.querySchedulesDto!.data![i].questionResult !=
-    //             null &&
-    //         responseListTemplate!
-    //                 .querySchedulesDto!.data![i].questionResult?.answers !=
-    //             null &&
-    //         responseListTemplate!.querySchedulesDto!.data![i].questionResult
-    //                 ?.answers!.length !=
-    //             0) {
-    //       listCompleted.add(responseListTemplate!.querySchedulesDto!.data![i]);
-    //     } else {
-    //       listInprogress.add(responseListTemplate!.querySchedulesDto!.data![i]);
-    //     }
-    //   }
-    // }
-
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
@@ -75,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final cl = GraphQLClient(
       link: link,
       // The default store is the InMemoryStore, which does NOT persist to disk
-      cache: GraphQLCache(store: HiveStore()),
+      cache: GraphQLCache(),
     );
     ValueNotifier<GraphQLClient> client = ValueNotifier(cl);
     setState(() {
@@ -173,9 +153,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: CircularProgressIndicator(),
                         );
                       }
-                      ResponseListTemplate responseListTemplate =
+                      listCompleted = [];
+                      listInprogress = [];
+                      ResponseListTemplate? responseListTemplate =
                           ResponseListTemplate.from(result.data);
-
+                      // context
+                      //     .watch<ResponseListTemplate>()
+                      //     .fromJson(result.data);
+                      print(responseListTemplate);
                       for (int i = 0;
                           i <
                               responseListTemplate
@@ -197,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               responseListTemplate.querySchedulesDto!.data![i]);
                         }
                       }
+                      // Provider.of<AnswerController>(context);
 
                       return TabBarView(
                           controller: tabController,
@@ -280,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     var result = await client.query(query);
     print(result);
-    setState(() {});
 
     if (mounted) setState(() {});
   }

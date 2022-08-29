@@ -49,7 +49,7 @@ class SurveyScreen extends StatefulWidget {
 
 class _SurveyScreenState extends State<SurveyScreen> {
   final ScrollController scrollController = ScrollController();
-
+  final _formKey = GlobalKey<FormState>();
   final List<GlobalKey> listKey = [];
 
   final GlobalKey<UploadDialogState> DialogState =
@@ -187,210 +187,220 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     )
                 ],
               ),
-              body: Stack(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height,
-                    child: widget.questions != null &&
-                            widget.questions.length > 0
-                        ? SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            controller: scrollController,
-                            child: Padding(
-                                padding: EdgeInsets.only(bottom: padding * 4),
-                                child: Column(
-                                  children: List.generate(
-                                      widget.questions.length, (index) {
-                                    listKey.add(GlobalKey());
-                                    var question = widget.questions[index];
-                                    var questionResult = widget
-                                                .questionResults.answers !=
-                                            null
-                                        ? widget.questionResults.answers!
-                                                    .length >
-                                                0
-                                            ? widget.questionResults.answers
-                                                ?.firstWhere((element) =>
-                                                    element
-                                                        .questionTemplateId ==
-                                                    question.questID)
-                                            : null
-                                        : null;
-                                    int questionIndex =
-                                        widget.questions.length > 0
-                                            ? widget.questions.indexWhere(
-                                                (element) =>
-                                                    element.questID ==
-                                                    question.questID)
-                                            : -1;
-                                    return ItemSurvey(
-                                      key: listKey[index],
-                                      question: question,
-                                      isCompleted: widget.isCompleted,
-                                      questID: question.questID ?? "",
-                                      // questionResultScheduleIdDto:
-                                      //     questionResultScheduleIdDto,
-                                      questionResult: questionResult,
-                                      questionIndex: questionIndex,
-                                    );
-                                  }),
-                                )),
-                          )
-                        : Center(
-                            child: Text("Không có câu hỏi nào"),
-                          ),
-                  ),
-                  if (showBtn &&
-                      widget.questions != null &&
-                      widget.questions.length > 0 &&
-                      !widget.isCompleted)
-                    Mutation(
-                      options: MutationOptions(
-                          document: gql(mutationData),
-                          onCompleted: (data) async {
-                            await showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: Text("Thông báo"),
-                                content: Text(
-                                    data!["scheduleresult_save_schedule_result"]
-                                                ["code"] ==
-                                            0
-                                        ? "Thành công"
-                                        : "Thất bại"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        if (data["scheduleresult_save_schedule_result"]
-                                                ["code"] !=
-                                            0) {
-                                          Navigator.pop(context);
-                                        } else {
-                                          Navigator.pop(context, true);
-                                        }
-                                      },
-                                      child: Text("OK"))
-                                ],
-                              ),
-                            ).then((value) {
-                              if (value != null) {
-                                if (value == true) {
-                                  // var json = jsonEncode(
-                                  //     ans.map((e) => e.toJson()).toList());
+              body: Form(
+                key: _formKey,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height,
+                      child: widget.questions.length > 0
+                          ? SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              controller: scrollController,
+                              child: Padding(
+                                  padding: EdgeInsets.only(bottom: padding * 4),
+                                  child: Column(
+                                    children: List.generate(
+                                        widget.questions.length, (index) {
+                                      listKey.add(GlobalKey());
+                                      var question = widget.questions[index];
+                                      var questionResult = widget
+                                                  .questionResults.answers !=
+                                              null
+                                          ? widget.questionResults.answers!
+                                                      .length >
+                                                  0
+                                              ? widget.questionResults.answers
+                                                  ?.firstWhere((element) =>
+                                                      element
+                                                          .questionTemplateId ==
+                                                      question.questID)
+                                              : null
+                                          : null;
+                                      int questionIndex =
+                                          widget.questions.length > 0
+                                              ? widget.questions.indexWhere(
+                                                  (element) =>
+                                                      element.questID ==
+                                                      question.questID)
+                                              : -1;
+                                      return ItemSurvey(
+                                        formKey: _formKey,
+                                        key: listKey[index],
+                                        question: question,
+                                        isCompleted: widget.isCompleted,
+                                        questID: question.questID ?? "",
+                                        // questionResultScheduleIdDto:
+                                        //     questionResultScheduleIdDto,
+                                        questionResult: questionResult,
+                                        questionIndex: questionIndex,
+                                      );
+                                    }),
+                                  )),
+                            )
+                          : Center(
+                              child: Text("Không có câu hỏi nào"),
+                            ),
+                    ),
+                    if (showBtn &&
+                        widget.questions.length > 0 &&
+                        !widget.isCompleted)
+                      Mutation(
+                        options: MutationOptions(
+                            document: gql(mutationData),
+                            onCompleted: (data) async {
+                              await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text("Thông báo"),
+                                  content: Text(
+                                      data!["scheduleresult_save_schedule_result"]
+                                                  ["code"] ==
+                                              0
+                                          ? "Thành công"
+                                          : "Thất bại"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          if (data["scheduleresult_save_schedule_result"]
+                                                  ["code"] !=
+                                              0) {
+                                            Navigator.pop(context);
+                                          } else {
+                                            Navigator.pop(context, true);
+                                          }
+                                        },
+                                        child: Text("OK"))
+                                  ],
+                                ),
+                              ).then((value) {
+                                if (value != null) {
+                                  if (value == true) {
+                                    // var json = jsonEncode(
+                                    //     ans.map((e) => e.toJson()).toList());
 
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => GraphQLProvider(
-                                          client: client,
-                                          child: Query(
-                                            options: QueryOptions(
-                                              document: gql(queryTemplate),
-                                            ),
-                                            builder: (result,
-                                                {fetchMore, refetch}) {
-                                              if (result.isLoading) {
-                                                return Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                              } else {
-                                                ResponseListTemplate
-                                                    responseListTemplate =
-                                                    ResponseListTemplate.from(
-                                                        result.data!);
-                                                if (result.data![
-                                                            'scheduleresult_get_questions_and_answers_by_schedule']
-                                                        ['code'] !=
-                                                    0) {
-                                                  // setState() {
-                                                  //   ScaffoldMessenger.of(
-                                                  //           context)
-                                                  //       .showSnackBar(SnackBar(
-                                                  //     content: const Text(
-                                                  //         'Không gửi được kết quả'),
-                                                  //     duration: const Duration(
-                                                  //         seconds: 1),
-                                                  //     action: SnackBarAction(
-                                                  //       label: 'Lỗi',
-                                                  //       onPressed: () {},
-                                                  //     ),
-                                                  //   ));
-                                                  // }
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (_) =>
-                                                              HomeScreen()));
-                                                  // Navigator.pop(context, true);
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => GraphQLProvider(
+                                            client: client,
+                                            child: Query(
+                                              options: QueryOptions(
+                                                document: gql(queryTemplate),
+                                              ),
+                                              builder: (result,
+                                                  {fetchMore, refetch}) {
+                                                if (result.isLoading) {
                                                   return Center(
-                                                      child: Text(''));
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                } else {
+                                                  ResponseListTemplate
+                                                      responseListTemplate =
+                                                      ResponseListTemplate.from(
+                                                          result.data!);
+                                                  if (result.data![
+                                                              'scheduleresult_get_questions_and_answers_by_schedule']
+                                                          ['code'] !=
+                                                      0) {
+                                                    // setState() {
+                                                    //   ScaffoldMessenger.of(
+                                                    //           context)
+                                                    //       .showSnackBar(SnackBar(
+                                                    //     content: const Text(
+                                                    //         'Không gửi được kết quả'),
+                                                    //     duration: const Duration(
+                                                    //         seconds: 1),
+                                                    //     action: SnackBarAction(
+                                                    //       label: 'Lỗi',
+                                                    //       onPressed: () {},
+                                                    //     ),
+                                                    //   ));
+                                                    // }
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                HomeScreen()));
+                                                    // Navigator.pop(context, true);
+                                                    return Center(
+                                                        child: Text(''));
+                                                  }
+                                                  var questionResult =
+                                                      responseListTemplate
+                                                          .querySchedulesDto!
+                                                          .data![0]
+                                                          .questionResultScheduleIdDto;
+                                                  print(questionResult);
+                                                  return HomeScreen();
+                                                  // SurveyScreen(
+                                                  //     questions: widget.questions,
+                                                  //     campaignId:
+                                                  //         widget.campaignId,
+                                                  //     scheduleId:
+                                                  //         widget.scheduleId,
+                                                  //     questionResults:
+                                                  //         widget.questionResults,
+                                                  //     isCompleted: true,
+                                                  //     questionResultScheduleIdDto:
+                                                  //         responseListTemplate
+                                                  //                     .querySchedulesDto!
+                                                  //                     .data![0]
+                                                  //                     .questionResultScheduleIdDto !=
+                                                  //                 null
+                                                  //             ? questionResult ??
+                                                  //                 []
+                                                  //             : []);
                                                 }
-                                                var questionResult =
-                                                    responseListTemplate
-                                                        .querySchedulesDto!
-                                                        .data![0]
-                                                        .questionResultScheduleIdDto;
-                                                print(questionResult);
-                                                return HomeScreen();
-                                                // SurveyScreen(
-                                                //     questions: widget.questions,
-                                                //     campaignId:
-                                                //         widget.campaignId,
-                                                //     scheduleId:
-                                                //         widget.scheduleId,
-                                                //     questionResults:
-                                                //         widget.questionResults,
-                                                //     isCompleted: true,
-                                                //     questionResultScheduleIdDto:
-                                                //         responseListTemplate
-                                                //                     .querySchedulesDto!
-                                                //                     .data![0]
-                                                //                     .questionResultScheduleIdDto !=
-                                                //                 null
-                                                //             ? questionResult ??
-                                                //                 []
-                                                //             : []);
-                                              }
-                                            },
+                                              },
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      (route) => route.isFirst);
+                                        (route) => route.isFirst);
+                                  }
                                 }
-                              }
-                            });
-                          }),
-                      builder: (runMutation, result) {
-                        return Positioned(
-                          bottom: padding,
-                          left: MediaQuery.of(context).size.width / 4,
-                          right: MediaQuery.of(context).size.width / 4,
-                          child: AuthButton(
-                            disabled: disabled,
-                            onPress: () {
-                              setState(() {
-                                disabled = true;
                               });
-                              bool valid = Provider.of<AnswerController>(
-                                      context,
-                                      listen: false)
-                                  .valid();
-                              if (valid) {
-                                var ans =
-                                    context.read<AnswerController>().listResult;
-                                var a = [];
-                                ans.forEach((v) {
-                                  a.add(v.toJson());
+                            }),
+                        builder: (runMutation, result) {
+                          return Positioned(
+                            bottom: padding,
+                            left: MediaQuery.of(context).size.width / 4,
+                            right: MediaQuery.of(context).size.width / 4,
+                            child: AuthButton(
+                              disabled: disabled,
+                              onPress: () {
+                                setState(() {
+                                  disabled = true;
                                 });
-                                print(a);
-
-                                // var json = jsonEncode(
-                                //     ans.map((e) => e.toJson()).toList());
-
-                                // return;
+                                var listResult =
+                                    context.read<AnswerController>().listResult;
+                                var data = [];
+                                listResult.forEach((v) {
+                                  data.add(v.toJson());
+                                });
                                 try {
-                                  runMutation({"data": a});
+                                  validation(context, widget.questions);
+                                  if (_formKey.currentState!.validate() &&
+                                      validationForm(context)) {
+                                    runMutation({"data": data});
+                                  } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (ctxt) => new AlertDialog(
+                                              title: Text("Thông báo"),
+                                              content: Text(
+                                                  "Dữ liệu khảo sát không hợp lệ"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context, true);
+                                                    },
+                                                    child: Text("Đóng")),
+                                              ],
+                                            ));
+                                  }
                                 } catch (e) {
                                   showDialog(
                                       context: context,
@@ -408,16 +418,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                             ],
                                           ));
                                 }
-                              } else {
-                                scrollToRequired(context);
-                              }
-                            },
-                            title: S.current.send,
-                          ),
-                        );
-                      },
-                    )
-                ],
+                              },
+                              title: S.current.send,
+                            ),
+                          );
+                        },
+                      )
+                  ],
+                ),
               ),
             ),
             if (context.watch<ChooseFileController>().isSelectedFile &&
@@ -455,28 +463,66 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
   }
 
+  void validation(BuildContext context, List<Questions> questions) {
+    var listResult = context.read<AnswerController>().listResult;
+    setState(() {
+      for (var question in questions) {
+        if (!question.required) {
+          question.valid = true;
+        }
+        switch (question.type) {
+          case "ONECHOOSE":
+            if (listResult
+                    .where((element) =>
+                        element.questionTemplateId == question.questID &&
+                        element.answer != "")
+                    .length <=
+                0) {
+              question.valid = false;
+              break;
+            } else {
+              question.valid = true;
+              break;
+            }
+
+          case "MULTIPLECHOOSE":
+            if (listResult
+                    .where((element) =>
+                        element.questionTemplateId == question.questID &&
+                        element.answer != "")
+                    .length <=
+                0) {
+              question.valid = false;
+              break;
+            } else {
+              question.valid = true;
+              break;
+            }
+          default:
+            question.valid = true;
+        }
+      }
+    });
+  }
+
+  bool validationForm(BuildContext context) {
+    var listResult = context.read<AnswerController>().listResult;
+    var valid = true;
+    for (var e in widget.questions) {
+      var result = listResult
+          .firstWhere((element) => element.question?.questID == e.questID);
+      if ((result.answer == null || result.answer == "") && e.required)
+        valid = false;
+      break;
+    }
+    return valid;
+  }
+
   onUpload(BuildContext context, List<ModelFile> listModelFile,
       Function uploadGoogle, Function stopUpload) {
     for (int i = 0; i < listModelFile.length; i++) {
       Provider.of<FileUploadController>(context, listen: false).uploadFile(
           context, listModelFile[i].file!, uploadGoogle, stopUpload);
     }
-  }
-
-  scrollToRequired(BuildContext context) {
-    int index = 0;
-    for (var i = 0;
-        i < context.read<AnswerController>().answer!.data!.length;
-        i++) {
-      if (context.read<AnswerController>().answer!.data![i].values!.isEmpty) {
-        index = i;
-        break;
-      }
-    }
-    RenderBox box =
-        listKey[index].currentContext!.findRenderObject() as RenderBox;
-    double offset = box.localToGlobal(Offset.zero).dy;
-    scrollController.animateTo(offset,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
   }
 }

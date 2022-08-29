@@ -38,3 +38,11 @@ List<ModelFile> filterList2(
   }
   return list;
 }
+
+bool isNumeric(String? s) {
+  if (s == null) {
+    return false;
+  }
+  var result = double.tryParse(s);
+  return double.tryParse(s) != null;
+}

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/slider_score_controller.dart';
+import '../../../utils/extentions/ex.dart';
 import 'gdrive_link.dart';
 import 'list_pinned_file.dart';
 import 'package:survey/models/response_list_campaign.dart';
@@ -20,7 +21,9 @@ class ItemSurvey extends StatefulWidget {
     required this.questionIndex,
     this.questionResult,
     this.isCompleted = false,
+    this.formKey,
   }) : super(key: key);
+  final GlobalKey<FormState>? formKey;
   final Questions question;
   final String questID;
   final bool isCompleted;
@@ -81,53 +84,83 @@ class ItemSurveyState extends State<ItemSurvey> {
               SizedBox(
                 height: padding / 2,
               ),
-              if (!widget.isCompleted)
-                if (valiation(context))
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                    child: Text(
-                      "* Đây là trường bắt buộc",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: padding * 1.5, vertical: 5),
-                child: Text(
-                  widget.question.hint ?? "",
-                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
-                ),
-              ),
+              // if (!widget.isCompleted)
+              //   if (valiation(context))
+              //     Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+              //       child: Text(
+              //         "* Đây là trường bắt buộc",
+              //         style: TextStyle(color: Colors.red),
+              //       ),
+              //     ),
+              // Padding(
+              //   padding: EdgeInsets.symmetric(
+              //       horizontal: padding * 1.5, vertical: 5),
+              //   child: Text(
+              //     widget.question.hint ?? "",
+              //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+              //   ),
+              // ),
               if (widget.question.type == "TEXT")
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                  child: TextField(
+                  child: TextFormField(
                     controller: textAnswerController,
                     readOnly: widget.isCompleted,
                     decoration: InputDecoration(labelText: "Trả lời"),
+                    validator: (value) {
+                      if (widget.question.required && value == null ||
+                          value == "") {
+                        return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
+                      }
+                      if (value?.trim() == "") {
+                        return 'Không được nhập khoảng trắng là câu trả lời';
+                      }
+                      return null;
+                    },
                     onChanged: (v) {
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: v,
-                              questID: widget.questID,
-                              type: widget.question.type!);
+                      if (widget.formKey!.currentState!.validate()) {
+                        Provider.of<AnswerController>(context, listen: false)
+                            .updateLableAnswer(
+                                lable: v,
+                                questID: widget.questID,
+                                type: widget.question.type!);
+                      }
                     },
                   ),
                 ),
               if (widget.question.type == "NUMBER")
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                  child: TextField(
+                  child: TextFormField(
                     controller: textAnswerController,
                     readOnly: widget.isCompleted,
                     keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (widget.question.required) {
+                        if (value == null || value == "") {
+                          return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
+                        }
+                        if (!isNumeric(value)) {
+                          return '$value không đúng định dạng số';
+                        }
+                      } else {
+                        if (!isNumeric(value) && value != "") {
+                          return '$value không đúng định dạng số';
+                        }
+                      }
+
+                      return null;
+                    },
                     decoration: InputDecoration(labelText: "Trả lời"),
                     onChanged: (v) {
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: v,
-                              questID: widget.questID,
-                              type: widget.question.type!);
+                      if (widget.formKey!.currentState!.validate()) {
+                        Provider.of<AnswerController>(context, listen: false)
+                            .updateLableAnswer(
+                                lable: v,
+                                questID: widget.questID,
+                                type: widget.question.type!);
+                      }
                     },
                   ),
                 ),
@@ -141,6 +174,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                                 : ""
                             : "")
                     : SinglechoiseAnswer(
+                        questions: widget.question,
+                        validation: validation,
                         polls: widget.question.poll!,
                         questID: widget.questID,
                         values: widget.questionResult != null
@@ -159,6 +194,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                                 : []
                             : [])
                     : MultichoiseAnswer(
+                        question: widget.question,
+                        validation: validation,
                         polls: widget.question.poll!,
                         questID: widget.questID,
                         values: widget.questionResult != null
@@ -252,59 +289,46 @@ class ItemSurveyState extends State<ItemSurvey> {
     );
   }
 
-  bool valiation(BuildContext context) {
-    // return true;
-    try {
-      print(context.watch<AnswerController>());
+  bool validation(BuildContext context) {
+    var listResult = context.read<AnswerController>().listResult;
 
-      if (context.watch<AnswerController>().validation) {
-        switch (widget.question.type) {
-          case "TEXT":
-            if (textAnswerController.text.isEmpty) {
-              return true;
-            } else {
-              return false;
-            }
-          case "SINGLECHOICE":
-            if ((context
-                        .watch<AnswerController>()
-                        .answer!
-                        .data
-                        ?.firstWhere((element) =>
-                            element.question?.questID == widget.questID)
-                        .values
-                        ?.length ??
-                    0) >
-                0) {
-              return false;
-            } else {
-              return true;
-            }
-
-          case "MULTIPLECHOICE":
-            if ((context
-                        .watch<AnswerController>()
-                        .answer!
-                        .data
-                        ?.firstWhere((element) =>
-                            element.question?.questID == widget.questID)
-                        .values
-                        ?.length ??
-                    0) >
-                0) {
-              return false;
-            } else {
-              return true;
-            }
-          default:
-            return false;
-        }
-      } else {
-        return false;
+    setState(() {
+      if (!widget.question.required) {
+        widget.question.valid = true;
       }
-    } catch (error) {
-      return false;
-    }
+      switch (widget.question.type) {
+        case "ONECHOOSE":
+          if (listResult
+                  .where((element) =>
+                      element.questionTemplateId == widget.questID &&
+                      element.answer != "")
+                  .length <=
+              0) {
+            widget.question.valid = false;
+            break;
+          } else {
+            widget.question.valid = true;
+            break;
+          }
+
+        case "MULTIPLECHOOSE":
+          if (listResult
+                  .where((element) =>
+                      element.questionTemplateId == widget.questID &&
+                      element.answer != "")
+                  .length <=
+              0) {
+            widget.question.valid = false;
+            break;
+          } else {
+            widget.question.valid = true;
+            break;
+          }
+        default:
+          widget.question.valid = true;
+      }
+    });
+    return widget.question.valid;
   }
 }
 

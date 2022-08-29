@@ -177,10 +177,28 @@ class _TemplateTabViewState extends State<TemplateTabView> {
         ),
       );
     } else {
-      return Center(
-        child: widget.isCompleted
-            ? Text("Chưa hoàn thành chiến dịch nào")
-            : Text("Chưa có chiến dịch mới nào"),
+      return SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: false,
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 1000));
+
+          widget.onRefresh();
+          _refreshController.refreshCompleted();
+        },
+        onLoading: () {
+          widget.onLoading();
+          _refreshController.loadComplete();
+        },
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
+        child: Center(
+          child: widget.isCompleted
+              ? Text("Chưa hoàn thành chiến dịch nào")
+              : Text("Chưa có chiến dịch mới nào"),
+        ),
       );
     }
   }

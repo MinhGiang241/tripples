@@ -161,27 +161,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       //     .watch<ResponseListTemplate>()
                       //     .fromJson(result.data);
                       print(responseListTemplate);
-                      for (int i = 0;
-                          i <
-                              responseListTemplate
-                                  .querySchedulesDto!.data!.length;
-                          i++) {
-                        if (responseListTemplate.querySchedulesDto!.data![i]
-                                    .questionResult !=
-                                null &&
-                            responseListTemplate.querySchedulesDto!.data![i]
-                                    .questionResult?.answers !=
-                                null &&
-                            responseListTemplate.querySchedulesDto!.data![i]
-                                    .questionResult?.answers!.length !=
-                                0) {
-                          listCompleted.add(
-                              responseListTemplate.querySchedulesDto!.data![i]);
-                        } else {
-                          listInprogress.add(
-                              responseListTemplate.querySchedulesDto!.data![i]);
+                      if (responseListTemplate.querySchedulesDto!.data !=
+                          null) {
+                        for (int i = 0;
+                            i <
+                                responseListTemplate
+                                    .querySchedulesDto!.data!.length;
+                            i++) {
+                          if (responseListTemplate.querySchedulesDto!.data![i]
+                                      .questionResult !=
+                                  null &&
+                              responseListTemplate.querySchedulesDto!.data![i]
+                                      .questionResult?.answers !=
+                                  null &&
+                              responseListTemplate.querySchedulesDto!.data![i]
+                                      .questionResult?.answers!.length !=
+                                  0) {
+                            listCompleted.add(responseListTemplate
+                                .querySchedulesDto!.data![i]);
+                          } else {
+                            listInprogress.add(responseListTemplate
+                                .querySchedulesDto!.data![i]);
+                          }
                         }
-                      }
+                      } else {}
                       // Provider.of<AnswerController>(context);
 
                       return TabBarView(

@@ -6,6 +6,8 @@ import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/multichoise_controller.dart';
 import 'package:survey/screens/survey/controllers/single_choise_controller.dart';
 
+import '../../../constants.dart';
+
 enum AnswerType { text, singleChoise, multiChoise }
 
 class MultichoiseAnswer extends StatelessWidget {
@@ -14,10 +16,14 @@ class MultichoiseAnswer extends StatelessWidget {
     required this.polls,
     required this.questID,
     required this.values,
+    required this.validation,
+    required this.question,
   }) : super(key: key);
   final List<Poll> polls;
   final String questID;
   final String values;
+  final Function validation;
+  final Questions question;
 
   @override
   Widget build(BuildContext context) {
@@ -33,34 +39,51 @@ class MultichoiseAnswer extends StatelessWidget {
     return ChangeNotifierProvider<MultichoiseController>(
       create: (context) => MultichoiseController(polls, values),
       builder: (context, child) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-              context.read<MultichoiseController>().listData.length,
-              (index) => CheckboxListTile(
-                    activeColor: Theme.of(context).primaryColor,
-                    value: context
-                        .watch<MultichoiseController>()
-                        .listData[index]
-                        .isSelected,
-                    onChanged: (val) {
-                      Provider.of<MultichoiseController>(context, listen: false)
-                          .onChange(index, val!);
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: context
-                                  .read<MultichoiseController>()
-                                  .listData[index]
-                                  .label!,
-                              questID: questID,
-                              type: "MULTIPLECHOICE");
-                    },
-                    title: Text(context
+        children: [
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(
+                  context.read<MultichoiseController>().listData.length,
+                  (index) => CheckboxListTile(
+                        activeColor: Theme.of(context).primaryColor,
+                        value: context
                             .watch<MultichoiseController>()
                             .listData[index]
-                            .label ??
-                        ""),
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ))),
+                            .isSelected,
+                        onChanged: (val) {
+                          Provider.of<MultichoiseController>(context,
+                                  listen: false)
+                              .onChange(index, val!);
+                          Provider.of<AnswerController>(context, listen: false)
+                              .updateLableAnswer(
+                                  lable: context
+                                      .read<MultichoiseController>()
+                                      .listData[index]
+                                      .label!,
+                                  questID: questID,
+                                  type: "MULTIPLECHOICE");
+                          validation(context);
+                        },
+                        title: Text(context
+                                .watch<MultichoiseController>()
+                                .listData[index]
+                                .label ??
+                            ""),
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ))),
+          !question.valid
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                  child: Text(
+                    "Đây là câu hỏi bắt buộc vui lòng chọn đáp án",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(),
+                )
+        ],
+      ),
     );
   }
 }
@@ -95,64 +118,58 @@ class SinglechoiseAnswer extends StatelessWidget {
     required this.polls,
     required this.questID,
     required this.values,
+    required this.validation,
+    required this.questions,
   }) : super(key: key);
   final List<Poll> polls;
   final String questID;
   final String values;
+  final Function validation;
+  final Questions questions;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SingleChoiseController>(
       create: (_) =>
           SingleChoiseController(polls, values.length > 0 ? values : null),
-      builder: (context, child) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-              context.watch<SingleChoiseController>().listData.length,
-              (index) => RadioListTile<Poll>(
-                    activeColor: Theme.of(context).primaryColor,
-                    groupValue: context.watch<SingleChoiseController>().data,
-                    value:
-                        context.watch<SingleChoiseController>().listData[index],
-                    onChanged: (val) {
-                      Provider.of<SingleChoiseController>(context,
-                              listen: false)
-                          .onChange(val!);
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: val.label!,
-                              questID: questID,
-                              type: "SINGLECHOICE");
-                    },
-                    title:
-                        // context
-                        //             .watch<SingleChoiseController>()
-                        //             .listData[index]
-                        //             .label ==
-                        //         "Khác"
-                        //     ? TextField(
-                        //         focusNode: context
-                        //             .watch<SingleChoiseController>()
-                        //             .otherNode,
-                        //         onChanged: (v) {
-                        //           Provider.of<SingleChoiseController>(context,
-                        //                   listen: false)
-                        //               .changeLableAnother(v);
-                        //           Provider.of<AnswerController>(context,
-                        //                   listen: false)
-                        //               .updateLableAnswer(
-                        //                   lable: v,
-                        //                   questID: questID,
-                        //                   type: "SINGLECHOICE");
-                        //         },
-                        //         decoration: InputDecoration(hintText: "Khác"),
-                        //       ):
-                        Text(context
-                                .watch<SingleChoiseController>()
-                                .listData[index]
-                                .label ??
-                            ""),
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ))),
+      builder: (context, child) => Column(children: [
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+                context.watch<SingleChoiseController>().listData.length,
+                (index) => RadioListTile<Poll>(
+                      activeColor: Theme.of(context).primaryColor,
+                      groupValue: context.watch<SingleChoiseController>().data,
+                      value: context
+                          .watch<SingleChoiseController>()
+                          .listData[index],
+                      onChanged: (val) {
+                        Provider.of<SingleChoiseController>(context,
+                                listen: false)
+                            .onChange(val!);
+                        Provider.of<AnswerController>(context, listen: false)
+                            .updateLableAnswer(
+                                lable: val.label!,
+                                questID: questID,
+                                type: "SINGLECHOICE");
+                        validation(context);
+                      },
+                      title: Text(context
+                              .watch<SingleChoiseController>()
+                              .listData[index]
+                              .label ??
+                          ""),
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ))),
+        !questions.valid
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                child: Text(
+                  "Đây là câu hỏi bắt buộc vui lòng chọn đáp án",
+                  style: TextStyle(color: Colors.red),
+                ),
+              )
+            : Padding(padding: EdgeInsets.symmetric())
+      ]),
     );
   }
 }

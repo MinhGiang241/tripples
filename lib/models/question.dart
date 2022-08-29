@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Questions extends ChangeNotifier {
+  bool valid = true;
   String? questID;
   String? hint;
   String? title;
@@ -10,7 +11,12 @@ class Questions extends ChangeNotifier {
   bool required = false;
   List<Poll>? poll;
 
-  Questions({this.questID, this.title, this.type, this.poll});
+  Questions({
+    this.questID,
+    this.title,
+    this.type,
+    this.poll,
+  });
 
   Questions.fromJson(json, max, isRequired) {
     questID = json['_id'];

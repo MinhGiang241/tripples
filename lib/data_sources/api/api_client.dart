@@ -82,6 +82,7 @@ class ApiClient {
       onFailUpload,
       setId}) async {
     // final url = 'http://api.triples.hoasao.demego.vn/headless/stream/upload';
+
     final url =
         "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart";
 

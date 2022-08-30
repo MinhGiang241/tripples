@@ -254,7 +254,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                             .showSelectedFile(
                                 widget.questionIndex, widget.questID);
                       },
-                      child: Text(S.current.choose_file)),
+                      child: Text("Chọn file" //S.current.choose_file
+                          )),
                 ),
               // widget.isCompleted
               //     ? widget.questionResult != null

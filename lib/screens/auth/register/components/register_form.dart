@@ -181,6 +181,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   onCompleted: (dynamic resultData) async {
                     Provider.of<AuthController>(context, listen: false)
                         .unloading();
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(resultData.containsKey("response")
                             ? resultData["response"]["message"]

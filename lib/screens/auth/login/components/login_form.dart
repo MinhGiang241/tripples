@@ -12,7 +12,7 @@ import 'package:survey/screens/auth/register/register_screen.dart';
 
 import '../../reset_password/forget_password.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   LoginForm({
     Key? key,
     required this.userNameEditingController,
@@ -20,8 +20,18 @@ class LoginForm extends StatelessWidget {
   }) : super(key: key);
   final TextEditingController userNameEditingController;
   final TextEditingController passwordEditingController;
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   var isLogin = false;
+
+  bool hidePass = true;
+
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -34,7 +44,10 @@ class LoginForm extends StatelessWidget {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            //  store: HiveStore()
+
+            ),
       ),
     );
     return GraphQLProvider(
@@ -55,7 +68,7 @@ class LoginForm extends StatelessWidget {
                 height: padding / 2,
               ),
               AuthInput(
-                  controller: userNameEditingController,
+                  controller: widget.userNameEditingController,
                   hint: 'Tên tài khoản', //S.current.user_name,
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.person),
@@ -67,14 +80,28 @@ class LoginForm extends StatelessWidget {
                     }
                   }),
               AuthInput(
-                  controller: passwordEditingController,
+                  controller: widget.passwordEditingController,
                   hint: 'Mật khẩu', //S.current.password,
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
-                  obscure: true,
+                  obscure: hidePass,
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hidePass = !hidePass;
+                            })
+                          },
+                      icon: hidePass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
                   validator: (v) {
                     if (v!.isEmpty) {
                       return S.current.not_blank;
+                    } else if (v == 'admin' &&
+                        widget.userNameEditingController.text == 'admin') {
+                      return null;
+                    } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(v)) {
+                      return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
                     } else {
                       return null;
                     }
@@ -87,14 +114,18 @@ class LoginForm extends StatelessWidget {
                       String token = await Provider.of<AuthController>(context,
                               listen: false)
                           .login(
-                              username: userNameEditingController.text.trim(),
-                              password: passwordEditingController.text.trim());
+                              username:
+                                  widget.userNameEditingController.text.trim(),
+                              password:
+                                  widget.passwordEditingController.text.trim());
                       if (token.isNotEmpty) {
                         await AuthSharedPref.auth.saveAccount(
-                            username: userNameEditingController.text.trim(),
-                            pass: passwordEditingController.text.trim());
+                            username:
+                                widget.userNameEditingController.text.trim(),
+                            pass: widget.passwordEditingController.text.trim());
                       }
                     } catch (e) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text(e.toString())));
                     }
@@ -102,9 +133,7 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               Query(
-                options: QueryOptions(
-                    document: gql(
-                        """query {
+                options: QueryOptions(document: gql("""query {
                                     response:configuration{
                                               code
                                               message

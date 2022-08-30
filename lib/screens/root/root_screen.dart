@@ -8,10 +8,13 @@ class RootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var status = context.watch<AuthController>().authStatus;
+    print(status);
     if (status == AuthStatus.unauthentication) {
       return LoginScreen(); //LoginScreen
     } else if (status == AuthStatus.authentication) {
       return HomeScreen();
+    } else if (status == AuthStatus.none) {
+      return LoginScreen();
     } else {
       return SplashScreen();
     }

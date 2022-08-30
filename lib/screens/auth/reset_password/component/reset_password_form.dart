@@ -41,7 +41,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   }
   }''';
   bool showValKey = false;
-
+  bool hideNewPass = true;
+  bool hideConfirmPass = true;
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -54,7 +55,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            // store: HiveStore()
+            ),
       ),
     );
 
@@ -88,8 +91,17 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   controller: widget.newPasswordEditingController,
                   hint: "Mật khẩu mới",
                   keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.abc),
-                  obscure: true,
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hideNewPass = !hideNewPass;
+                            })
+                          },
+                      icon: hideNewPass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
+                  obscure: hideNewPass,
                   tab: () {
                     setState(() {
                       showValKey = true;
@@ -109,6 +121,30 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     }
                     return null;
                   }),
+              AuthInput(
+                  controller: widget.confirmNewPasswordEditingController,
+                  hint: "Nhập lại mật khẩu mới",
+                  keyboardType: TextInputType.text,
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hideConfirmPass = !hideConfirmPass;
+                            })
+                          },
+                      icon: hideConfirmPass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
+                  obscure: hideConfirmPass,
+                  validator: (v) {
+                    if (v!.isEmpty) {
+                      return S.current.not_blank;
+                    } else if (v != widget.newPasswordEditingController.text) {
+                      return 'mật khẩu không khớp';
+                    } else {
+                      return null;
+                    }
+                  }),
               if (showValKey)
                 FlutterPwValidator(
                     controller: widget.newPasswordEditingController,
@@ -121,21 +157,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     onSuccess: () {
                       print("Matched");
                     }),
-              AuthInput(
-                  controller: widget.confirmNewPasswordEditingController,
-                  hint: "Nhập lại mật khẩu mới",
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.abc),
-                  obscure: true,
-                  validator: (v) {
-                    if (v!.isEmpty) {
-                      return S.current.not_blank;
-                    } else if (v != widget.newPasswordEditingController.text) {
-                      return 'mật khẩu không khớp';
-                    } else {
-                      return null;
-                    }
-                  }),
               Mutation(
                   options: MutationOptions(
                       document: gql(changePassword),
@@ -145,11 +166,13 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                         });
                         if (result["authorization_forgot_password"]['code'] ==
                             0) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text("Đã đổi mật khẩu thành công")));
                           Navigator.push(context,
                               MaterialPageRoute(builder: (_) => LoginScreen()));
                         } else {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
                                   Text("mã OTP không hợp lệ hoặc đã hết hạn")));

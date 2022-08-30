@@ -9,6 +9,7 @@ class AuthInput extends StatelessWidget {
     this.obscure = false,
     required this.keyboardType,
     required this.prefixIcon,
+    this.suffixIcon,
     this.validator,
     this.tab,
   }) : super(key: key);
@@ -17,6 +18,7 @@ class AuthInput extends StatelessWidget {
   final bool obscure;
   final TextInputType keyboardType;
   final Widget prefixIcon;
+  final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final Function? tab;
   @override
@@ -38,7 +40,8 @@ class AuthInput extends StatelessWidget {
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 0.5)),
-            prefixIcon: prefixIcon),
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon),
       ),
     );
   }

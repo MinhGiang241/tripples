@@ -12,6 +12,7 @@ import 'package:survey/models/question.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
 import 'package:survey/screens/home/home_screens.dart';
+import 'package:survey/screens/root/root_screen.dart';
 import 'package:survey/screens/survey/components/list_pinned_file.dart';
 import 'package:survey/screens/survey/components/select_file_dialog.dart';
 import 'package:survey/screens/survey/components/upload_dialog.dart';
@@ -87,7 +88,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            // store: HiveStore()
+            ),
       ),
     );
 
@@ -231,8 +234,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                         question: question,
                                         isCompleted: widget.isCompleted,
                                         questID: question.questID ?? "",
-                                        // questionResultScheduleIdDto:
-                                        //     questionResultScheduleIdDto,
                                         questionResult: questionResult,
                                         questionIndex: questionIndex,
                                       );
@@ -256,10 +257,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                   title: Text("Thông báo"),
                                   content: Text(
                                       data!["scheduleresult_save_schedule_result"]
-                                                  ["code"] ==
-                                              0
-                                          ? "Thành công"
-                                          : "Thất bại"),
+                                              ["data"]["message"]
+                                          .split('<')
+                                          .first),
                                   actions: [
                                     TextButton(
                                         onPressed: () {
@@ -277,9 +277,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               ).then((value) {
                                 if (value != null) {
                                   if (value == true) {
-                                    // var json = jsonEncode(
-                                    //     ans.map((e) => e.toJson()).toList());
-
                                     Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
@@ -305,26 +302,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                               'scheduleresult_get_questions_and_answers_by_schedule']
                                                           ['code'] !=
                                                       0) {
-                                                    // setState() {
-                                                    //   ScaffoldMessenger.of(
-                                                    //           context)
-                                                    //       .showSnackBar(SnackBar(
-                                                    //     content: const Text(
-                                                    //         'Không gửi được kết quả'),
-                                                    //     duration: const Duration(
-                                                    //         seconds: 1),
-                                                    //     action: SnackBarAction(
-                                                    //       label: 'Lỗi',
-                                                    //       onPressed: () {},
-                                                    //     ),
-                                                    //   ));
-                                                    // }
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                HomeScreen()));
-                                                    // Navigator.pop(context, true);
+                                                    // Navigator.push(
+                                                    //     context,
+                                                    //     MaterialPageRoute(
+                                                    //         builder: (_) =>
+                                                    //             HomeScreen()));
+
                                                     return Center(
                                                         child: Text(''));
                                                   }
@@ -334,25 +317,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                           .data![0]
                                                           .questionResultScheduleIdDto;
                                                   print(questionResult);
-                                                  return HomeScreen();
-                                                  // SurveyScreen(
-                                                  //     questions: widget.questions,
-                                                  //     campaignId:
-                                                  //         widget.campaignId,
-                                                  //     scheduleId:
-                                                  //         widget.scheduleId,
-                                                  //     questionResults:
-                                                  //         widget.questionResults,
-                                                  //     isCompleted: true,
-                                                  //     questionResultScheduleIdDto:
-                                                  //         responseListTemplate
-                                                  //                     .querySchedulesDto!
-                                                  //                     .data![0]
-                                                  //                     .questionResultScheduleIdDto !=
-                                                  //                 null
-                                                  //             ? questionResult ??
-                                                  //                 []
-                                                  //             : []);
+                                                  return RootScreen();
                                                 }
                                               },
                                             ),
@@ -456,7 +421,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     );
                     Provider.of<ChooseFileController>(context, listen: false)
                         .offUploadFile();
-
+                    print(Provider.of<AnswerController>(context, listen: false)
+                        .listResult);
                     return fileUpload;
                   };
                   onUpload(context, listModelFile, uploadGoogle, stopUpload);

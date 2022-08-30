@@ -8,6 +8,7 @@ import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'components/home_appbar.dart';
 import 'components/home_tabbar.dart';
+import 'components/month_year_picker.dart';
 import 'components/template_tab_view.dart';
 import 'package:provider/provider.dart';
 
@@ -87,13 +88,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
                       TextButton(
                           onPressed: () async {
-                            await context.read<AuthController>().logOut();
+                            await context
+                                .read<AuthController>()
+                                .logOut(context);
                           },
                           child: Text("Đăng nhập lại"))
                     ]);
-                // Center(
-                //   child: Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
-                // );
               }
               var isRoot =
                   meResult.data!['authorization_me']['data']['isRoot'] ?? false;
@@ -157,9 +157,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       listInprogress = [];
                       ResponseListTemplate? responseListTemplate =
                           ResponseListTemplate.from(result.data);
-                      // context
-                      //     .watch<ResponseListTemplate>()
-                      //     .fromJson(result.data);
+
                       print(responseListTemplate);
                       if (responseListTemplate.querySchedulesDto!.data !=
                           null) {
@@ -184,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 .querySchedulesDto!.data![i]);
                           }
                         }
-                      } else {}
+                      }
                       // Provider.of<AnswerController>(context);
 
                       return TabBarView(
@@ -223,45 +221,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
   }
-
-// void refresh = useMutation(
-//       MutationOptions(
-//         document: gql(query), // this is the mutation string you just created
-//         // you can update the cache based on results
-//         // update: (GraphQLDataProxy cache, QueryResult result)  {
-//         //   return cache;
-//         // },
-//         // or do something with the result.data on completion
-
-//         onCompleted: (dynamic resultData) {
-//           setState(() {
-//             ResponseListTemplate responseListTemplate =
-//                 ResponseListTemplate.from(resultData.data);
-
-//             for (int i = 0;
-//                 i < responseListTemplate.querySchedulesDto!.data!.length;
-//                 i++) {
-//               if (responseListTemplate
-//                           .querySchedulesDto!.data![i].questionResult !=
-//                       null &&
-//                   responseListTemplate.querySchedulesDto!.data![i]
-//                           .questionResult?.answers !=
-//                       null &&
-//                   responseListTemplate.querySchedulesDto!.data![i]
-//                           .questionResult?.answers!.length !=
-//                       0) {
-//                 listCompleted
-//                     .add(responseListTemplate.querySchedulesDto!.data![i]);
-//               } else {
-//                 listInprogress
-//                     .add(responseListTemplate.querySchedulesDto!.data![i]);
-//               }
-//             }
-//           });
-//         },
-
-//       ),
-//     )
 
   void _onRefresh(
       GraphQLClient client, Map<String, Object> filter, String mutation) async {

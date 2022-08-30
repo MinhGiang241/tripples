@@ -16,7 +16,6 @@ class ForgetPasswordForm extends StatefulWidget {
     required this.emailEditingController,
   }) : super(key: key);
   final TextEditingController emailEditingController;
-  var disabled = false;
 
   @override
   State<ForgetPasswordForm> createState() => _ForgetPasswordFormState();
@@ -25,6 +24,7 @@ class ForgetPasswordForm extends StatefulWidget {
 class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  var disabled = false;
   var sendOtp = '''
   mutation (\$mailTo: String) {
   authorization_generate_otp(mailTo: \$mailTo){
@@ -47,7 +47,9 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            // store: HiveStore()
+            ),
       ),
     );
 
@@ -86,14 +88,16 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                       onCompleted: (dynamic result) async {
                         print(result);
                         setState(() {
-                          widget.disabled = false;
+                          disabled = false;
                         });
                         if (result['authorization_generate_otp']['code'] != 0) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
                                   "Gửi mã OTP không thành công" //result['authorization_generate_otp']['message']
                                   )));
                         } else {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
                                   Text("Đã gửi mã OTP vào email của bạn")));
@@ -108,12 +112,12 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                   builder: ((runMutation, result) => Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: AuthButton(
-                        disabled: widget.disabled,
+                        disabled: disabled,
                         title: 'Gửi Mã OTP',
                         onPress: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() {
-                              widget.disabled = true;
+                              disabled = true;
                             });
                             runMutation(
                                 {'mailTo': widget.emailEditingController.text});

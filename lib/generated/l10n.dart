@@ -234,7 +234,7 @@ class S {
   String get customer {
     return Intl.message(
       'Khách hàng',
-      name: 'customer',
+      name: 'Khách hàng',
       desc: '',
       args: [],
     );
@@ -244,7 +244,7 @@ class S {
   String get branch {
     return Intl.message(
       'Chi nhánh',
-      name: 'branch',
+      name: 'Chi nhánh',
       desc: '',
       args: [],
     );
@@ -254,7 +254,7 @@ class S {
   String get address {
     return Intl.message(
       'Địa chỉ',
-      name: 'address',
+      name: 'Địa chỉ',
       desc: '',
       args: [],
     );
@@ -274,7 +274,7 @@ class S {
   String get begin {
     return Intl.message(
       'Bắt đầu',
-      name: 'begin',
+      name: 'Bắt đầu',
       desc: '',
       args: [],
     );
@@ -284,7 +284,7 @@ class S {
   String get end {
     return Intl.message(
       'Kết thúc',
-      name: 'end',
+      name: 'Kết thúc',
       desc: '',
       args: [],
     );
@@ -294,7 +294,7 @@ class S {
   String get select_file {
     return Intl.message(
       'Chọn file',
-      name: 'select_file',
+      name: 'Chọn file',
       desc: '',
       args: [],
     );
@@ -314,7 +314,7 @@ class S {
   String get image_video {
     return Intl.message(
       'Hình ảnh/Video',
-      name: 'image_video',
+      name: 'Hình ảnh/Video',
       desc: '',
       args: [],
     );
@@ -334,7 +334,7 @@ class S {
   String get choose_file {
     return Intl.message(
       'Chọn file',
-      name: 'choose_file',
+      name: 'Chọn file',
       desc: '',
       args: [],
     );
@@ -344,7 +344,7 @@ class S {
   String get send {
     return Intl.message(
       'Gửi',
-      name: 'send',
+      name: 'Gửi',
       desc: '',
       args: [],
     );
@@ -354,7 +354,7 @@ class S {
   String get user_name {
     return Intl.message(
       'Tên tài khoản',
-      name: 'user_name',
+      name: 'Tên tài khoản',
       desc: '',
       args: [],
     );
@@ -364,7 +364,7 @@ class S {
   String get result {
     return Intl.message(
       'Kết quả',
-      name: 'result',
+      name: 'Kết quả',
       desc: '',
       args: [],
     );
@@ -374,7 +374,7 @@ class S {
   String get survey {
     return Intl.message(
       'Khảo sát',
-      name: 'survey',
+      name: 'Khảo sát',
       desc: '',
       args: [],
     );
@@ -383,8 +383,8 @@ class S {
   /// `Can not be empty!`
   String get not_blank {
     return Intl.message(
-      'Không để trống trường này',
-      name: 'not_blank',
+      'Không để trống trường này.',
+      name: 'Không để trống trường này.',
       desc: '',
       args: [],
     );
@@ -394,7 +394,7 @@ class S {
   String get not_same {
     return Intl.message(
       'Mật khẩu không trùng khớp.',
-      name: 'not_same',
+      name: 'Mật khẩu không trùng khớp.',
       desc: '',
       args: [],
     );
@@ -404,7 +404,7 @@ class S {
   String get phone {
     return Intl.message(
       'Số điện thoại',
-      name: 'phone',
+      name: 'Số điện thoại',
       desc: '',
       args: [],
     );

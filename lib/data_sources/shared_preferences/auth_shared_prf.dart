@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey/models/account.dart';
+
+import '../../screens/auth/login/login_screen.dart';
 
 class AuthSharedPref {
   static final AuthSharedPref auth = AuthSharedPref();
@@ -22,6 +25,8 @@ class AuthSharedPref {
 
   Future<bool> clearAccount() async {
     final preference = await SharedPreferences.getInstance();
+    // Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+
     return preference.remove(saveAccountKey);
   }
 }

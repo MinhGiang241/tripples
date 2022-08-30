@@ -3,6 +3,7 @@ import 'package:survey/data_sources/api/api_auth.dart';
 import 'package:survey/data_sources/shared_preferences/auth_shared_prf.dart';
 import 'package:survey/models/account.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:survey/screens/auth/login/login_screen.dart';
 
 enum AuthStatus { none, authentication, unauthentication }
 
@@ -32,8 +33,17 @@ class AuthController extends ChangeNotifier {
       }
     } catch (e) {
       unloading();
+      print(e.toString().split(":").last);
       Fluttertoast.showToast(
-          msg: e.toString().split(":").last,
+          msg: e.toString().split(",").last == "errno = 7)"
+              ? "Kiểm tra kết nối mạng"
+              : e.toString().split(":").last == " Incorrect password." ||
+                      e.toString().split(":").last == ' User does not exist..'
+                  ? 'Sai tài khoản hoặc mật khẩu'
+                  : e
+                      .toString()
+                      .split(":")
+                      .last, //e.toString().split(":").last,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -44,16 +54,13 @@ class AuthController extends ChangeNotifier {
     return _token ?? "";
   }
 
-  Future logOut() async {
+  Future logOut(context) async {
     loading();
     await AuthSharedPref.auth.clearAccount().then((value) async {
-      unloading();
+      await unloading();
       authStatus = AuthStatus.none;
       notifyListeners();
-      await Future.delayed(Duration(seconds: 1), () {
-        authStatus = AuthStatus.unauthentication;
-        notifyListeners();
-      });
+      authStatus = AuthStatus.unauthentication;
     });
   }
 

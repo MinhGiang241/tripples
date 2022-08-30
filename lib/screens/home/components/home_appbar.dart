@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:survey/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
+import '../../auth/login/login_screen.dart';
 import '../../profile/user_profile.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -51,7 +52,9 @@ class HomeAppBar extends StatelessWidget {
                   size: 30,
                 ),
                 onPressed: () async {
-                  await context.read<AuthController>().logOut();
+                  await context.read<AuthController>().logOut(context);
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (_) => LoginScreen()));
                 })
           ],
         ));

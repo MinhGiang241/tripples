@@ -70,15 +70,14 @@ class ChooseFileController extends ChangeNotifier {
           'rar',
           'xls',
           'xlsx',
-          'xlsm'
+          'xlsm',
+          'pdf'
         ]);
 
     if (result != null) {
       files = result.paths
           .map((path) => ModelFile(
-                index: currentIndex!,
-                file: File(path!),
-              ))
+              index: currentIndex!, file: File(path!), questID: questID))
           .toList();
 
       Provider.of<FileUploadController>(context, listen: false).addFile(files);
@@ -125,6 +124,7 @@ extension MediaString on String {
         s.endsWith(".rar") ||
         s.endsWith(".xls") ||
         s.endsWith(".xlsx") ||
-        s.endsWith(".xlsm");
+        s.endsWith(".xlsm") ||
+        s.endsWith(".pdf");
   }
 }

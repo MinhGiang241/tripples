@@ -11,6 +11,7 @@ import '../../controllers/auth/auth_controller.dart';
 import '../../data_sources/api/constants.dart';
 import '../../generated/l10n.dart';
 import '../auth/components/auth_input.dart';
+import '../home/home_screens.dart';
 import 'user_profile.dart';
 
 class UpdatePassword extends StatefulWidget {
@@ -22,14 +23,8 @@ class UpdatePassword extends StatefulWidget {
 class _UpdatePassword extends State<UpdatePassword> {
   final oldPasController = TextEditingController();
   final newPasController = TextEditingController();
-  final confirmNewPasCotroller = TextEditingController();
+  final confirmNewPasController = TextEditingController();
   var disabled = false;
-  void submitData() {
-    print(oldPasController.text);
-    print(newPasController.text);
-    print(confirmNewPasCotroller.text);
-    Navigator.of(context).pop();
-  }
 
   SnackBar createSnackBar(String message) {
     return SnackBar(
@@ -50,7 +45,7 @@ class _UpdatePassword extends State<UpdatePassword> {
       await runMutation({
         "oldpass": oldPasController.text.trim(),
         "newpass": newPasController.text.trim(),
-        "renewpw": confirmNewPasCotroller.text.trim()
+        "renewpw": confirmNewPasController.text.trim()
       });
     }
   }
@@ -59,25 +54,36 @@ class _UpdatePassword extends State<UpdatePassword> {
     setState(() {
       disabled = false;
     });
-    var message = data["authorization_change_password"]["message"];
-    if (message == null) {
-      final snackBar = createSnackBar("Đã đổi mật khẩu thành công");
+    String? message = data["authorization_change_password"]["message"];
+    var code = data["authorization_change_password"]["code"];
+    if (code == 0) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      final snackBar = createSnackBar("Đổi mật khẩu thành công");
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
     } else {
-      final snackBar = createSnackBar(message);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      final snackBar = createSnackBar(message != null
+          ? message.split(':').last
+          : "Đổi mật khẩu không thành công");
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
   final _formKey = GlobalKey<FormState>();
   bool showValKey = false;
+  bool hideOldPass = true;
+  bool hideNewPass = true;
+  bool hideConfirmPass = true;
+
   @override
   Widget build(BuildContext context) {
     var changePassword = '''
-      mutation  (\$oldpass: String, \$newpass: String, \$re_new_pw){
+      mutation  (\$oldpass: String, \$newpass: String, \$renewpw:String){
     authorization_change_password (old_pw:\$oldpass , new_pw:\$newpass, re_new_pw:\$renewpw){
   	  message
+      code 
+      data
     }
     }
       ''';
@@ -119,11 +125,20 @@ class _UpdatePassword extends State<UpdatePassword> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 AuthInput(
-                  obscure: true,
+                  obscure: hideOldPass,
                   controller: oldPasController,
                   hint: "Mật khẩu cũ",
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hideOldPass = !hideOldPass;
+                            })
+                          },
+                      icon: hideOldPass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
                   validator: (val) {
                     if (val!.isEmpty) {
                       return S.current.not_blank;
@@ -133,11 +148,20 @@ class _UpdatePassword extends State<UpdatePassword> {
                   },
                 ),
                 AuthInput(
-                  obscure: true,
+                  obscure: hideNewPass,
                   controller: newPasController,
                   hint: "Mật khẩu mới",
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hideNewPass = !hideNewPass;
+                            })
+                          },
+                      icon: hideNewPass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
                   tab: () {
                     setState(() {
                       showValKey = true;
@@ -158,6 +182,31 @@ class _UpdatePassword extends State<UpdatePassword> {
                     return null;
                   },
                 ),
+                AuthInput(
+                  obscure: hideConfirmPass,
+                  controller: confirmNewPasController,
+                  hint: "Nhập lại mật khẩu", //S.current.confirm_pass,
+                  keyboardType: TextInputType.text,
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () => {
+                            setState(() {
+                              hideConfirmPass = !hideConfirmPass;
+                            })
+                          },
+                      icon: hideConfirmPass
+                          ? Icon(Icons.visibility_rounded)
+                          : Icon(Icons.visibility_off_sharp)),
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return S.current.not_blank;
+                    } else if (val != newPasController.text) {
+                      return S.current.not_same;
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
                 if (showValKey)
                   FlutterPwValidator(
                     controller: newPasController,
@@ -171,22 +220,6 @@ class _UpdatePassword extends State<UpdatePassword> {
                       print("Matched");
                     },
                   ),
-                AuthInput(
-                  obscure: true,
-                  controller: confirmNewPasCotroller,
-                  hint: S.current.confirm_pass,
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.lock),
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return S.current.not_blank;
-                    } else if (val != confirmNewPasCotroller.text) {
-                      return S.current.not_same;
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
                 Mutation(
                   options: MutationOptions(
                     document: gql(changePassword),

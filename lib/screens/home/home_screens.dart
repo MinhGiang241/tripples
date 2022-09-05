@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   int year = DateTime.now().year;
   int month = DateTime.now().month;
-
+  String avatar = '';
   void selectMonthAndYear(int selectedYear, int selectedMonth) {
     setState(() {
       year = selectedYear;
@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       listInprogress = [];
       listCompleted = [];
     });
+
     return GraphQLProvider(
       client: client,
       child: GestureDetector(
@@ -105,8 +106,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: Text("Đăng nhập lại"))
                     ]);
               }
+              avatar = meResult.data!['authorization_me']['data']['avatar'];
               var isRoot =
                   meResult.data!['authorization_me']['data']['isRoot'] ?? false;
+
               context.read<AuthController>().idUser =
                   meResult.data!['authorization_me']['data']['_id'] as String;
               var filter = {
@@ -139,18 +142,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
                   HomeAppBar(
-                      name: meResult.data!["authorization_me"]["data"] != null
-                          ? meResult.data!["authorization_me"]["data"]
-                                  ["fullName"] ??
-                              meResult.data!["authorization_me"]["data"]
-                                  ["userName"] ??
-                              "Tên"
-                          : "",
-                      userId: meResult.data!["authorization_me"]["data"] != null
-                          ? meResult.data!["authorization_me"]["data"]["_id"]
-                          : "id"
-                      // user: meResult.data!["authorization_me"]["data"],
-                      ),
+                    name: meResult.data!["authorization_me"]["data"] != null
+                        ? meResult.data!["authorization_me"]["data"]
+                                ["fullName"] ??
+                            meResult.data!["authorization_me"]["data"]
+                                ["userName"] ??
+                            "Tên"
+                        : "",
+                    userId: meResult.data!["authorization_me"]["data"] != null
+                        ? meResult.data!["authorization_me"]["data"]["_id"]
+                        : "id",
+                    avatar: avatar,
+                    // user: meResult.data!["authorization_me"]["data"],
+                  ),
                   SizedBox(height: padding),
                   HomeTabBar(tabController: tabController),
                   Expanded(

@@ -86,19 +86,32 @@ class DetailUser extends StatelessWidget {
                     : ListView(
                         padding: EdgeInsets.all(padding),
                         children: [
-                          Container(
-                            decoration: BoxDecoration(),
-                            padding: EdgeInsets.symmetric(vertical: padding),
-                            height: 180,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.grey.shade400,
-                              radius: 25,
-                              child: Icon(
-                                Icons.person,
-                                size: 130,
-                              ),
-                            ),
-                          ),
+                          userInfo['avatar'] != null && userInfo['avatar'] != ''
+                              ? Center(
+                                  child: ClipOval(
+                                    // borderRadius: BorderRadius.circular(500),
+                                    child: Image.network(
+                                      'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${userInfo['avatar']}',
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(),
+                                  padding:
+                                      EdgeInsets.symmetric(vertical: padding),
+                                  height: 180,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.grey.shade400,
+                                    radius: 25,
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 130,
+                                    ),
+                                  ),
+                                ),
                           buildUserInfoDisplay(
                             userInfo['userName'],
                             'Tài khoản:',

@@ -6,13 +6,15 @@ import '../../auth/login/login_screen.dart';
 import '../../profile/user_profile.dart';
 
 class HomeAppBar extends StatelessWidget {
-  const HomeAppBar({
-    Key? key,
-    required this.name,
-    required this.userId,
-  }) : super(key: key);
+  const HomeAppBar(
+      {Key? key,
+      required this.name,
+      required this.userId,
+      required this.avatar})
+      : super(key: key);
   final String name;
   final String userId;
+  final String avatar;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,14 +27,24 @@ class HomeAppBar extends StatelessWidget {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (_) => DetailUser(userId)));
                 },
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey.shade400,
-                  radius: 25,
-                  child: Icon(
-                    Icons.person,
-                    size: 40,
-                  ),
-                ),
+                child: avatar != ''
+                    ? CircleAvatar(
+                        child: ClipOval(
+                          child: Image.network(
+                              'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${avatar}',
+                              width: 60,
+                              fit: BoxFit.fill),
+                        ),
+                        radius: 30,
+                      )
+                    : CircleAvatar(
+                        backgroundColor: Colors.grey.shade400,
+                        radius: 25,
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                        ),
+                      ),
                 itemBuilder: (_) => [
                   PopupMenuItem(child: Text('Hồ sơ'), value: 0),
                 ],

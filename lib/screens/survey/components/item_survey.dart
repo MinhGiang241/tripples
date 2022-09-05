@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:survey/constants.dart';
 import 'package:survey/generated/l10n.dart';
 import 'package:survey/models/question.dart';
@@ -372,9 +373,9 @@ class ScoreSlider extends StatelessWidget {
                       Expanded(
                         child: Slider.adaptive(
                             activeColor: Theme.of(context).primaryColor,
-                            value: value,
+                            value: double.parse(value.toStringAsFixed(2)),
                             divisions: 20,
-                            label: "$value",
+                            label: "${value.toStringAsFixed(2)}",
                             max: double.parse(maxScore.toString()),
                             min: 0,
                             onChanged: (val) {
@@ -389,7 +390,7 @@ class ScoreSlider extends StatelessWidget {
                       width: 14,
                     ),
                     Text(
-                      "$value",
+                      "${value.toStringAsFixed(2)}",
                       style: TextStyle(height: 1.5, fontSize: 16),
                     )
                   ],

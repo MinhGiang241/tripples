@@ -9,6 +9,7 @@ import 'package:survey/screens/auth/login/login_screen.dart';
 import '../../../../constants.dart';
 import '../../../../data_sources/api/constants.dart';
 import '../../../../generated/l10n.dart';
+import '../../../root/root_screen.dart';
 import '../../components/auth_button.dart';
 import '../../components/auth_input.dart';
 
@@ -179,7 +180,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text("Đã đổi mật khẩu thành công")));
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => LoginScreen()));
+                              MaterialPageRoute(builder: (_) => RootScreen()));
                         } else {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(

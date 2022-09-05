@@ -186,7 +186,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             Icons.edit_rounded,
                             size: 18,
                           ),
-                          label: Text("Edit   ")),
+                          label: Text("Sửa   ")),
                     )
                 ],
               ),

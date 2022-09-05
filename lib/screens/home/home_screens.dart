@@ -28,12 +28,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     }""";
   final String queryTemplate = """
-  mutation {
-     scheduleresult_get_questions_and_answers_by_schedule  {
-        code
-        message
-        data
-    }
+  mutation (\$year: Float, \$month: Float){
+  scheduleresult_get_questions_and_answers_by_schedule(year: \$year, month: \$month){
+    code
+    data
+    message
+  }
 }
   """;
 
@@ -44,6 +44,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
+  }
+
+  int year = DateTime.now().year;
+  int month = DateTime.now().month;
+
+  void selectMonthAndYear(int selectedYear, int selectedMonth) {
+    setState(() {
+      year = selectedYear;
+      month = selectedMonth;
+    });
   }
 
   @override
@@ -146,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   Expanded(
                       child: Query(
                     options: QueryOptions(
-                        document: gql(queryTemplate), variables: filter),
+                        document: gql(queryTemplate),
+                        variables: {'year': year, 'month': month}),
                     builder: (result, {fetchMore, refetch}) {
                       if (result.isLoading) {
                         return Center(
@@ -192,6 +203,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             TemplateTabView(
                                 listCampaign: listInprogress,
                                 isCompleted: false,
+                                selectMonthAndYear: selectMonthAndYear,
+                                year: year,
+                                month: month,
                                 onBack: (val) {
                                   print('onback');
                                   if (val == true) setState(() {});
@@ -202,6 +216,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 }),
                             TemplateTabView(
                               listCampaign: listCompleted,
+                              year: year,
+                              month: month,
+                              selectMonthAndYear: selectMonthAndYear,
                               onLoading: _onLoading,
                               onRefresh: () =>
                                   _onRefresh(cl, filter, queryTemplate),

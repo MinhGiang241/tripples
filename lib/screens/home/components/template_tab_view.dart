@@ -9,19 +9,26 @@ import 'package:survey/screens/home/components/template_item.dart';
 import '../../../models/department.dart';
 
 class TemplateTabView extends StatefulWidget {
-  TemplateTabView({
-    Key? key,
-    required this.listCampaign,
-    required this.isCompleted,
-    required this.onBack,
-    required this.onLoading,
-    required this.onRefresh,
-  }) : super(key: key);
+  TemplateTabView(
+      {Key? key,
+      required this.listCampaign,
+      required this.isCompleted,
+      required this.onBack,
+      required this.onLoading,
+      required this.onRefresh,
+      required this.selectMonthAndYear,
+      required this.year,
+      required this.month})
+      : super(key: key);
   List<ScheduleCampaign> listCampaign;
   final bool isCompleted;
   final Function(bool) onBack;
   final Function() onLoading;
   final Function() onRefresh;
+  final int year;
+  final int month;
+  final Function selectMonthAndYear;
+
   @override
   _TemplateTabViewState createState() => _TemplateTabViewState();
 }
@@ -90,6 +97,10 @@ class _TemplateTabViewState extends State<TemplateTabView> {
           padding: EdgeInsets.only(top: padding, bottom: padding),
           physics: BouncingScrollPhysics(),
           children: [
+            ChooseMonthYear(
+                year: widget.year,
+                month: widget.month,
+                selectMonthAndYear: widget.selectMonthAndYear),
             DropdownButton<RefDepartmentIdDepartmentDto>(
               isExpanded: true,
               value: selectedDepartment,
@@ -199,11 +210,22 @@ class _TemplateTabViewState extends State<TemplateTabView> {
         header: WaterDropMaterialHeader(
           backgroundColor: Theme.of(context).primaryColor,
         ),
-        child: Center(
-          child: widget.isCompleted
-              ? Text("Chưa hoàn thành chiến dịch nào")
-              : Text("Chưa có chiến dịch mới nào"),
-        ),
+        child: Column(children: [
+          Padding(
+            padding: EdgeInsets.only(top: padding),
+            child: ChooseMonthYear(
+                year: widget.year,
+                month: widget.month,
+                selectMonthAndYear: widget.selectMonthAndYear),
+          ),
+          Expanded(
+            child: Center(
+              child: widget.isCompleted
+                  ? Text("Chưa hoàn thành chiến dịch nào")
+                  : Text("Chưa có chiến dịch mới nào"),
+            ),
+          )
+        ]),
       );
     }
   }

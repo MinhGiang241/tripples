@@ -81,6 +81,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   keyboardType: TextInputType.number,
                   prefixIcon: Icon(Icons.mail),
                   validator: (v) {
+                    setState(() {
+                      widget.disabled = false;
+                    });
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else {
@@ -108,6 +111,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     });
                   },
                   validator: (val) {
+                    setState(() {
+                      widget.disabled = false;
+                    });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
@@ -137,6 +143,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                           : Icon(Icons.visibility_off_sharp)),
                   obscure: hideConfirmPass,
                   validator: (v) {
+                    setState(() {
+                      widget.disabled = false;
+                    });
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else if (v != widget.newPasswordEditingController.text) {

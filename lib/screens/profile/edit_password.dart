@@ -12,6 +12,7 @@ import '../../data_sources/api/constants.dart';
 import '../../generated/l10n.dart';
 import '../auth/components/auth_input.dart';
 import '../home/home_screens.dart';
+import '../root/root_screen.dart';
 import 'user_profile.dart';
 
 class UpdatePassword extends StatefulWidget {
@@ -60,7 +61,7 @@ class _UpdatePassword extends State<UpdatePassword> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       final snackBar = createSnackBar("Đổi mật khẩu thành công");
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => RootScreen()));
     } else {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       final snackBar = createSnackBar(message != null
@@ -140,6 +141,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                           ? Icon(Icons.visibility_rounded)
                           : Icon(Icons.visibility_off_sharp)),
                   validator: (val) {
+                    setState(() {
+                      disabled = false;
+                    });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else {
@@ -168,6 +172,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                     });
                   },
                   validator: (val) {
+                    setState(() {
+                      disabled = false;
+                    });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
@@ -198,6 +205,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                           ? Icon(Icons.visibility_rounded)
                           : Icon(Icons.visibility_off_sharp)),
                   validator: (val) {
+                    setState(() {
+                      disabled = false;
+                    });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (val != newPasController.text) {

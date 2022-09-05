@@ -207,7 +207,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                 thickness: 1,
               ),
               ScoreSlider(
-                  maxScore: widget.questionResult != null
+                  maxScore: widget.question.maxScore != null
                       ? widget.question.maxScore
                       : 10,
                   score: widget.questionResult != null

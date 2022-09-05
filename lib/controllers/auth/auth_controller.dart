@@ -35,7 +35,7 @@ class AuthController extends ChangeNotifier {
       unloading();
       print(e.toString().split(":").last);
       Fluttertoast.showToast(
-          msg: e.toString().split(",").last == "errno = 7)"
+          msg: e.toString().contains("hostname")
               ? "Kiểm tra kết nối mạng"
               : e.toString().split(":").last == " Incorrect password." ||
                       e.toString().split(":").last == ' User does not exist..'

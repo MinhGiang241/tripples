@@ -21,12 +21,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
   final String queryMe = """mutation {
-    authorization_me{
-      code
-      message
-      data
-      }
-    }""";
+     authorization_get_user_me  {
+        code
+        message
+        data
+    }
+}
+        """;
   final String queryTemplate = """
   mutation (\$year: Float, \$month: Float){
   scheduleresult_get_questions_and_answers_by_schedule(year: \$year, month: \$month){
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       year = selectedYear;
       month = selectedMonth;
     });
+    Future.delayed(Duration(milliseconds: 100), () {});
   }
 
   @override
@@ -90,9 +92,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: CircularProgressIndicator(),
                 );
               }
-              if (meResult.data != null) if (meResult.data!['authorization_me']
-                      ['data'] ==
+              if (meResult.data != null) if (meResult
+                      .data!['authorization_get_user_me']['data'] ==
                   null) {
+                print(meResult);
                 return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -106,12 +109,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: Text("Đăng nhập lại"))
                     ]);
               }
-              avatar = meResult.data!['authorization_me']['data']['avatar'];
-              var isRoot =
-                  meResult.data!['authorization_me']['data']['isRoot'] ?? false;
+              avatar = meResult.data!['authorization_get_user_me']['data']
+                          ['avatar'] !=
+                      null
+                  ? meResult.data!['authorization_get_user_me']['data']
+                      ['avatar']
+                  : '';
+              var isRoot = meResult.data!['authorization_get_user_me']['data']
+                      ['isRoot'] ??
+                  false;
 
-              context.read<AuthController>().idUser =
-                  meResult.data!['authorization_me']['data']['_id'] as String;
+              context.read<AuthController>().idUser = meResult
+                  .data!['authorization_get_user_me']['data']['_id'] as String;
               var filter = {
                 "filter": {
                   "withRecords": true,
@@ -119,12 +128,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     "children": [
                       {
                         "id": "agent",
-                        "value":
-                            meResult.data!['authorization_me']['data'] != null
-                                ? meResult.data!['authorization_me']['data']
-                                        ['userName'] ??
-                                    ""
-                                : ""
+                        "value": meResult.data!['authorization_get_user_me']
+                                    ['data'] !=
+                                null
+                            ? meResult.data!['authorization_get_user_me']
+                                    ['data']['userName'] ??
+                                ""
+                            : ""
                       },
                       {
                         "id": "survey_date",
@@ -142,15 +152,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
                   HomeAppBar(
-                    name: meResult.data!["authorization_me"]["data"] != null
-                        ? meResult.data!["authorization_me"]["data"]
+                    name: meResult.data!["authorization_get_user_me"]["data"] !=
+                            null
+                        ? meResult.data!["authorization_get_user_me"]["data"]
                                 ["fullName"] ??
-                            meResult.data!["authorization_me"]["data"]
+                            meResult.data!["authorization_get_user_me"]["data"]
                                 ["userName"] ??
                             "Tên"
                         : "",
-                    userId: meResult.data!["authorization_me"]["data"] != null
-                        ? meResult.data!["authorization_me"]["data"]["_id"]
+                    userId: meResult.data!["authorization_get_user_me"]
+                                ["data"] !=
+                            null
+                        ? meResult.data!["authorization_get_user_me"]["data"]
+                            ["_id"]
                         : "id",
                     avatar: avatar,
                     // user: meResult.data!["authorization_me"]["data"],

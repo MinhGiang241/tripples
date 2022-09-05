@@ -214,7 +214,7 @@ class S {
   String get details {
     return Intl.message(
       'Chi tiết',
-      name: 'details',
+      name: 'Chi tiết',
       desc: '',
       args: [],
     );

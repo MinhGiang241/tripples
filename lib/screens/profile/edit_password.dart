@@ -82,10 +82,23 @@ class _UpdatePassword extends State<UpdatePassword> {
   }
 
   final _formKey = GlobalKey<FormState>();
+  final _oldPassFocusNode = FocusNode();
   bool showValKey = false;
   bool hideOldPass = true;
   bool hideNewPass = true;
   bool hideConfirmPass = true;
+
+  @override
+  void dispose() {
+    _oldPassFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _oldPassFocusNode.requestFocus();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +150,7 @@ class _UpdatePassword extends State<UpdatePassword> {
               children: <Widget>[
                 AuthInput(
                   blockUnicode: true,
+                  focusNode: _oldPassFocusNode,
                   obscure: hideOldPass,
                   controller: oldPasController,
                   hint: "Mật khẩu cũ",
@@ -184,17 +198,19 @@ class _UpdatePassword extends State<UpdatePassword> {
                     });
                   },
                   validator: (val) {
-                    // setState(() {
                     disabled = false;
-                    // });
+
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
                       return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
-                    } else if (!RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]")
-                        .hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 chữ cái , 1 số";
-                    } else if (!RegExp(r"(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]")
+                    } else if (!RegExp(r"(.*[a-z].*)").hasMatch(val) ||
+                        !RegExp(r"(.*[A-Z].*)").hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 chữ cái hoa, 1 chữ cái thường";
+                    } else if (!RegExp(r"(.*[0-9].*)").hasMatch(val)) {
+                      return "Mật khẩu ít nhất 1 chữ số";
+                    } else if (!RegExp(
+                            r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
                         .hasMatch(val)) {
                       return "Mật khẩu ít nhất 1 ký tự đặc biệt";
                     }

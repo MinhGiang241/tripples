@@ -29,8 +29,16 @@ class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   var isLogin = false;
-
+  final _userNameFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
   bool hidePass = true;
+
+  @override
+  void dispose() {
+    _userNameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +73,21 @@ class _LoginFormState extends State<LoginForm> {
                 height: padding / 2,
               ),
               AuthInput(
+                  focusNode: _userNameFocusNode,
                   controller: widget.userNameEditingController,
                   hint: 'Tên tài khoản', //S.current.user_name,
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.person),
                   validator: (v) {
-                    if (v!.isEmpty) {
+                    if (v!.trim().isEmpty) {
+                      _userNameFocusNode.requestFocus();
                       return S.current.not_blank;
                     } else {
                       return null;
                     }
                   }),
               AuthInput(
+                  focusNode: _passwordFocusNode,
                   blockUnicode: true,
                   controller: widget.passwordEditingController,
                   hint: 'Mật khẩu', //S.current.password,
@@ -94,6 +105,10 @@ class _LoginFormState extends State<LoginForm> {
                           : Icon(Icons.visibility_off_sharp)),
                   validator: (v) {
                     if (v!.isEmpty) {
+                      if (!_passwordFocusNode.hasFocus) {
+                        _passwordFocusNode.requestFocus();
+                      }
+
                       return S.current.not_blank;
                     } else if (v == 'admin' &&
                         widget.userNameEditingController.text == 'admin') {

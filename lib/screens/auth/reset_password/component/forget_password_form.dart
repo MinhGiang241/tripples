@@ -73,10 +73,10 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                   keyboardType: TextInputType.text,
                   prefixIcon: Icon(Icons.mail),
                   validator: (v) {
-                    if (v!.isEmpty) {
+                    if (v!.trim().isEmpty) {
                       return S.current.not_blank;
                     } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(v)) {
+                        .hasMatch(v.trim())) {
                       return "Không phải email";
                     } else {
                       return null;
@@ -105,8 +105,8 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                               context,
                               MaterialPageRoute(
                                   builder: (_) => ResetPassword(
-                                      email:
-                                          widget.emailEditingController.text)));
+                                      email: widget.emailEditingController.text
+                                          .trim())));
                         }
                       }),
                   builder: ((runMutation, result) => Padding(
@@ -119,8 +119,10 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                             setState(() {
                               disabled = true;
                             });
-                            runMutation(
-                                {'mailTo': widget.emailEditingController.text});
+                            runMutation({
+                              'mailTo':
+                                  widget.emailEditingController.text.trim()
+                            });
                             print(widget.emailEditingController.text);
                           }
                         },

@@ -65,6 +65,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     return GraphQLProvider(
       client: client,
       child: Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,15 +77,16 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               SizedBox(
                 height: padding / 2,
               ),
+
               AuthInput(
                   controller: widget.codeEditingController,
                   hint: "Mã OTP",
                   keyboardType: TextInputType.number,
                   prefixIcon: Icon(Icons.mail),
                   validator: (v) {
-                    setState(() {
-                      widget.disabled = false;
-                    });
+                    // setState(() {
+                    widget.disabled = false;
+                    // });
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else {
@@ -92,43 +94,47 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     }
                   }),
               AuthInput(
-                  blockUnicode: true,
-                  controller: widget.newPasswordEditingController,
-                  hint: "Mật khẩu mới",
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                      onPressed: () => {
-                            setState(() {
-                              hideNewPass = !hideNewPass;
-                            })
-                          },
-                      icon: hideNewPass
-                          ? Icon(Icons.visibility_rounded)
-                          : Icon(Icons.visibility_off_sharp)),
-                  obscure: hideNewPass,
-                  tab: () {
-                    setState(() {
-                      showValKey = true;
-                    });
-                  },
-                  validator: (val) {
-                    setState(() {
-                      widget.disabled = false;
-                    });
-                    if (val!.isEmpty) {
-                      return S.current.not_blank;
-                    } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
-                      return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
-                    } else if (!RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]")
-                        .hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 chữ cái , 1 số";
-                    } else if (!RegExp(r"(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]")
-                        .hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 ký tự đặc biệt";
-                    }
-                    return null;
-                  }),
+                blockUnicode: true,
+                controller: widget.newPasswordEditingController,
+                hint: "Mật khẩu mới",
+                keyboardType: TextInputType.text,
+                prefixIcon: Icon(Icons.lock),
+                suffixIcon: IconButton(
+                    onPressed: () => {
+                          setState(() {
+                            hideNewPass = !hideNewPass;
+                          })
+                        },
+                    icon: hideNewPass
+                        ? Icon(Icons.visibility_rounded)
+                        : Icon(Icons.visibility_off_sharp)),
+                obscure: hideNewPass,
+                tab: () {
+                  setState(() {
+                    showValKey = true;
+                  });
+                },
+                validator: (val) {
+                  // setState(() {
+                  widget.disabled = false;
+                  // });
+                  if (val!.isEmpty) {
+                    return S.current.not_blank;
+                  } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
+                    return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
+                  } else if (!RegExp(r"(.*[a-z].*)").hasMatch(val) ||
+                      !RegExp(r"(.*[A-Z].*)").hasMatch(val)) {
+                    return "Mật khẩu ít nhất 1 chữ cái hoa, 1 chữ cái thường";
+                  } else if (!RegExp(r"(.*[0-9].*)").hasMatch(val)) {
+                    return "Mật khẩu ít nhất 1 chữ số";
+                  } else if (!RegExp(
+                          r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
+                      .hasMatch(val)) {
+                    return "Mật khẩu ít nhất 1 ký tự đặc biệt";
+                  }
+                  return null;
+                },
+              ),
               AuthInput(
                   blockUnicode: true,
                   controller: widget.confirmNewPasswordEditingController,
@@ -146,9 +152,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                           : Icon(Icons.visibility_off_sharp)),
                   obscure: hideConfirmPass,
                   validator: (v) {
-                    setState(() {
-                      widget.disabled = false;
-                    });
+                    // setState(() {
+                    widget.disabled = false;
+                    // });
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else if (v != widget.newPasswordEditingController.text) {
@@ -157,18 +163,18 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                       return null;
                     }
                   }),
-              if (showValKey)
-                FlutterPwValidator(
-                    controller: widget.newPasswordEditingController,
-                    minLength: 6,
-                    uppercaseCharCount: 1,
-                    numericCharCount: 1,
-                    specialCharCount: 1,
-                    width: 400,
-                    height: 150,
-                    onSuccess: () {
-                      print("Matched");
-                    }),
+              // if (showValKey)
+              //   FlutterPwValidator(
+              //       controller: widget.newPasswordEditingController,
+              //       minLength: 6,
+              //       uppercaseCharCount: 1,
+              //       numericCharCount: 1,
+              //       specialCharCount: 1,
+              //       width: 400,
+              //       height: 150,
+              //       onSuccess: () {
+              //         print("Matched");
+              //       }),
               Mutation(
                   options: MutationOptions(
                       document: gql(changePassword),

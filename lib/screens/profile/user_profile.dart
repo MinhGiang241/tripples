@@ -41,11 +41,8 @@ class DetailUser extends StatelessWidget {
         email
         follower_numb
         fullName
-        isRoot
         isActive
-        isDraft
-        isLocked  
-        follower_numb
+  
         tenantId
         userName
         work

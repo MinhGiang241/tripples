@@ -13,9 +13,11 @@ class AuthInput extends StatelessWidget {
       this.suffixIcon,
       this.validator,
       this.tab,
+      this.focusNode,
       this.blockUnicode = false})
       : super(key: key);
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final String hint;
   final bool obscure;
   final TextInputType keyboardType;
@@ -40,6 +42,7 @@ class AuthInput extends StatelessWidget {
             tab!();
           }
         },
+        focusNode: focusNode,
         obscureText: obscure,
         controller: controller,
         keyboardType: keyboardType,

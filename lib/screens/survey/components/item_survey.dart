@@ -373,9 +373,9 @@ class ScoreSlider extends StatelessWidget {
                       Expanded(
                         child: Slider.adaptive(
                             activeColor: Theme.of(context).primaryColor,
-                            value: double.parse(value.toStringAsFixed(2)),
+                            value: double.parse(value.toStringAsFixed(0)),
                             divisions: 20,
-                            label: "${value.toStringAsFixed(2)}",
+                            label: "${value.toStringAsFixed(0)}",
                             max: double.parse(maxScore.toString()),
                             min: 0,
                             onChanged: (val) {
@@ -390,7 +390,7 @@ class ScoreSlider extends StatelessWidget {
                       width: 14,
                     ),
                     Text(
-                      "${value.toStringAsFixed(2)}",
+                      "${value.toStringAsFixed(0)}",
                       style: TextStyle(height: 1.5, fontSize: 16),
                     )
                   ],

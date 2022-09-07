@@ -21,11 +21,11 @@ class ResponseListTemplate extends ChangeNotifier {
 
   ResponseListTemplate({this.querySchedulesDto});
   ResponseListTemplate.from(json) {
-    querySchedulesDto =
-        json['scheduleresult_get_questions_and_answers_by_schedule'] != null
-            ? new QuerySchedulesDto.fromJson(
-                json['scheduleresult_get_questions_and_answers_by_schedule'])
-            : null;
+    querySchedulesDto = json != null &&
+            json['scheduleresult_get_questions_and_answers_by_schedule'] != null
+        ? new QuerySchedulesDto.fromJson(
+            json['scheduleresult_get_questions_and_answers_by_schedule'])
+        : null;
   }
 
   fromJson(json) {

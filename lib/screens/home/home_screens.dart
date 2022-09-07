@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:survey/constants.dart';
 import 'package:survey/controllers/auth/auth_controller.dart';
 import 'package:survey/data_sources/api/constants.dart';
@@ -109,62 +110,72 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: Text("Đăng nhập lại"))
                     ]);
               }
-              avatar = meResult.data!['authorization_get_user_me']['data']
-                          ['avatar'] !=
-                      null
+
+              avatar = meResult.data != null &&
+                      meResult.data!['authorization_get_user_me']['data']
+                              ['avatar'] !=
+                          null
                   ? meResult.data!['authorization_get_user_me']['data']
                       ['avatar']
                   : '';
-              var isRoot = meResult.data!['authorization_get_user_me']['data']
-                      ['isRoot'] ??
-                  false;
+              var isRoot = meResult.data != null &&
+                      meResult.data!['authorization_get_user_me']['data']
+                          ['isRoot']
+                  ? meResult.data!['authorization_get_user_me']['data']
+                      ['isRoot']
+                  : false;
 
-              context.read<AuthController>().idUser = meResult
-                  .data!['authorization_get_user_me']['data']['_id'] as String;
+              context.read<AuthController>().idUser = meResult.data != null
+                  ? meResult.data!['authorization_get_user_me']['data']['_id']
+                      as String
+                  : null;
               var filter = {
-                "filter": {
-                  "withRecords": true,
-                  "group": {
-                    "children": [
-                      {
-                        "id": "agent",
-                        "value": meResult.data!['authorization_get_user_me']
-                                    ['data'] !=
-                                null
-                            ? meResult.data!['authorization_get_user_me']
-                                    ['data']['userName'] ??
-                                ""
-                            : ""
-                      },
-                      {
-                        "id": "survey_date",
-                        "value": DateTime(DateTime.now().year,
-                                DateTime.now().month, DateTime.now().day)
-                            .toUtc()
-                            .toString()
-                      }
-                    ]
-                  }
-                }
+                // "filter": {
+                //   "withRecords": true,
+                //   "group": {
+                //     "children": [
+                //       {
+                //         "id": "agent",
+                //         "value": meResult.data!['authorization_get_user_me']
+                //                     ['data'] !=
+                //                 null
+                //             ? meResult.data!['authorization_get_user_me']
+                //                     ['data']['userName'] ??
+                //                 ""
+                //             : ""
+                //       },
+                //       {
+                //         "id": "survey_date",
+                //         "value": DateTime(DateTime.now().year,
+                //                 DateTime.now().month, DateTime.now().day)
+                //             .toUtc()
+                //             .toString()
+                //       }
+                //     ]
+                //   }
+                // }
               };
 
               return Column(
                 children: [
                   SizedBox(height: AppBar().preferredSize.height),
                   HomeAppBar(
-                    name: meResult.data!["authorization_get_user_me"]["data"] !=
-                            null
-                        ? meResult.data!["authorization_get_user_me"]["data"]
-                                ["fullName"] ??
-                            meResult.data!["authorization_get_user_me"]["data"]
-                                ["userName"] ??
-                            "Tên"
+                    name: meResult.data != null
+                        ? meResult.data!["authorization_get_user_me"]["data"] !=
+                                null
+                            ? meResult.data!["authorization_get_user_me"]
+                                    ["data"]["fullName"] ??
+                                meResult.data!["authorization_get_user_me"]
+                                    ["data"]["userName"] ??
+                                "Tên"
+                            : ""
                         : "",
-                    userId: meResult.data!["authorization_get_user_me"]
-                                ["data"] !=
-                            null
-                        ? meResult.data!["authorization_get_user_me"]["data"]
-                            ["_id"]
+                    userId: meResult.data != null
+                        ? meResult.data!["authorization_get_user_me"]["data"] !=
+                                null
+                            ? meResult.data!["authorization_get_user_me"]
+                                ["data"]["_id"]
+                            : "id"
                         : "id",
                     avatar: avatar,
                     // user: meResult.data!["authorization_me"]["data"],
@@ -184,12 +195,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       }
                       listCompleted = [];
                       listInprogress = [];
+                      if (result.data == null) {
+                        RefreshController _refreshController =
+                            RefreshController(initialRefresh: false);
+                        return SmartRefresher(
+                            controller: _refreshController,
+                            enablePullDown: true,
+                            enablePullUp: false,
+                            onRefresh: () {
+                              setState(() {});
+                            },
+                            child: Center(
+                                child: Text(
+                                    'Lỗi kết nối ,không lấy được dữ liệu lịch triển khai')));
+                      }
                       ResponseListTemplate? responseListTemplate =
                           ResponseListTemplate.from(result.data);
 
                       print(responseListTemplate);
-                      if (responseListTemplate.querySchedulesDto!.data !=
-                          null) {
+                      if (responseListTemplate.querySchedulesDto == null) {}
+
+                      if (responseListTemplate.querySchedulesDto != null &&
+                          responseListTemplate.querySchedulesDto!.data !=
+                              null) {
                         for (int i = 0;
                             i <
                                 responseListTemplate
@@ -212,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           }
                         }
                       }
+
                       // Provider.of<AnswerController>(context);
 
                       return TabBarView(
@@ -257,12 +286,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _onRefresh(
-      GraphQLClient client, Map<String, Object> filter, String mutation) async {
-    var query = QueryOptions(document: gql(mutation), variables: filter);
+  void _onRefresh(GraphQLClient client, filter, String mutation) async {
+    // var query = QueryOptions(document: gql(mutation));
 
-    var result = await client.query(query);
-    print(result);
+    // var result = await client.query(query);
+    // print(result);
 
     if (mounted) setState(() {});
   }

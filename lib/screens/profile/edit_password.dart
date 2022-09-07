@@ -55,18 +55,28 @@ class _UpdatePassword extends State<UpdatePassword> {
     setState(() {
       disabled = false;
     });
-    String? message = data["authorization_change_password"]["message"];
-    var code = data["authorization_change_password"]["code"];
-    if (code == 0) {
+    try {
+      String? message = data["authorization_change_password"]["message"];
+      var code = data["authorization_change_password"]["code"];
+      if (code == 0) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        final snackBar = createSnackBar("Đổi mật khẩu thành công");
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => RootScreen()));
+      } else {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        final snackBar = createSnackBar(message != null
+            ? message.split(':').last
+            : "Đổi mật khẩu không thành công");
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } catch (e) {
+      print(e);
+      print('loooooo');
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      final snackBar = createSnackBar("Đổi mật khẩu thành công");
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.push(context, MaterialPageRoute(builder: (_) => RootScreen()));
-    } else {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      final snackBar = createSnackBar(message != null
-          ? message.split(':').last
-          : "Đổi mật khẩu không thành công");
+      final snackBar =
+          createSnackBar("Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối");
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
@@ -121,11 +131,12 @@ class _UpdatePassword extends State<UpdatePassword> {
           padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
           child: Form(
             key: _formKey,
-            // autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 AuthInput(
+                  blockUnicode: true,
                   obscure: hideOldPass,
                   controller: oldPasController,
                   hint: "Mật khẩu cũ",
@@ -141,9 +152,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                           ? Icon(Icons.visibility_rounded)
                           : Icon(Icons.visibility_off_sharp)),
                   validator: (val) {
-                    setState(() {
-                      disabled = false;
-                    });
+                    // setState(() {
+                    disabled = false;
+                    // });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else {
@@ -152,6 +163,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                   },
                 ),
                 AuthInput(
+                  blockUnicode: true,
                   obscure: hideNewPass,
                   controller: newPasController,
                   hint: "Mật khẩu mới",
@@ -172,9 +184,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                     });
                   },
                   validator: (val) {
-                    setState(() {
-                      disabled = false;
-                    });
+                    // setState(() {
+                    disabled = false;
+                    // });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
@@ -190,6 +202,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                   },
                 ),
                 AuthInput(
+                  blockUnicode: true,
                   obscure: hideConfirmPass,
                   controller: confirmNewPasController,
                   hint: "Nhập lại mật khẩu", //S.current.confirm_pass,
@@ -205,9 +218,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                           ? Icon(Icons.visibility_rounded)
                           : Icon(Icons.visibility_off_sharp)),
                   validator: (val) {
-                    setState(() {
-                      disabled = false;
-                    });
+                    // setState(() {
+                    disabled = false;
+                    // });
                     if (val!.isEmpty) {
                       return S.current.not_blank;
                     } else if (val != newPasController.text) {
@@ -217,19 +230,19 @@ class _UpdatePassword extends State<UpdatePassword> {
                     }
                   },
                 ),
-                if (showValKey)
-                  FlutterPwValidator(
-                    controller: newPasController,
-                    minLength: 6,
-                    uppercaseCharCount: 1,
-                    numericCharCount: 1,
-                    specialCharCount: 1,
-                    width: 400,
-                    height: 150,
-                    onSuccess: () {
-                      print("Matched");
-                    },
-                  ),
+                // if (showValKey)
+                // FlutterPwValidator(
+                //   controller: newPasController,
+                //   minLength: 6,
+                //   uppercaseCharCount: 1,
+                //   numericCharCount: 1,
+                //   specialCharCount: 1,
+                //   width: 400,
+                //   height: 150,
+                //   onSuccess: () {
+                //     print("Matched");
+                //   },
+                // ),
                 Mutation(
                   options: MutationOptions(
                     document: gql(changePassword),

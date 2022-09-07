@@ -77,6 +77,7 @@ class _LoginFormState extends State<LoginForm> {
                     }
                   }),
               AuthInput(
+                  blockUnicode: true,
                   controller: widget.passwordEditingController,
                   hint: 'Mật khẩu', //S.current.password,
                   keyboardType: TextInputType.text,

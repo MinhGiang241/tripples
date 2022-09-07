@@ -92,6 +92,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     }
                   }),
               AuthInput(
+                  blockUnicode: true,
                   controller: widget.newPasswordEditingController,
                   hint: "Mật khẩu mới",
                   keyboardType: TextInputType.text,
@@ -129,6 +130,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     return null;
                   }),
               AuthInput(
+                  blockUnicode: true,
                   controller: widget.confirmNewPasswordEditingController,
                   hint: "Nhập lại mật khẩu mới",
                   keyboardType: TextInputType.text,

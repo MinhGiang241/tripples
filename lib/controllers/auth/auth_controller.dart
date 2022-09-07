@@ -40,10 +40,12 @@ class AuthController extends ChangeNotifier {
               : e.toString().split(":").last == " Incorrect password." ||
                       e.toString().split(":").last == ' User does not exist..'
                   ? 'Sai tài khoản hoặc mật khẩu'
-                  : e
-                      .toString()
-                      .split(":")
-                      .last, //e.toString().split(":").last,
+                  : e.toString().contains("authorization")
+                      ? "Không đăng nhập được tài khoản"
+                      : e
+                          .toString()
+                          .split(":")
+                          .last, //e.toString().split(":").last,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

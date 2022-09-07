@@ -253,27 +253,67 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             onCompleted: (data) async {
                               await showDialog(
                                 context: context,
-                                builder: (_) => AlertDialog(
-                                  title: Text("Thông báo"),
-                                  content: Text(
-                                      data!["scheduleresult_save_schedule_result"]
-                                              ["data"]["message"]
-                                          .split('<')
-                                          .first),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          if (data["scheduleresult_save_schedule_result"]
-                                                  ["code"] !=
-                                              0) {
-                                            Navigator.pop(context);
-                                          } else {
-                                            Navigator.pop(context, true);
-                                          }
-                                        },
-                                        child: Text("OK"))
-                                  ],
-                                ),
+                                builder: (_) {
+                                  if (data == null) {
+                                    return AlertDialog(
+                                        title: Text('Có lỗi xảy ra'),
+                                        content: Text("Kiểm tra lại kết nối"),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text('Đóng'))
+                                        ]);
+                                  }
+                                  if (data["scheduleresult_save_schedule_result"]
+                                          ["code"] !=
+                                      0) {
+                                    return AlertDialog(
+                                        title: Text('Có lỗi xảy ra'),
+                                        content:
+                                            Text("Không gửi kết quả lên được "),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text('Đóng'))
+                                        ]);
+                                  }
+                                  return AlertDialog(
+                                    title: data!["scheduleresult_save_schedule_result"]
+                                                    ["code"] ==
+                                                0 &&
+                                            data["scheduleresult_save_schedule_result"]
+                                                    ["data"]["failure"] ==
+                                                0
+                                        ? Text("Thành công")
+                                        : Text("Thất bại"),
+                                    content: data["scheduleresult_save_schedule_result"]
+                                                ["code"] ==
+                                            0
+                                        ? Text(
+                                            data["scheduleresult_save_schedule_result"]
+                                                    ["data"]["message"]
+                                                .split('<')
+                                                .first)
+                                        : Text(data[
+                                                "scheduleresult_save_schedule_result"]
+                                            ["message"]),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            if (data["scheduleresult_save_schedule_result"]
+                                                    ["code"] !=
+                                                0) {
+                                              Navigator.pop(context);
+                                            } else {
+                                              Navigator.pop(context, true);
+                                            }
+                                          },
+                                          child: Text("OK"))
+                                    ],
+                                  );
+                                },
                               ).then((value) {
                                 if (value != null) {
                                   if (value == true) {
@@ -302,21 +342,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                               'scheduleresult_get_questions_and_answers_by_schedule']
                                                           ['code'] !=
                                                       0) {
-                                                    // Navigator.push(
-                                                    //     context,
-                                                    //     MaterialPageRoute(
-                                                    //         builder: (_) =>
-                                                    //             HomeScreen()));
-
                                                     return Center(
                                                         child: Text(''));
                                                   }
-                                                  var questionResult =
-                                                      responseListTemplate
-                                                          .querySchedulesDto!
-                                                          .data![0]
-                                                          .questionResultScheduleIdDto;
-                                                  print(questionResult);
+                                                  // var questionResult =
+                                                  //     responseListTemplate
+                                                  //         .querySchedulesDto!
+                                                  //         .data![0]
+                                                  //         .questionResultScheduleIdDto;
+                                                  // print(questionResult);
                                                   return RootScreen();
                                                 }
                                               },

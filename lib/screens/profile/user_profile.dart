@@ -46,7 +46,6 @@ class DetailUser extends StatelessWidget {
         isDraft
         isLocked  
         follower_numb
-        task_numb
         tenantId
         userName
         work
@@ -76,92 +75,104 @@ class DetailUser extends StatelessWidget {
               options: QueryOptions(
                   document: gql(queryInfo), variables: {"userId": userId}),
               builder: (result, {fetchMore, refetch}) {
+                if (result.data?['response'] != null &&
+                    result.data?['response']['code'] == 1) {
+                  return Center(
+                      child: Text(' không lấy được thông tin tài khoản'));
+                }
+
                 final userInfo = result.data?['find_Account_dto']['data'];
                 print(userInfo);
 
                 return result.isLoading
                     ? Center(
-                        child: Text('Loading...'),
+                        child: CircularProgressIndicator(),
                       )
-                    : ListView(
-                        padding: EdgeInsets.all(padding),
-                        children: [
-                          userInfo['avatar'] != null && userInfo['avatar'] != ''
-                              ? Center(
-                                  child: ClipOval(
-                                    // borderRadius: BorderRadius.circular(500),
-                                    child: Image.network(
-                                      'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${userInfo['avatar']}',
-                                      width: 200,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(),
-                                  padding:
-                                      EdgeInsets.symmetric(vertical: padding),
-                                  height: 180,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.grey.shade400,
-                                    radius: 25,
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 130,
-                                    ),
-                                  ),
-                                ),
-                          buildUserInfoDisplay(
-                            userInfo['userName'],
-                            'Tài khoản:',
-                          ),
-                          buildUserInfoDisplay(
-                            userInfo['fullName'],
-                            'Họ và tên:',
-                          ),
-                          buildUserInfoDisplay(
-                            userInfo!['email'] != null
-                                ? userInfo['email']
-                                : 'chưa có email',
-                            'Email:',
-                          ),
-                          buildUserInfoDisplay(
-                              userInfo!['phoneNumber'] != null
-                                  ? userInfo['phoneNumber']
-                                  : 'chưa có số điện thoại',
-                              "Số điện thoại:"),
-                          if (userInfo.containsKey('roles'))
-                            buildUserInfoDisplay(
-                                userInfo['roles'][0]['display_name'] != null
-                                    ? userInfo['roles'][0]['display_name']
-                                    : 'chưa có chứu vụ',
-                                "Chức vụ:"),
-                          Center(
-                            child: Padding(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: padding),
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  UpdatePassword()));
-                                    },
-                                    style: TextButton.styleFrom(
-                                        backgroundColor:
-                                            Theme.of(context).primaryColor),
-                                    child: Text(
-                                      "Đổi mật khẩu",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .button
-                                          ?.copyWith(color: Colors.white),
-                                    ))),
+                    : result.data == null
+                        ? Center(
+                            child: Text(
+                                'Lỗi kết nối, Không lấy được dữ liệu thông tin người dùng'),
                           )
-                        ],
-                      );
+                        : ListView(
+                            padding: EdgeInsets.all(padding),
+                            children: [
+                              userInfo['avatar'] != null &&
+                                      userInfo['avatar'] != ''
+                                  ? Center(
+                                      child: ClipOval(
+                                        // borderRadius: BorderRadius.circular(500),
+                                        child: Image.network(
+                                          'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${userInfo['avatar']}',
+                                          width: 200,
+                                          height: 200,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      decoration: BoxDecoration(),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: padding),
+                                      height: 180,
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.grey.shade400,
+                                        radius: 25,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 130,
+                                        ),
+                                      ),
+                                    ),
+                              buildUserInfoDisplay(
+                                userInfo['userName'],
+                                'Tài khoản:',
+                              ),
+                              buildUserInfoDisplay(
+                                userInfo['fullName'],
+                                'Họ và tên:',
+                              ),
+                              buildUserInfoDisplay(
+                                userInfo!['email'] != null
+                                    ? userInfo['email']
+                                    : 'chưa có email',
+                                'Email:',
+                              ),
+                              buildUserInfoDisplay(
+                                  userInfo!['phoneNumber'] != null
+                                      ? userInfo['phoneNumber']
+                                      : 'chưa có số điện thoại',
+                                  "Số điện thoại:"),
+                              if (userInfo.containsKey('roles'))
+                                buildUserInfoDisplay(
+                                    userInfo['roles'][0]['display_name'] != null
+                                        ? userInfo['roles'][0]['display_name']
+                                        : 'chưa có chứu vụ',
+                                    "Chức vụ:"),
+                              Center(
+                                child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: padding),
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      UpdatePassword()));
+                                        },
+                                        style: TextButton.styleFrom(
+                                            backgroundColor:
+                                                Theme.of(context).primaryColor),
+                                        child: Text(
+                                          "Đổi mật khẩu",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .button
+                                              ?.copyWith(color: Colors.white),
+                                        ))),
+                              )
+                            ],
+                          );
               })),
     );
   }

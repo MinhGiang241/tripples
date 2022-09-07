@@ -52,7 +52,9 @@ class _LoginFormState extends State<LoginForm> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(
+            // store: HiveStore()
+            ),
       ),
     );
     return GraphQLProvider(

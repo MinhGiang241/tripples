@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,9 +10,7 @@ import 'package:survey/generated/l10n.dart';
 import 'package:survey/models/question.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
-import 'package:survey/screens/home/home_screens.dart';
 import 'package:survey/screens/root/root_screen.dart';
-import 'package:survey/screens/survey/components/list_pinned_file.dart';
 import 'package:survey/screens/survey/components/select_file_dialog.dart';
 import 'package:survey/screens/survey/components/upload_dialog.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
@@ -280,7 +277,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                         ]);
                                   }
                                   return AlertDialog(
-                                    title: data!["scheduleresult_save_schedule_result"]
+                                    title: data["scheduleresult_save_schedule_result"]
                                                     ["code"] ==
                                                 0 &&
                                             data["scheduleresult_save_schedule_result"]

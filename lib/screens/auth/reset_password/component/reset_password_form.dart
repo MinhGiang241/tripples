@@ -124,7 +124,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
                   } else if (!RegExp(r"(.*[a-z].*)").hasMatch(val) ||
                       !RegExp(r"(.*[A-Z].*)").hasMatch(val)) {
-                    return "Mật khẩu ít nhất 1 chữ cái hoa, 1 chữ cái thường";
+                    return "Mật khẩu ít nhất 1 chữ hoa, 1 chữ thường";
                   } else if (!RegExp(r"(.*[0-9].*)").hasMatch(val)) {
                     return "Mật khẩu ít nhất 1 chữ số";
                   } else if (!RegExp(

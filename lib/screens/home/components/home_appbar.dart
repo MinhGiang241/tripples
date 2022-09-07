@@ -28,14 +28,12 @@ class HomeAppBar extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => DetailUser(userId)));
                 },
                 child: avatar != ''
-                    ? CircleAvatar(
-                        child: ClipOval(
-                          child: Image.network(
-                              'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${avatar}',
-                              width: 60,
-                              fit: BoxFit.fill),
-                        ),
-                        radius: 30,
+                    ? ClipOval(
+                        child: Image.network(
+                            'http://api.triples.hoasao.demego.vn/headless/stream/upload?load=${avatar}',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover),
                       )
                     : CircleAvatar(
                         backgroundColor: Colors.grey.shade400,

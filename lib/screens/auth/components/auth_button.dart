@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:survey/constants.dart';
 
 class AuthButton extends StatefulWidget {
-  AuthButton({
-    Key? key,
-    required this.title,
-    required this.onPress,
-    this.disabled = false,
-  }) : super(key: key);
+  AuthButton(
+      {Key? key,
+      required this.title,
+      required this.onPress,
+      this.disabled = false,
+      this.color})
+      : super(key: key);
   final String title;
   bool disabled;
   final Function onPress;
+  final Color? color;
 
   @override
   State<AuthButton> createState() => _AuthButtonState();
@@ -31,9 +33,11 @@ class _AuthButtonState extends State<AuthButton> {
                     widget.onPress();
                   },
             style: TextButton.styleFrom(
-                backgroundColor: widget.disabled
-                    ? Colors.grey
-                    : Theme.of(context).primaryColor),
+                backgroundColor: widget.color != null
+                    ? widget.color
+                    : widget.disabled
+                        ? Colors.grey
+                        : Theme.of(context).primaryColor),
             child: Text(
               widget.title,
               style: Theme.of(context)

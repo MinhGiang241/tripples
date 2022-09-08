@@ -16,6 +16,8 @@ import 'package:survey/screens/survey/components/upload_dialog.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
 import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/file_upload.dart';
+import 'package:intl/intl.dart';
+import 'package:survey/utils/extentions/ex.dart';
 
 import '../../data_sources/api/api_client.dart';
 import '../../models/campaign.dart';
@@ -103,6 +105,22 @@ class _SurveyScreenState extends State<SurveyScreen> {
     };
     bool disabled = false;
 
+    getFormattedDateFromFormattedString(
+        {required value,
+        required String currentFormat,
+        required String desiredFormat,
+        isUtc = false}) {
+      DateTime? dateTime = DateTime.now();
+      if (value != null || value.isNotEmpty) {
+        try {
+          dateTime = DateFormat(currentFormat).parse(value, isUtc).toLocal();
+        } catch (e) {
+          print("$e");
+        }
+      }
+      return dateTime;
+    }
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ChooseFileController>(
@@ -136,48 +154,79 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       padding: EdgeInsets.only(right: padding / 2),
                       child: TextButton.icon(
                           onPressed: () async {
-                            await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: Text("Thông báo"),
-                                      content: Text(
-                                          "Bạn có muốn chỉnh sửa phần trả lời khảo sát của mình ?"),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                            },
-                                            child: Text(
-                                              "Không",
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            )),
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context, true);
-                                            },
-                                            child: Text("Có")),
-                                      ],
-                                    )).then((value) {
-                              if (value != null) {
-                                if (value == true) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => SurveyScreen(
-                                          questions: widget.questions,
-                                          campaignId: widget.campaignId,
-                                          scheduleId: widget.scheduleId,
-                                          isCompleted: false,
-                                          questionResultScheduleIdDto: widget
-                                              .questionResultScheduleIdDto,
-                                          questionResults:
-                                              widget.questionResults),
-                                    ),
-                                  );
+                            // print(widget
+                            //     .questionResults.answers?[0].updatedTime!);
+
+                            DateTime? dateTime =
+                                getFormattedDateFromFormattedString(
+                                    value: widget.questionResults.answers?[0]
+                                        .updatedTime!,
+                                    currentFormat: "yyyy-MM-ddTHH:mm:ssZ",
+                                    desiredFormat: "yyyy-MM-dd HH:mm:ss");
+
+                            // print(dateTime!.year); //2021-12-15 11:10:01.000
+                            // print(dateTime.month); //2021-12-15 11:10:01.000
+                            // print(dateTime.day); //2021-12-15 11:10:01.000
+                            if (DateTime.now().year == dateTime!.year &&
+                                DateTime.now().month == dateTime.month &&
+                                DateTime.now().day == dateTime.day) {
+                              await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: Text("Thông báo"),
+                                        content: Text(
+                                            "Bạn có muốn chỉnh sửa phần trả lời khảo sát của mình ?"),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
+                                              },
+                                              child: Text(
+                                                "Không",
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              )),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context, true);
+                                              },
+                                              child: Text("Có")),
+                                        ],
+                                      )).then((value) {
+                                if (value != null) {
+                                  if (value == true) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => SurveyScreen(
+                                            questions: widget.questions,
+                                            campaignId: widget.campaignId,
+                                            scheduleId: widget.scheduleId,
+                                            isCompleted: false,
+                                            questionResultScheduleIdDto: widget
+                                                .questionResultScheduleIdDto,
+                                            questionResults:
+                                                widget.questionResults),
+                                      ),
+                                    );
+                                  }
                                 }
-                              }
-                            });
+                              });
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                          title: Text('Thông báo'),
+                                          content: Text(
+                                              'Lịch triển khai đã qua ngày không thể chỉnh sửa'),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Đóng'))
+                                          ]));
+                            }
                           },
                           icon: Icon(
                             Icons.edit_rounded,

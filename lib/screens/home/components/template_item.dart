@@ -10,13 +10,16 @@ class TemplateItem extends StatelessWidget {
     required this.campaign,
     required this.isCompleted,
     required this.onBack,
+    this.status,
   }) : super(key: key);
   final ScheduleCampaign campaign;
   final bool isCompleted;
+  final String? status;
   final Function(bool) onBack;
 
   @override
   Widget build(BuildContext context) {
+    print(status);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: padding / 2, horizontal: padding),
       child: InkWell(
@@ -25,6 +28,9 @@ class TemplateItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (_) => DetailsScreen(
+                        status: campaign.status != null
+                            ? campaign.status as String
+                            : '',
                         questions: campaign.questions,
                         idSchedule: campaign.sId!,
                         idCampaign: campaign.refCampaignIdCampaignDto != null
@@ -107,7 +113,12 @@ class TemplateItem extends StatelessWidget {
                         "${campaign.surveyTime} - ${(campaign.surveyDate ?? DateTime.now().toIso8601String()).formatDateTimeDMY()}",
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
-                      )
+                      ),
+                      // Text(
+                      //   campaign.sId != null ? campaign.sId as String : '',
+                      //   style: Theme.of(context).textTheme.caption?.copyWith(
+                      //       height: 1.5, fontWeight: FontWeight.bold),
+                      // )
                     ],
                   ),
                 ),
@@ -116,7 +127,8 @@ class TemplateItem extends StatelessWidget {
             SizedBox(
               height: padding / 2,
             ),
-            isCompleted
+            // isCompleted ||
+            status == 'COMPLETE'
                 ? Text(
                     "Đã hoàn thành",
                     style: Theme.of(context)
@@ -124,12 +136,21 @@ class TemplateItem extends StatelessWidget {
                         .caption
                         ?.copyWith(height: 1.5, color: Colors.green),
                   )
-                : Text(
-                    "Chưa hoàn thành",
-                    style: Theme.of(context).textTheme.caption?.copyWith(
-                          height: 1.5,
-                        ),
-                  ),
+                : status == 'INPROCESS'
+                    ? Text(
+                        "Đang chạy",
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            ?.copyWith(height: 1.5, color: Colors.amber[600]),
+                      )
+                    : Text(
+                        "Chưa bắt đầu",
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            ?.copyWith(height: 1.5, color: Colors.grey[600]),
+                      ),
             SizedBox(
               height: padding / 2,
             ),

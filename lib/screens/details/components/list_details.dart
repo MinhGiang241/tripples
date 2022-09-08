@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:survey/constants.dart';
 import 'package:survey/generated/l10n.dart';
 import 'package:survey/models/campaign.dart';
 import 'package:survey/models/department.dart';
 import 'package:survey/utils/extentions/ex.dart';
+import '../../../controllers/auth/auth_controller.dart';
+import '../../../data_sources/api/constants.dart';
 import 'item_detail.dart';
 
 class ListDetails extends StatelessWidget {
@@ -11,9 +15,11 @@ class ListDetails extends StatelessWidget {
     Key? key,
     required this.refCampaignIdCampaignDto,
     required this.department,
+    required this.status,
   }) : super(key: key);
   final RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   final RefDepartmentIdDepartmentDto department;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +43,6 @@ class ListDetails extends StatelessWidget {
             title: S.current.branch, description: department.name ?? ""),
         ItemDetails(
             title: S.current.address, description: department.address ?? ""),
-        // ItemDetails(
-        //     title: S.current.working_time, description: "8:00 - 11:00"),
-
         ItemDetails(
             title: S.current.begin,
             description: (refCampaignIdCampaignDto?.startTime ?? "")
@@ -48,6 +51,14 @@ class ListDetails extends StatelessWidget {
             title: S.current.end,
             description:
                 (refCampaignIdCampaignDto?.endTime ?? "").formatDateTimeDMY()),
+        ItemDetails(
+          title: "Trạng thái lịch triển khai",
+          description: status == 'PENDING'
+              ? 'Chưa bắt đầu'
+              : status == 'INPROCESS'
+                  ? 'Đang chạy'
+                  : 'Đã hoàn thành',
+        ),
       ],
     );
   }

@@ -382,7 +382,11 @@ class ScoreSlider extends StatelessWidget {
                               if (!isReadOnly) {
                                 Provider.of<SliderScoreController>(context,
                                         listen: false)
-                                    .changeValue(val, index, context, questID);
+                                    .changeValue(
+                                        double.parse(val.toStringAsFixed(0)),
+                                        index,
+                                        context,
+                                        questID);
                               }
                             }),
                       ),

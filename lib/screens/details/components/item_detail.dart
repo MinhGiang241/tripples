@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class ItemDetails extends StatelessWidget {
-  const ItemDetails({
-    Key? key,
-    required this.title,
-    required this.description,
-  }) : super(key: key);
+  const ItemDetails({Key? key, required this.title, required this.description})
+      : super(key: key);
   final String title;
   final String description;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -24,6 +22,7 @@ class ItemDetails extends StatelessWidget {
                     .bodyText1
                     ?.copyWith(fontWeight: FontWeight.bold, height: 1.5),
               ),
+
               Html(
                 data: description,
               ),

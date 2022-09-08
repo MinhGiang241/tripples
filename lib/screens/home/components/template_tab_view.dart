@@ -76,6 +76,8 @@ class _TemplateTabViewState extends State<TemplateTabView> {
       //       .compareTo(DateTime.parse(b.refCampaignIdCampaignDto!.endTime ??
       //           DateTime.now().toIso8601String())));
       // }
+
+      print(widget.listCampaign);
       return SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,
@@ -186,6 +188,7 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                     widget.listCampaign.length,
                     (index) => TemplateItem(
                           campaign: widget.listCampaign[index],
+                          status: widget.listCampaign[index].status,
                           isCompleted: widget.isCompleted,
                           onBack: widget.onBack,
                         ))

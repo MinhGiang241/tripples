@@ -36,7 +36,9 @@ class _UpdatePassword extends State<UpdatePassword> {
   }
 
   void onSubmit(runMutation, result) async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey1.currentState!.validate() &&
+        _formKey2.currentState!.validate() &&
+        _formKey3.currentState!.validate()) {
       print('validated');
       setState(() {
         disabled = true;
@@ -81,7 +83,9 @@ class _UpdatePassword extends State<UpdatePassword> {
     }
   }
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+  final _formKey3 = GlobalKey<FormState>();
   final _oldPassFocusNode = FocusNode();
   bool showValKey = false;
   bool hideOldPass = true;
@@ -141,152 +145,160 @@ class _UpdatePassword extends State<UpdatePassword> {
         ),
         body: Card(
             child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
-          child: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                AuthInput(
-                  blockUnicode: true,
-                  focusNode: _oldPassFocusNode,
-                  obscure: hideOldPass,
-                  controller: oldPasController,
-                  hint: "Mật khẩu cũ",
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                      onPressed: () => {
-                            setState(() {
-                              hideOldPass = !hideOldPass;
-                            })
+                padding: EdgeInsets.symmetric(
+                    horizontal: padding, vertical: padding),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Form(
+                        key: _formKey1,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: AuthInput(
+                          blockUnicode: true,
+                          focusNode: _oldPassFocusNode,
+                          obscure: hideOldPass,
+                          controller: oldPasController,
+                          hint: "Mật khẩu cũ",
+                          keyboardType: TextInputType.text,
+                          prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                              onPressed: () => {
+                                    setState(() {
+                                      hideOldPass = !hideOldPass;
+                                    })
+                                  },
+                              icon: hideOldPass
+                                  ? Icon(Icons.visibility_rounded)
+                                  : Icon(Icons.visibility_off_sharp)),
+                          validator: (val) {
+                            // setState(() {
+                            disabled = false;
+                            // });
+                            if (val!.isEmpty) {
+                              return S.current.not_blank;
+                            } else {
+                              return null;
+                            }
                           },
-                      icon: hideOldPass
-                          ? Icon(Icons.visibility_rounded)
-                          : Icon(Icons.visibility_off_sharp)),
-                  validator: (val) {
-                    // setState(() {
-                    disabled = false;
-                    // });
-                    if (val!.isEmpty) {
-                      return S.current.not_blank;
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                AuthInput(
-                  blockUnicode: true,
-                  obscure: hideNewPass,
-                  controller: newPasController,
-                  hint: "Mật khẩu mới",
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                      onPressed: () => {
+                        ),
+                      ),
+                      Form(
+                        key: _formKey2,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: AuthInput(
+                          blockUnicode: true,
+                          obscure: hideNewPass,
+                          controller: newPasController,
+                          hint: "Mật khẩu mới",
+                          keyboardType: TextInputType.text,
+                          prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                              onPressed: () => {
+                                    setState(() {
+                                      hideNewPass = !hideNewPass;
+                                    })
+                                  },
+                              icon: hideNewPass
+                                  ? Icon(Icons.visibility_rounded)
+                                  : Icon(Icons.visibility_off_sharp)),
+                          tab: () {
                             setState(() {
-                              hideNewPass = !hideNewPass;
-                            })
+                              showValKey = true;
+                            });
                           },
-                      icon: hideNewPass
-                          ? Icon(Icons.visibility_rounded)
-                          : Icon(Icons.visibility_off_sharp)),
-                  tab: () {
-                    setState(() {
-                      showValKey = true;
-                    });
-                  },
-                  validator: (val) {
-                    disabled = false;
+                          validator: (val) {
+                            disabled = false;
 
-                    if (val!.isEmpty) {
-                      return S.current.not_blank;
-                    } else if (!RegExp(r"^[\s\S]{6,20}$").hasMatch(val)) {
-                      return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
-                    } else if (!RegExp(r"(.*[a-z].*)").hasMatch(val) ||
-                        !RegExp(r"(.*[A-Z].*)").hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 chữ cái hoa, 1 chữ cái thường";
-                    } else if (!RegExp(r"(.*[0-9].*)").hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 chữ số";
-                    } else if (!RegExp(
-                            r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
-                        .hasMatch(val)) {
-                      return "Mật khẩu ít nhất 1 ký tự đặc biệt";
-                    }
-                    return null;
-                  },
-                ),
-                AuthInput(
-                  blockUnicode: true,
-                  obscure: hideConfirmPass,
-                  controller: confirmNewPasController,
-                  hint: "Nhập lại mật khẩu", //S.current.confirm_pass,
-                  keyboardType: TextInputType.text,
-                  prefixIcon: Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                      onPressed: () => {
-                            setState(() {
-                              hideConfirmPass = !hideConfirmPass;
-                            })
+                            if (val!.isEmpty) {
+                              return S.current.not_blank;
+                            } else if (!RegExp(r"^[\s\S]{6,20}$")
+                                .hasMatch(val)) {
+                              return "Mật khẩu ít nhất 6 ký tự và nhiều nhất 20 ký tự";
+                            } else if (!RegExp(r"(.*[a-z].*)").hasMatch(val) ||
+                                !RegExp(r"(.*[A-Z].*)").hasMatch(val)) {
+                              return "Mật khẩu ít nhất 1 chữ cái hoa, 1 chữ cái thường";
+                            } else if (!RegExp(r"(.*[0-9].*)").hasMatch(val)) {
+                              return "Mật khẩu ít nhất 1 chữ số";
+                            } else if (!RegExp(
+                                    r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
+                                .hasMatch(val)) {
+                              return "Mật khẩu ít nhất 1 ký tự đặc biệt";
+                            }
+                            return null;
                           },
-                      icon: hideConfirmPass
-                          ? Icon(Icons.visibility_rounded)
-                          : Icon(Icons.visibility_off_sharp)),
-                  validator: (val) {
-                    // setState(() {
-                    disabled = false;
-                    // });
-                    if (val!.isEmpty) {
-                      return S.current.not_blank;
-                    } else if (val != newPasController.text) {
-                      return S.current.not_same;
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                // if (showValKey)
-                // FlutterPwValidator(
-                //   controller: newPasController,
-                //   minLength: 6,
-                //   uppercaseCharCount: 1,
-                //   numericCharCount: 1,
-                //   specialCharCount: 1,
-                //   width: 400,
-                //   height: 150,
-                //   onSuccess: () {
-                //     print("Matched");
-                //   },
-                // ),
-                Mutation(
-                  options: MutationOptions(
-                    document: gql(changePassword),
-                    onCompleted: (data) => onCompleteMutation(data),
-                  ),
-                  builder: ((runMutation, result) => Padding(
-                        padding: EdgeInsets.symmetric(vertical: padding),
-                        child: ElevatedButton(
-                            onPressed: disabled
-                                ? null
-                                : () => onSubmit(runMutation, result),
-                            style: TextButton.styleFrom(
-                                backgroundColor: disabled
-                                    ? Colors.grey
-                                    : Theme.of(context).primaryColor),
-                            child: Text(
-                              "Đổi mật khẩu",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .button
-                                  ?.copyWith(color: Colors.white),
+                        ),
+                      ),
+                      Form(
+                        key: _formKey3,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: AuthInput(
+                          blockUnicode: true,
+                          obscure: hideConfirmPass,
+                          controller: confirmNewPasController,
+                          hint: "Nhập lại mật khẩu", //S.current.confirm_pass,
+                          keyboardType: TextInputType.text,
+                          prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                              onPressed: () => {
+                                    setState(() {
+                                      hideConfirmPass = !hideConfirmPass;
+                                    })
+                                  },
+                              icon: hideConfirmPass
+                                  ? Icon(Icons.visibility_rounded)
+                                  : Icon(Icons.visibility_off_sharp)),
+                          validator: (val) {
+                            // setState(() {
+                            disabled = false;
+                            // });
+                            if (val!.isEmpty) {
+                              return S.current.not_blank;
+                            } else if (val != newPasController.text) {
+                              return S.current.not_same;
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
+                      ),
+                      // if (showValKey)
+                      // FlutterPwValidator(
+                      //   controller: newPasController,
+                      //   minLength: 6,
+                      //   uppercaseCharCount: 1,
+                      //   numericCharCount: 1,
+                      //   specialCharCount: 1,
+                      //   width: 400,
+                      //   height: 150,
+                      //   onSuccess: () {
+                      //     print("Matched");
+                      //   },
+                      // ),
+                      Mutation(
+                        options: MutationOptions(
+                          document: gql(changePassword),
+                          onCompleted: (data) => onCompleteMutation(data),
+                        ),
+                        builder: ((runMutation, result) => Padding(
+                              padding: EdgeInsets.symmetric(vertical: padding),
+                              child: ElevatedButton(
+                                  onPressed: disabled
+                                      ? null
+                                      : () => onSubmit(runMutation, result),
+                                  style: TextButton.styleFrom(
+                                      backgroundColor: disabled
+                                          ? Colors.grey
+                                          : Theme.of(context).primaryColor),
+                                  child: Text(
+                                    "Đổi mật khẩu",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button
+                                        ?.copyWith(color: Colors.white),
+                                  )),
                             )),
-                      )),
-                )
-              ],
-            ),
-          ),
-        )),
+                      )
+                    ]))),
       ),
     );
   }

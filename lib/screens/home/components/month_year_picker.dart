@@ -41,8 +41,8 @@ class _ChooseMonthYearState extends State<ChooseMonthYear> {
             print(v.month);
           },
               pickerModel: CustomMonthPicker(
-                  minTime: DateTime(2000, 1, 1),
-                  maxTime: DateTime.now(),
+                  minTime: DateTime(DateTime.now().year - 10, 1, 1),
+                  maxTime: DateTime(DateTime.now().year + 10, 12, 31),
                   currentTime: DateTime(widget.year, widget.month, 1),
                   locale: LocaleType.vi));
         },

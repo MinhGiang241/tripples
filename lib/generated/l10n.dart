@@ -203,8 +203,8 @@ class S {
   /// `Start`
   String get start {
     return Intl.message(
-      'Start',
-      name: 'start',
+      'Bắt đầu',
+      name: 'Bắt đầu',
       desc: '',
       args: [],
     );

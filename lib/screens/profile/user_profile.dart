@@ -110,7 +110,7 @@ class DetailUser extends StatelessWidget {
                                       decoration: BoxDecoration(),
                                       padding: EdgeInsets.symmetric(
                                           vertical: padding),
-                                      height: 180,
+                                      height: 200,
                                       child: CircleAvatar(
                                         backgroundColor: Colors.grey.shade400,
                                         radius: 25,

@@ -23,6 +23,9 @@ class ForgetPasswordForm extends StatefulWidget {
 
 class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey3 = GlobalKey<FormState>();
 
   var disabled = false;
   var sendOtp = '''
@@ -105,6 +108,9 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                               context,
                               MaterialPageRoute(
                                   builder: (_) => ResetPassword(
+                                      formKey1: _formKey1,
+                                      formKey2: _formKey2,
+                                      formKey3: _formKey3,
                                       email: widget.emailEditingController.text
                                           .trim())));
                         }

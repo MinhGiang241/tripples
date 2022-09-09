@@ -155,6 +155,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey1,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
+                          maxLength: 20,
                           blockUnicode: true,
                           focusNode: _oldPassFocusNode,
                           obscure: hideOldPass,
@@ -187,6 +188,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey2,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
+                          maxLength: 20,
                           blockUnicode: true,
                           obscure: hideNewPass,
                           controller: newPasController,
@@ -233,6 +235,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey3,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
+                          maxLength: 20,
                           blockUnicode: true,
                           obscure: hideConfirmPass,
                           controller: confirmNewPasController,

@@ -403,7 +403,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                               ],
                                                             );
                                                           });
-                                                    } else if (result![
+                                                    } else if (result[
                                                                 'schedule_change_status_schedule']
                                                             ['code'] !=
                                                         0) {
@@ -433,35 +433,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                                               ],
                                                             );
                                                           });
-                                                    }
+                                                    } else {}
                                                   }),
                                               builder: (runMutation, result) {
-                                                // runMutation({
-                                                //   "scheduleId":
-                                                //       widget.scheduleId,
-                                                //   "status": "COMPLETE"
-                                                // });
-
-                                                // if (result.isLoading) {
-                                                //   return Center(
-                                                //     child:
-                                                //         CircularProgressIndicator(),
-                                                //   );
-                                                // } else {
-                                                //   ResponseListTemplate
-                                                //       responseListTemplate =
-                                                //       ResponseListTemplate.from(
-                                                //           result.data!);
-                                                //   if (result.data![
-                                                //               'scheduleresult_get_questions_and_answers_by_schedule']
-                                                //           ['code'] !=
-                                                //       0) {
-                                                //     return Center(
-                                                //         child: Text(''));
-                                                //   }
-
                                                 return RootScreen();
-                                                // }
                                               },
                                             ),
                                           ),

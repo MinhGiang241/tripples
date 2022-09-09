@@ -125,6 +125,7 @@ class _LoginFormState extends State<LoginForm> {
                 title: S.current.login,
                 onPress: () async {
                   if (_formKey.currentState!.validate()) {
+                    FocusScope.of(context).unfocus();
                     try {
                       String token = await Provider.of<AuthController>(context,
                               listen: false)

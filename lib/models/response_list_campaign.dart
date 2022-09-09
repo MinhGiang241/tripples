@@ -85,6 +85,7 @@ class ScheduleCampaign extends ChangeNotifier {
   String? surveyDate;
   String? surveyTime;
   String? status;
+  String? updatedTime;
   RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   RefDepartmentIdDepartmentDto? refDepartmentIdDepartmentDto;
   RefCompanyIdCompanyDto? refCompanyIdCompanyDto;
@@ -100,12 +101,14 @@ class ScheduleCampaign extends ChangeNotifier {
       this.refCompanyIdCompanyDto,
       this.questionResult,
       this.status,
+      this.updatedTime,
       // no use
       this.questionResultScheduleIdDto,
       // no use
       this.questions});
 
   ScheduleCampaign.fromJson(json) {
+    updatedTime = json['updatedTime'];
     sId = json['_id'];
     surveyDate = json['survey_date'];
     surveyTime = json['survey_time'];

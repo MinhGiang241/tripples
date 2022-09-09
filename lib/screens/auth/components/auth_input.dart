@@ -14,6 +14,8 @@ class AuthInput extends StatelessWidget {
       this.validator,
       this.tab,
       this.focusNode,
+      this.maxLength,
+      this.autoFocus = false,
       this.blockUnicode = false})
       : super(key: key);
   final TextEditingController controller;
@@ -25,12 +27,16 @@ class AuthInput extends StatelessWidget {
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final Function? tab;
+  final int? maxLength;
+  final bool autoFocus;
   bool blockUnicode = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: padding / 2),
       child: TextFormField(
+        autofocus: autoFocus,
+        maxLength: maxLength,
         inputFormatters: blockUnicode
             ? <TextInputFormatter>[
                 FilteringTextInputFormatter.deny(RegExp(

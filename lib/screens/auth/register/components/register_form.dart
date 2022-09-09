@@ -7,7 +7,6 @@ import 'package:survey/data_sources/api/constants.dart';
 import 'package:survey/generated/l10n.dart';
 import 'package:survey/screens/auth/components/auth_button.dart';
 import 'package:survey/screens/auth/components/auth_input.dart';
-import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 
 class RegisterForm extends StatefulWidget {
   RegisterForm({
@@ -133,19 +132,6 @@ class _RegisterFormState extends State<RegisterForm> {
                   return null;
                 },
               ),
-              if (showValKey)
-                FlutterPwValidator(
-                  controller: widget.passwordController,
-                  minLength: 6,
-                  uppercaseCharCount: 1,
-                  numericCharCount: 1,
-                  specialCharCount: 1,
-                  width: 400,
-                  height: 150,
-                  onSuccess: () {
-                    print("Matched");
-                  },
-                ),
               AuthInput(
                 blockUnicode: true,
                 obscure: true,

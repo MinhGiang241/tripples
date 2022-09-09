@@ -118,6 +118,13 @@ class TemplateItem extends StatelessWidget {
                       //   campaign.sId != null ? campaign.sId as String : '',
                       //   style: Theme.of(context).textTheme.caption?.copyWith(
                       //       height: 1.5, fontWeight: FontWeight.bold),
+                      // ),
+                      // Text(
+                      //   campaign.updatedTime != null
+                      //       ? campaign.updatedTime as String
+                      //       : '',
+                      //   style: Theme.of(context).textTheme.caption?.copyWith(
+                      //       height: 1.5, fontWeight: FontWeight.bold),
                       // )
                     ],
                   ),

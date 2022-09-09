@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:survey/screens/auth/login/login_screen.dart';
 
@@ -92,6 +91,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               key: widget.formKey1,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
+                  autoFocus: true,
                   controller: widget.codeEditingController,
                   hint: "Mã OTP",
                   keyboardType: TextInputType.number,
@@ -231,6 +231,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                             widget.formKey2.currentState!.validate() &&
                             widget.formKey3.currentState!.validate()) {
                           print('submit');
+                          FocusScope.of(context).unfocus();
+
                           runMutation({
                             "mailTo": widget.email,
                             "new_pw": widget.newPasswordEditingController.text,

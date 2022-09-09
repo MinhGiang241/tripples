@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import "package:flutter/material.dart";
-import 'package:flutter_pw_validator/flutter_pw_validator.dart';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +40,7 @@ class _UpdatePassword extends State<UpdatePassword> {
         _formKey2.currentState!.validate() &&
         _formKey3.currentState!.validate()) {
       print('validated');
+      FocusScope.of(context).unfocus();
       setState(() {
         disabled = true;
       });

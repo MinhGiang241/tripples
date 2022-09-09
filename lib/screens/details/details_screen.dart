@@ -222,6 +222,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (_) => SurveyScreen(
+                                                        status: status,
                                                         campaignId:
                                                             widget.idCampaign,
                                                         scheduleId:

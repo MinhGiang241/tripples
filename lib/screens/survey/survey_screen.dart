@@ -18,6 +18,7 @@ import 'package:survey/screens/survey/controllers/choose_file_controller.dart';
 import 'package:survey/screens/survey/controllers/file_upload.dart';
 import 'package:intl/intl.dart';
 import 'package:survey/utils/extentions/ex.dart';
+import 'package:diacritic/diacritic.dart';
 
 import '../../data_sources/api/api_client.dart';
 import '../../models/campaign.dart';
@@ -29,6 +30,7 @@ class SurveyScreen extends StatefulWidget {
   final String campaignId;
   final String scheduleId;
   final bool isCompleted;
+  final String status;
   final List<QuestionResultScheduleIdDto> questionResultScheduleIdDto;
   final QuestionResult questionResults;
   final RefCampaignIdCampaignDto? campaign;
@@ -39,6 +41,7 @@ class SurveyScreen extends StatefulWidget {
       required this.scheduleId,
       required this.questionResultScheduleIdDto,
       required this.questionResults,
+      this.status = '',
       this.isCompleted = false,
       this.campaign})
       : super(key: key);
@@ -68,9 +71,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
     """;
 
-    final String queryTemplate = """
-    mutation {
-     scheduleresult_get_questions_and_answers_by_schedule  {
+    final String changeStatus = """
+        mutation(\$scheduleId: String , \$newStatus: String){
+      schedule_change_status_schedule(scheduleId: \$scheduleId ,newStatus: \$newStatus ){
         code
         message
         data
@@ -199,6 +202,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => SurveyScreen(
+                                            status: widget.status,
                                             questions: widget.questions,
                                             campaignId: widget.campaignId,
                                             scheduleId: widget.scheduleId,
@@ -253,6 +257,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                     children: List.generate(
                                         widget.questions.length, (index) {
                                       listKey.add(GlobalKey());
+                                      // var listQuestion =
+                                      widget.questions.sort((a, b) =>
+                                          removeDiacritics(a.title as String)
+                                              .compareTo(removeDiacritics(
+                                                  b.title as String)));
                                       var question = widget.questions[index];
                                       var questionResult = widget
                                                   .questionResults.answers !=
@@ -368,37 +377,91 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                         MaterialPageRoute(
                                           builder: (_) => GraphQLProvider(
                                             client: client,
-                                            child: Query(
-                                              options: QueryOptions(
-                                                document: gql(queryTemplate),
-                                              ),
-                                              builder: (result,
-                                                  {fetchMore, refetch}) {
-                                                if (result.isLoading) {
-                                                  return Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                } else {
-                                                  ResponseListTemplate
-                                                      responseListTemplate =
-                                                      ResponseListTemplate.from(
-                                                          result.data!);
-                                                  if (result.data![
-                                                              'scheduleresult_get_questions_and_answers_by_schedule']
-                                                          ['code'] !=
-                                                      0) {
-                                                    return Center(
-                                                        child: Text(''));
-                                                  }
-                                                  // var questionResult =
-                                                  //     responseListTemplate
-                                                  //         .querySchedulesDto!
-                                                  //         .data![0]
-                                                  //         .questionResultScheduleIdDto;
-                                                  // print(questionResult);
-                                                  return RootScreen();
-                                                }
+                                            child: Mutation(
+                                              options: MutationOptions(
+                                                  document: gql(changeStatus),
+                                                  onCompleted: (result) {
+                                                    if (result == null) {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Có lỗi xảy ra '),
+                                                              content: Text(
+                                                                  'xem lại kết nối internet'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Text(
+                                                                      'Đóng'),
+                                                                )
+                                                              ],
+                                                            );
+                                                          });
+                                                    } else if (result![
+                                                                'schedule_change_status_schedule']
+                                                            ['code'] !=
+                                                        0) {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Không chuyển trạng thái chiến dịch được'),
+                                                              content: Text(
+                                                                  result['schedule_change_status_schedule']
+                                                                          [
+                                                                          'message']
+                                                                      .split(
+                                                                          ':')
+                                                                      .last),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Text(
+                                                                      'Đóng'),
+                                                                )
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
+                                                  }),
+                                              builder: (runMutation, result) {
+                                                // runMutation({
+                                                //   "scheduleId":
+                                                //       widget.scheduleId,
+                                                //   "status": "COMPLETE"
+                                                // });
+
+                                                // if (result.isLoading) {
+                                                //   return Center(
+                                                //     child:
+                                                //         CircularProgressIndicator(),
+                                                //   );
+                                                // } else {
+                                                //   ResponseListTemplate
+                                                //       responseListTemplate =
+                                                //       ResponseListTemplate.from(
+                                                //           result.data!);
+                                                //   if (result.data![
+                                                //               'scheduleresult_get_questions_and_answers_by_schedule']
+                                                //           ['code'] !=
+                                                //       0) {
+                                                //     return Center(
+                                                //         child: Text(''));
+                                                //   }
+
+                                                return RootScreen();
+                                                // }
                                               },
                                             ),
                                           ),

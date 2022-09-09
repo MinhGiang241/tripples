@@ -133,10 +133,11 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                             .answers![0]
                             .updatedTime!)));
                   } else {
-                    listSearch.sort((a, b) =>
-                        DateTime.parse(a.refCampaignIdCampaignDto!.endTime!)
-                            .compareTo(DateTime.parse(
-                                b.refCampaignIdCampaignDto!.endTime!)));
+                    listSearch.sort(
+                        (a, b) => DateTime.parse(a.updatedTime as String)
+                            .compareTo(DateTime.parse(b.updatedTime as String))
+                        // a.status!.compareTo(b.status!)
+                        );
                   }
                 });
               },

@@ -53,6 +53,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   bool showValKey = false;
   bool hideNewPass = true;
   bool hideConfirmPass = true;
+  bool notValidation = false;
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink(ApiConstants.baseUrl);
@@ -89,7 +90,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
             Form(
               key: widget.formKey1,
-              autovalidateMode: AutovalidateMode.always,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
                   autoFocus: true,
                   controller: widget.codeEditingController,
@@ -109,7 +110,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             ),
             Form(
               key: widget.formKey2,
-              autovalidateMode: AutovalidateMode.always,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
                 maxLength: 20,
                 blockUnicode: true,
@@ -120,6 +121,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 suffixIcon: IconButton(
                     onPressed: () => {
                           setState(() {
+                            notValidation = true;
                             hideNewPass = !hideNewPass;
                           })
                         },
@@ -127,11 +129,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                         ? Icon(Icons.visibility_rounded)
                         : Icon(Icons.visibility_off_sharp)),
                 obscure: hideNewPass,
-                tab: () {
-                  setState(() {
-                    showValKey = true;
-                  });
-                },
+                enableSuggestions: true,
                 validator: (val) {
                   // setState(() {
                   widget.disabled = false;
@@ -156,10 +154,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             ),
             Form(
               key: widget.formKey3,
-              autovalidateMode: AutovalidateMode.always,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
                   maxLength: 20,
                   blockUnicode: true,
+                  enableSuggestions: true,
                   controller: widget.confirmNewPasswordEditingController,
                   hint: "Nhập lại mật khẩu mới",
                   keyboardType: TextInputType.text,
@@ -167,6 +166,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   suffixIcon: IconButton(
                       onPressed: () => {
                             setState(() {
+                              notValidation = true;
                               hideConfirmPass = !hideConfirmPass;
                             })
                           },
@@ -177,7 +177,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   validator: (v) {
                     // setState(() {
                     widget.disabled = false;
-                    // });
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else if (v != widget.newPasswordEditingController.text) {
@@ -229,9 +228,15 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                         setState(() {
                           widget.disabled = true;
                         });
-                        if (widget.formKey1.currentState!.validate() &&
-                            widget.formKey2.currentState!.validate() &&
-                            widget.formKey3.currentState!.validate()) {
+                        var form_1Validate =
+                            widget.formKey1.currentState!.validate();
+                        var form_2Validate =
+                            widget.formKey2.currentState!.validate();
+                        var form_3Validate =
+                            widget.formKey3.currentState!.validate();
+                        if (form_1Validate &&
+                            form_2Validate &&
+                            form_3Validate) {
                           print('submit');
                           FocusScope.of(context).unfocus();
 

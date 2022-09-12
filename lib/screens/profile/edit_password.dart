@@ -51,9 +51,11 @@ class _UpdatePassword extends State<UpdatePassword> {
     setState(() {
       disabled = true;
     });
-    if (_formKey1.currentState!.validate() &&
-        _formKey2.currentState!.validate() &&
-        _formKey3.currentState!.validate()) {
+
+    var form_1Validation = _formKey1.currentState!.validate();
+    var form_2Validation = _formKey2.currentState!.validate();
+    var form_3Validation = _formKey3.currentState!.validate();
+    if (form_1Validation && form_2Validation && form_3Validation) {
       print('validated');
       FocusScope.of(context).unfocus();
 
@@ -159,7 +161,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                     children: <Widget>[
                       Form(
                         key: _formKey1,
-                        autovalidateMode: AutovalidateMode.always,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
                           // onFieldSubmitted: ,
                           autoFocus: true,
@@ -194,7 +196,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                       ),
                       Form(
                         key: _formKey2,
-                        autovalidateMode: AutovalidateMode.always,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
                           // focusNode: _newPassFocusNode,
                           // onFieldSubmitted: (value) {
@@ -242,7 +244,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                       ),
                       Form(
                         key: _formKey3,
-                        autovalidateMode: AutovalidateMode.always,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
                           // onFieldSubmitted: (value) {
                           //   FocusScope.of(context)

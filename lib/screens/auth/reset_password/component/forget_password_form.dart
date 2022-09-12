@@ -37,6 +37,19 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
     }
   }
   ''';
+  final _emailFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _emailFocusNode.requestFocus();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +69,8 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
       ),
     );
 
+    // _emailFocusNode.requestFocus();
+
     return GraphQLProvider(
       client: client,
       child: Form(
@@ -71,6 +86,7 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                 height: padding / 2,
               ),
               AuthInput(
+                  focusNode: _emailFocusNode,
                   blockUnicode: true,
                   controller: widget.emailEditingController,
                   hint: S.current.email,
@@ -94,12 +110,21 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                         setState(() {
                           disabled = false;
                         });
-                        if (result['authorization_generate_otp']['code'] != 0) {
+                        if (result == null) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Kiểm tra lại kết nối!")));
+                        } else if (result['authorization_generate_otp']
+                                ['code'] !=
+                            0) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
-                                  "Gửi mã OTP không thành công" //result['authorization_generate_otp']['message']
-                                  )));
+                                  // "Gửi mã OTP không thành công"
+                                  result['authorization_generate_otp']
+                                          ['message']
+                                      .split(':')
+                                      .last)));
                         } else {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -123,9 +148,10 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                         title: 'Gửi Mã OTP',
                         onPress: () async {
                           if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              disabled = true;
-                            });
+                            _emailFocusNode.unfocus();
+                            // setState(() {
+                            disabled = true;
+                            // });
                             runMutation({
                               'mailTo':
                                   widget.emailEditingController.text.trim()

@@ -221,7 +221,9 @@ class QuestionResultScheduleIdDto {
   QuestionResultScheduleIdDto.fromJson(json, q) {
     id = json['_id'];
 
-    score = q['max_score'];
+    score = json['max_score'] != null
+        ? int.parse(json['max_score'].toStringAsFixed(0))
+        : 0;
 
     if (json["question_results"] != null &&
         json["question_results"].length > 0) {

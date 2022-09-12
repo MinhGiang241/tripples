@@ -89,7 +89,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
             Form(
               key: widget.formKey1,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
               child: AuthInput(
                   autoFocus: true,
                   controller: widget.codeEditingController,
@@ -109,7 +109,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             ),
             Form(
               key: widget.formKey2,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
               child: AuthInput(
                 maxLength: 20,
                 blockUnicode: true,
@@ -156,7 +156,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             ),
             Form(
               key: widget.formKey3,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
               child: AuthInput(
                   maxLength: 20,
                   blockUnicode: true,
@@ -181,7 +181,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     if (v!.isEmpty) {
                       return S.current.not_blank;
                     } else if (v != widget.newPasswordEditingController.text) {
-                      return 'mật khẩu không khớp';
+                      return 'Mật khẩu không khớp';
                     } else {
                       return null;
                     }

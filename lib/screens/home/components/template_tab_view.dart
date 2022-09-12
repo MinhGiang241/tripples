@@ -37,26 +37,25 @@ class _TemplateTabViewState extends State<TemplateTabView> {
   final TextEditingController searchController = TextEditingController();
   bool onSearch = false;
   List<ScheduleCampaign> listSearch = [];
-  late RefDepartmentIdDepartmentDto selectedDepartment;
-  List<RefDepartmentIdDepartmentDto> departments =
-      <RefDepartmentIdDepartmentDto>[
-    RefDepartmentIdDepartmentDto(id: '-1', name: '-- Tất cả --')
+  late RefCompanyIdCompanyDto selectedCompany;
+  List<RefCompanyIdCompanyDto> companies = <RefCompanyIdCompanyDto>[
+    RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
   ];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    selectedDepartment = departments[0];
-    var resultDepartments = widget.listCampaign
-        .where((element) => element.refDepartmentIdDepartmentDto != null)
-        .map((element) => element.refDepartmentIdDepartmentDto!)
+    selectedCompany = companies[0];
+    var resultCompanies = widget.listCampaign
+        .where((element) => element.refCompanyIdCompanyDto != null)
+        .map((element) => element.refCompanyIdCompanyDto!)
         .toSet()
         .toList();
     var idSet = <String?>{};
-    for (var d in resultDepartments) {
+    for (var d in resultCompanies) {
       if (idSet.add(d.id)) {
-        departments.add(RefDepartmentIdDepartmentDto(id: d.id!, name: d.name!));
+        companies.add(RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
       }
     }
   }
@@ -103,20 +102,19 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                 year: widget.year,
                 month: widget.month,
                 selectMonthAndYear: widget.selectMonthAndYear),
-            DropdownButton<RefDepartmentIdDepartmentDto>(
+            DropdownButton<RefCompanyIdCompanyDto>(
               isExpanded: true,
-              value: selectedDepartment,
-              onChanged: (RefDepartmentIdDepartmentDto? value) {
+              value: selectedCompany,
+              onChanged: (RefCompanyIdCompanyDto? value) {
                 setState(() {
-                  selectedDepartment = value!;
+                  selectedCompany = value!;
                   // listSearch = widget.listCampaign;
                   if (value.id == '-1') {
                     onSearch = false;
                   } else {
                     listSearch.clear();
                     widget.listCampaign.forEach((element) {
-                      if (element.refDepartmentIdDepartmentDto!.id ==
-                          value.id) {
+                      if (element.refCompanyIdCompanyDto!.id == value.id) {
                         listSearch.add(element);
                       }
                     });
@@ -141,12 +139,12 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                   }
                 });
               },
-              items: departments.map((RefDepartmentIdDepartmentDto department) {
-                return DropdownMenuItem<RefDepartmentIdDepartmentDto>(
-                  value: department,
+              items: companies.map((RefCompanyIdCompanyDto company) {
+                return DropdownMenuItem<RefCompanyIdCompanyDto>(
+                  value: company,
                   child: Center(
                     child: new Text(
-                      department.name!,
+                      company.name!,
                       style: new TextStyle(color: Colors.black),
                     ),
                   ),

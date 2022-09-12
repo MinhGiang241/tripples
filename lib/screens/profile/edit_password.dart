@@ -17,6 +17,7 @@ import 'user_profile.dart';
 
 class UpdatePassword extends StatefulWidget {
   UpdatePassword();
+
   @override
   State<UpdatePassword> createState() => _UpdatePassword();
 }
@@ -35,15 +36,27 @@ class _UpdatePassword extends State<UpdatePassword> {
     ));
   }
 
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+  final _formKey3 = GlobalKey<FormState>();
+  final _oldPassFocusNode = FocusNode();
+  final _newPassFocusNode = FocusNode();
+  final _confirmPassFocusNode = FocusNode();
+  bool showValKey = false;
+  bool hideOldPass = true;
+  bool hideNewPass = true;
+  bool hideConfirmPass = true;
+
   void onSubmit(runMutation, result) async {
+    setState(() {
+      disabled = true;
+    });
     if (_formKey1.currentState!.validate() &&
         _formKey2.currentState!.validate() &&
         _formKey3.currentState!.validate()) {
       print('validated');
       FocusScope.of(context).unfocus();
-      setState(() {
-        disabled = true;
-      });
+
       print(result);
       // ignore: await_only_futures
       await runMutation({
@@ -84,24 +97,17 @@ class _UpdatePassword extends State<UpdatePassword> {
     }
   }
 
-  final _formKey1 = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
-  final _formKey3 = GlobalKey<FormState>();
-  final _oldPassFocusNode = FocusNode();
-  bool showValKey = false;
-  bool hideOldPass = true;
-  bool hideNewPass = true;
-  bool hideConfirmPass = true;
-
   @override
   void dispose() {
     _oldPassFocusNode.dispose();
+    _newPassFocusNode.dispose();
+    _confirmPassFocusNode.dispose();
     super.dispose();
   }
 
-  @override
+  // @override
   void initState() {
-    _oldPassFocusNode.requestFocus();
+    // _oldPassFocusNode.requestFocus();
     super.initState();
   }
 
@@ -153,11 +159,13 @@ class _UpdatePassword extends State<UpdatePassword> {
                     children: <Widget>[
                       Form(
                         key: _formKey1,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.always,
                         child: AuthInput(
+                          // onFieldSubmitted: ,
+                          autoFocus: true,
                           maxLength: 20,
                           blockUnicode: true,
-                          focusNode: _oldPassFocusNode,
+                          // focusNode: _oldPassFocusNode,
                           obscure: hideOldPass,
                           controller: oldPasController,
                           hint: "Mật khẩu cũ",
@@ -186,8 +194,13 @@ class _UpdatePassword extends State<UpdatePassword> {
                       ),
                       Form(
                         key: _formKey2,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.always,
                         child: AuthInput(
+                          // focusNode: _newPassFocusNode,
+                          // onFieldSubmitted: (value) {
+                          //   FocusScope.of(context)
+                          //       .requestFocus(_newPassFocusNode);
+                          // },
                           maxLength: 20,
                           blockUnicode: true,
                           obscure: hideNewPass,
@@ -204,11 +217,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                               icon: hideNewPass
                                   ? Icon(Icons.visibility_rounded)
                                   : Icon(Icons.visibility_off_sharp)),
-                          tab: () {
-                            setState(() {
-                              showValKey = true;
-                            });
-                          },
+                          tab: () {},
                           validator: (val) {
                             disabled = false;
 
@@ -233,8 +242,13 @@ class _UpdatePassword extends State<UpdatePassword> {
                       ),
                       Form(
                         key: _formKey3,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.always,
                         child: AuthInput(
+                          // onFieldSubmitted: (value) {
+                          //   FocusScope.of(context)
+                          //       .requestFocus(_confirmPassFocusNode);
+                          // },
+                          // focusNode: _confirmPassFocusNode,
                           maxLength: 20,
                           blockUnicode: true,
                           obscure: hideConfirmPass,

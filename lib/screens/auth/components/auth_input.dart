@@ -16,6 +16,7 @@ class AuthInput extends StatelessWidget {
       this.focusNode,
       this.maxLength,
       this.autoFocus = false,
+      this.onFieldSubmitted,
       this.blockUnicode = false})
       : super(key: key);
   final TextEditingController controller;
@@ -29,6 +30,7 @@ class AuthInput extends StatelessWidget {
   final Function? tab;
   final int? maxLength;
   final bool autoFocus;
+  final onFieldSubmitted;
   bool blockUnicode = false;
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,7 @@ class AuthInput extends StatelessWidget {
             tab!();
           }
         },
+        onFieldSubmitted: onFieldSubmitted,
         focusNode: focusNode,
         obscureText: obscure,
         controller: controller,

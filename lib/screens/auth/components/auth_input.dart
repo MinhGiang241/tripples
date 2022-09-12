@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:survey/constants.dart';
+import 'package:tiengviet/tiengviet.dart';
 
 class AuthInput extends StatelessWidget {
   AuthInput(
@@ -19,6 +20,7 @@ class AuthInput extends StatelessWidget {
       this.onFieldSubmitted,
       this.enableSuggestions = false,
       this.autovalidateMode,
+      this.onChanged,
       this.blockUnicode = false})
       : super(key: key);
   final TextEditingController controller;
@@ -34,19 +36,40 @@ class AuthInput extends StatelessWidget {
   final bool autoFocus;
   final bool enableSuggestions;
   final onFieldSubmitted;
+  final onChanged;
   final AutovalidateMode? autovalidateMode;
   bool blockUnicode = false;
+  // var text = [];
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: padding / 2),
       child: TextFormField(
+        onChanged: (v) {
+          // text: text.join(''),
+
+          // if (v.length == TiengViet.parse(v).length) {
+          //   controller.value = TextEditingValue(
+          //       text: TiengViet.parse(v),
+          //       selection: TextSelection.fromPosition(
+          //           TextPosition(offset: controller.text.length)));
+          // } else {
+          //   controller.value = TextEditingValue(
+          //       text: TiengViet.parse(v),
+          //       selection:
+          //           TextSelection.fromPosition(TextPosition(offset: v.length)));
+          // }
+        },
+        // textInputAction: TextInputAction.next,
         autofocus: autoFocus,
         maxLength: maxLength,
         inputFormatters: blockUnicode
             ? <TextInputFormatter>[
-                FilteringTextInputFormatter.deny(RegExp(
-                    r'[ àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')),
+                FilteringTextInputFormatter.deny(RegExp(r'[ ]'))
+                // FilteringTextInputFormatter.allow(RegExp('[a-z A-Z 0-9]'))
+
+                // FilteringTextInputFormatter.deny(RegExp(
+                //     r'[ àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')),
               ]
             : null,
         onTap: () {

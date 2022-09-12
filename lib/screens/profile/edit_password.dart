@@ -166,7 +166,6 @@ class _UpdatePassword extends State<UpdatePassword> {
                           // onFieldSubmitted: ,
                           autoFocus: true,
                           maxLength: 20,
-                          blockUnicode: true,
                           // focusNode: _oldPassFocusNode,
                           obscure: hideOldPass,
                           controller: oldPasController,
@@ -188,6 +187,10 @@ class _UpdatePassword extends State<UpdatePassword> {
                             // });
                             if (val!.isEmpty) {
                               return S.current.not_blank;
+                            } else if (RegExp(
+                                    r'[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')
+                                .hasMatch(val)) {
+                              return 'Không nhập tiếng việt có dấu!';
                             } else {
                               return null;
                             }
@@ -204,7 +207,6 @@ class _UpdatePassword extends State<UpdatePassword> {
                           //       .requestFocus(_newPassFocusNode);
                           // },
                           maxLength: 20,
-                          blockUnicode: true,
                           obscure: hideNewPass,
                           controller: newPasController,
                           hint: "Mật khẩu mới",
@@ -237,6 +239,10 @@ class _UpdatePassword extends State<UpdatePassword> {
                                     r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
                                 .hasMatch(val)) {
                               return "Mật khẩu ít nhất 1 ký tự đặc biệt";
+                            } else if (RegExp(
+                                    r'[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')
+                                .hasMatch(val)) {
+                              return 'Không nhập tiếng việt có dấu!';
                             }
                             return null;
                           },
@@ -252,7 +258,6 @@ class _UpdatePassword extends State<UpdatePassword> {
                           // },
                           // focusNode: _confirmPassFocusNode,
                           maxLength: 20,
-                          blockUnicode: true,
                           obscure: hideConfirmPass,
                           controller: confirmNewPasController,
                           hint: "Nhập lại mật khẩu", //S.current.confirm_pass,

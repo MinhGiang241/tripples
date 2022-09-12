@@ -113,7 +113,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
                 maxLength: 20,
-                blockUnicode: true,
                 controller: widget.newPasswordEditingController,
                 hint: "Mật khẩu mới",
                 keyboardType: TextInputType.text,
@@ -147,6 +146,10 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                           r"(?=.*[@$!%*#?&)(\-+=\[\]\{\}\.\,<>\'\`~:;\\|/])[A-Za-z\d@$!%*#?&]")
                       .hasMatch(val)) {
                     return "Mật khẩu ít nhất 1 ký tự đặc biệt";
+                  } else if (RegExp(
+                          r'[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')
+                      .hasMatch(val)) {
+                    return 'Không nhập tiếng việt có dấu!';
                   }
                   return null;
                 },
@@ -157,7 +160,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
                   maxLength: 20,
-                  blockUnicode: true,
                   enableSuggestions: true,
                   controller: widget.confirmNewPasswordEditingController,
                   hint: "Nhập lại mật khẩu mới",

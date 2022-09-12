@@ -75,7 +75,6 @@ class _LoginFormState extends State<LoginForm> {
                 height: padding / 2,
               ),
               AuthInput(
-                  blockUnicode: true,
                   focusNode: _userNameFocusNode,
                   controller: widget.userNameEditingController,
                   hint: 'Tên tài khoản', //S.current.user_name,
@@ -85,6 +84,10 @@ class _LoginFormState extends State<LoginForm> {
                     if (v!.trim().isEmpty) {
                       _userNameFocusNode.requestFocus();
                       return S.current.not_blank;
+                    } else if (RegExp(
+                            r'[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')
+                        .hasMatch(v)) {
+                      return 'Không nhập tiếng việt có dấu!';
                     } else {
                       return null;
                     }
@@ -92,7 +95,6 @@ class _LoginFormState extends State<LoginForm> {
               AuthInput(
                   maxLength: 20,
                   focusNode: _passwordFocusNode,
-                  blockUnicode: true,
                   controller: widget.passwordEditingController,
                   hint: 'Mật khẩu', //S.current.password,
                   keyboardType: TextInputType.text,

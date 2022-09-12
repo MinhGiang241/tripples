@@ -106,7 +106,6 @@ class _RegisterFormState extends State<RegisterForm> {
                 },
               ),
               AuthInput(
-                blockUnicode: true,
                 obscure: true,
                 controller: widget.passwordController,
                 hint: S.current.password,
@@ -133,7 +132,6 @@ class _RegisterFormState extends State<RegisterForm> {
                 },
               ),
               AuthInput(
-                blockUnicode: true,
                 obscure: true,
                 controller: widget.confirmPassController,
                 hint: S.current.confirm_pass,

@@ -87,7 +87,6 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
               ),
               AuthInput(
                   focusNode: _emailFocusNode,
-                  blockUnicode: true,
                   controller: widget.emailEditingController,
                   hint: S.current.email,
                   keyboardType: TextInputType.text,
@@ -98,6 +97,10 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                     } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                         .hasMatch(v.trim())) {
                       return "Không phải email";
+                    } else if (RegExp(
+                            r'[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]')
+                        .hasMatch(v)) {
+                      return 'Không nhập tiếng việt có dấu!';
                     } else {
                       return null;
                     }

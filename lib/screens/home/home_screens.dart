@@ -243,8 +243,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       // Provider.of<AnswerController>(context);
                       listInprogress.sort((a, b) =>
+                          DateTime.parse(b.surveyDate as String).compareTo(
+                              DateTime.parse(a.surveyDate as String)));
+                      listInprogress.sort(
+                          (a, b) => b.status!.compareTo(a.status as String));
+
+                      listCompleted.sort((a, b) =>
                           DateTime.parse(b.updatedTime as String).compareTo(
                               DateTime.parse(a.updatedTime as String)));
+
                       return TabBarView(
                           controller: tabController,
                           physics: NeverScrollableScrollPhysics(),

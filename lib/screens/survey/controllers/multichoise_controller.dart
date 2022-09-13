@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:survey/models/question.dart';
 import 'package:survey/models/response_list_campaign.dart';
+import 'package:collection/collection.dart';
 
 class MultichoiseController extends ChangeNotifier {
   List<Poll> listData = [];
@@ -11,10 +12,14 @@ class MultichoiseController extends ChangeNotifier {
     var lisChoices = values.split(',');
     if (values != '' && lisChoices != '' && lisChoices != null) {
       lisChoices.forEach((element) {
-        listData.firstWhere((e) => e.label == element).isSelected = true;
+        var e = listData.firstWhereOrNull((e) => e.label == element);
+        if (e != null) {
+          e.isSelected = true;
+        }
       });
     }
     print(listData);
+    print(lisChoices);
     notifyListeners();
   }
   onChange(int index, bool val) {

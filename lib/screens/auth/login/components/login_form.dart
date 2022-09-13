@@ -75,6 +75,7 @@ class _LoginFormState extends State<LoginForm> {
                 height: padding / 2,
               ),
               AuthInput(
+                  blockUnicode: true,
                   focusNode: _userNameFocusNode,
                   controller: widget.userNameEditingController,
                   hint: 'Tên tài khoản', //S.current.user_name,
@@ -93,6 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                     }
                   }),
               AuthInput(
+                  blockUnicode: true,
                   maxLength: 20,
                   focusNode: _passwordFocusNode,
                   controller: widget.passwordEditingController,

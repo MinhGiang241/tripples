@@ -86,6 +86,7 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
                 height: padding / 2,
               ),
               AuthInput(
+                  blockUnicode: true,
                   focusNode: _emailFocusNode,
                   controller: widget.emailEditingController,
                   hint: S.current.email,

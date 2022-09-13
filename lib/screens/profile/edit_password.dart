@@ -163,7 +163,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey1,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
-                          // onFieldSubmitted: ,
+                          blockUnicode: true,
                           autoFocus: true,
                           maxLength: 20,
                           // focusNode: _oldPassFocusNode,
@@ -201,6 +201,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey2,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
+                          blockUnicode: true,
                           // focusNode: _newPassFocusNode,
                           // onFieldSubmitted: (value) {
                           //   FocusScope.of(context)
@@ -252,6 +253,7 @@ class _UpdatePassword extends State<UpdatePassword> {
                         key: _formKey3,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: AuthInput(
+                          blockUnicode: true,
                           // onFieldSubmitted: (value) {
                           //   FocusScope.of(context)
                           //       .requestFocus(_confirmPassFocusNode);

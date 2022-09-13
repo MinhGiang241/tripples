@@ -92,6 +92,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               key: widget.formKey1,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
+                  blockUnicode: true,
                   autoFocus: true,
                   controller: widget.codeEditingController,
                   hint: "Mã OTP",
@@ -112,6 +113,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               key: widget.formKey2,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
+                blockUnicode: true,
                 maxLength: 20,
                 controller: widget.newPasswordEditingController,
                 hint: "Mật khẩu mới",
@@ -159,6 +161,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               key: widget.formKey3,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: AuthInput(
+                  blockUnicode: true,
                   maxLength: 20,
                   enableSuggestions: true,
                   controller: widget.confirmNewPasswordEditingController,

@@ -64,6 +64,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 height: padding / 2,
               ),
               AuthInput(
+                blockUnicode: true,
                 controller: widget.usernameController,
                 hint: S.current.user_name,
                 keyboardType: TextInputType.name,
@@ -77,6 +78,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 },
               ),
               AuthInput(
+                blockUnicode: true,
                 controller: widget.emailController,
                 hint: S.current.email,
                 keyboardType: TextInputType.emailAddress,

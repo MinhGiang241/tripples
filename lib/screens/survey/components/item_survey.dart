@@ -190,7 +190,8 @@ class ItemSurveyState extends State<ItemSurvey> {
                         polls: widget.question.poll!,
                         values: widget.questionResult != null
                             ? widget.questionResult!.answerText != null
-                                ? widget.questionResult!.answerText!.split(',')
+                                ? widget.questionResult!.answerText!
+                                    .split('</br>')
                                 : []
                             : [])
                     : MultichoiseAnswer(

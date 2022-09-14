@@ -11,14 +11,16 @@ import '../../../data_sources/api/constants.dart';
 import 'item_detail.dart';
 
 class ListDetails extends StatelessWidget {
-  const ListDetails({
-    Key? key,
-    required this.refCampaignIdCampaignDto,
-    required this.department,
-    required this.status,
-  }) : super(key: key);
+  const ListDetails(
+      {Key? key,
+      required this.refCampaignIdCampaignDto,
+      required this.department,
+      required this.status,
+      required this.surveyDate})
+      : super(key: key);
   final RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   final RefDepartmentIdDepartmentDto department;
+  final String? surveyDate;
   final String status;
 
   @override
@@ -27,7 +29,8 @@ class ListDetails extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       children: [
         Text(
-          refCampaignIdCampaignDto?.name ?? "",
+          (refCampaignIdCampaignDto?.name ?? "") +
+              " (${(refCampaignIdCampaignDto?.startTime ?? "").formatDateTimeDMY()} -${(refCampaignIdCampaignDto?.endTime ?? "").formatDateTimeDMY()})",
           style: Theme.of(context).textTheme.headline6,
         ),
         SizedBox(
@@ -44,13 +47,8 @@ class ListDetails extends StatelessWidget {
         ItemDetails(
             title: S.current.address, description: department.address ?? ""),
         ItemDetails(
-            title: S.current.begin,
-            description: (refCampaignIdCampaignDto?.startTime ?? "")
-                .formatDateTimeDMY()),
-        ItemDetails(
-            title: S.current.end,
-            description:
-                (refCampaignIdCampaignDto?.endTime ?? "").formatDateTimeDMY()),
+            title: 'Ngày- giờ khảo sát',
+            description: (surveyDate ?? "").formatDateTimeHmDMY()),
         ItemDetails(
           title: "Trạng thái lịch triển khai",
           description: status == 'PENDING'

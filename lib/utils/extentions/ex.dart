@@ -10,7 +10,7 @@ extension ConvertDateTime on String {
   String formatDateTimeHmDMY() {
     DateTime dt = DateTime.parse(this);
     DateTime d = dt.add(Duration(hours: 7));
-    return "${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')} ${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}";
+    return "${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year} - ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}";
   }
 }
 

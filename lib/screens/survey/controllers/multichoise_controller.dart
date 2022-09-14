@@ -9,12 +9,13 @@ class MultichoiseController extends ChangeNotifier {
     list.asMap().forEach((i, element) {
       listData.add(Poll(factor: i, isSelected: false, label: element.label));
     });
-    var lisChoices = values.split(',');
+    var lisChoices = values.split('</br>');
     if (values != '' && lisChoices != '' && lisChoices != null) {
-      lisChoices.forEach((element) {
-        var e = listData.firstWhereOrNull((e) => e.label == element);
-        if (e != null) {
-          e.isSelected = true;
+      lisChoices.asMap().forEach((index, element) {
+        var a = listData.firstWhereOrNull((e) => e.label == element);
+        if (a != null) {
+          a.isSelected = true;
+          // lisChoices[index] = a;
         }
       });
     }

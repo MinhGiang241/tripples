@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:survey/screens/auth/components/auth_button.dart';
 
 import '../../constants.dart';
 import '../../controllers/auth/auth_controller.dart';
@@ -149,24 +150,26 @@ class DetailUser extends StatelessWidget {
                                 child: Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: padding),
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      UpdatePassword()));
-                                        },
-                                        style: TextButton.styleFrom(
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor),
-                                        child: Text(
-                                          "Đổi mật khẩu",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button
-                                              ?.copyWith(color: Colors.white),
-                                        ))),
+                                    child: AuthButton(
+                                      title: "Đổi mật khẩu",
+                                      onPress: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    UpdatePassword()));
+                                      },
+                                      // style: TextButton.styleFrom(
+                                      //     backgroundColor:
+                                      //         Theme.of(context).primaryColor),
+                                      // child: Text(
+                                      //   "Đổi mật khẩu",
+                                      //   style: Theme.of(context)
+                                      //       .textTheme
+                                      //       .button
+                                      //       ?.copyWith(color: Colors.white),
+                                      // )
+                                    )),
                               )
                             ],
                           );
@@ -176,7 +179,7 @@ class DetailUser extends StatelessWidget {
 
   Widget buildUserInfoDisplay(String getValue, String title) => Center(
         child: Padding(
-            padding: EdgeInsets.only(bottom: 5),
+            padding: EdgeInsets.only(bottom: 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -193,7 +196,7 @@ class DetailUser extends StatelessWidget {
                 ),
                 Container(
                     width: 350,
-                    height: 40,
+                    height: 35,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(

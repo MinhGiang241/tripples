@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           DateTime.parse(b.surveyDate as String).compareTo(
                               DateTime.parse(a.surveyDate as String)));
                       listInprogress.sort(
-                          (a, b) => b.status!.compareTo(a.status as String));
+                          (a, b) => a.status!.compareTo(b.status as String));
 
                       listCompleted.sort((a, b) =>
                           DateTime.parse(b.updatedTime as String).compareTo(

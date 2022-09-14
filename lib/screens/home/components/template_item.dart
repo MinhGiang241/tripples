@@ -28,6 +28,7 @@ class TemplateItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (_) => DetailsScreen(
+                        surveyDate: campaign.surveyDate,
                         status: campaign.status != null
                             ? campaign.status as String
                             : '',
@@ -67,12 +68,22 @@ class TemplateItem extends StatelessWidget {
                   child: Wrap(
                     children: [
                       Text(
-                        "Chi nhánh : ",
+                        "Chiến dịch :",
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "${campaign.refDepartmentIdDepartmentDto!.name ?? ''}",
+                        "   ${campaign.refCampaignIdCampaignDto!.name ?? ''}",
+                        style: Theme.of(context).textTheme.caption?.copyWith(
+                            height: 1.5, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Chi nhánh :",
+                        style: Theme.of(context).textTheme.caption?.copyWith(
+                            height: 1.5, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "   ${campaign.refDepartmentIdDepartmentDto!.name ?? ''}",
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
                       ),
@@ -106,11 +117,11 @@ class TemplateItem extends StatelessWidget {
                                   ?.copyWith(
                                       height: 1.5, fontWeight: FontWeight.bold),
                             ),
-                      Text("Ngày hẹn : ",
+                      Text("Ngày- giờ khảo sát : ",
                           style: Theme.of(context).textTheme.caption?.copyWith(
                               height: 1.5, fontWeight: FontWeight.bold)),
                       Text(
-                        "${campaign.surveyTime} - ${(campaign.surveyDate ?? DateTime.now().toIso8601String()).formatDateTimeDMY()}",
+                        "${(campaign.surveyDate ?? DateTime.now().toIso8601String()).formatDateTimeHmDMY()}",
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
                       ),

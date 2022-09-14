@@ -52,7 +52,7 @@ class Questions extends ChangeNotifier {
 class Poll extends ChangeNotifier {
   String? label;
   int? factor;
-  bool? isSelected;
+  bool isSelected = false;
 
   Poll({this.label, this.factor, this.isSelected = false});
 

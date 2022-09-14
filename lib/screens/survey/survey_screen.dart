@@ -58,6 +58,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   final GlobalKey<UploadDialogState> DialogState =
       GlobalKey<UploadDialogState>();
 
+  bool disabled = false;
   @override
   Widget build(BuildContext context) {
     print(widget.questions);
@@ -106,7 +107,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
       // DialogState.currentState?.updateState();
     };
-    bool disabled = false;
 
     getFormattedDateFromFormattedString(
         {required value,
@@ -457,6 +457,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 setState(() {
                                   disabled = true;
                                 });
+                                print(disabled);
                                 var listResult =
                                     context.read<AnswerController>().listResult;
                                 var data = [];

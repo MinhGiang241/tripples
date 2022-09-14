@@ -173,7 +173,7 @@ class AnswerController extends ChangeNotifier {
           .indexWhere((element) => element.questionTemplateId == questID);
       var listChoiceAnswer;
 
-      listChoiceAnswer = listResult[index].answerText!.split(',');
+      listChoiceAnswer = listResult[index].answerText!.split('\n');
 
       var choiceIndex = listChoiceAnswer.indexWhere((v) => v == lable);
 
@@ -182,19 +182,19 @@ class AnswerController extends ChangeNotifier {
         if (listChoiceAnswer.length == 1) {
           listResult[index].answerText = listChoiceAnswer[0];
         } else {
-          listResult[index].answerText = listChoiceAnswer.join(',');
+          listResult[index].answerText = listChoiceAnswer.join('</br>');
         }
       } else {
         listChoiceAnswer.removeWhere((v) => v == lable);
         if (listChoiceAnswer != null) {
-          listResult[index].answerText = listChoiceAnswer.join(',');
+          listResult[index].answerText = listChoiceAnswer.join('</br>');
         } else if (listChoiceAnswer.length == 1) {
           listResult[index].answerText = listChoiceAnswer[0];
         } else {
           listResult[index].answerText = null;
         }
       }
-      if (listResult[index].answerText!.startsWith(',')) {
+      if (listResult[index].answerText!.startsWith('</br>')) {
         listResult[index].answerText = listResult[index].answerText!.substring(
               1,
             );

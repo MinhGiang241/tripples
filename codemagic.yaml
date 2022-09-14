@@ -1,22 +1,27 @@
 workflows:
   my-workflow:
     scripts:
-      - name: Install dependencies
-        script: npm ci
-      - name: Switch to a specific version of Cordova
+      - name: Add provisioning profiles
         script: |
           set -e # exit on first failed command
-
-          cvm install 9.0.0
-          cvm use 9.0.0
-      - name: Add iOS platform
+          PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILES_HOME"
+          echo ${PROVISIONING_PROFILE?} | base64 --decode > "$PROFILES_HOME/$(uuidgen).mobileprovision"
+      - name: Add signing certificate
         script: |
           set -e # exit on first failed command
-
-          cordova platform remove ios --nosave
-          cordova platform add ios --confirm --no-interactive --noresources --save
-      - name: Build iOS release
-        script: |
-          set -e # exit on first failed command
-
-          cordova build ios --no-interactive
+          echo ${CERTIFICATE?} | base64 --decode > /tmp/certificate.p12
+          keychain initialize
+          keychain add-certificates \
+              --certificate /tmp/certificate.p12 \
+              --certificate-password ${CERTIFICATE_PASSWORD?}
+      - name: Increment build number
+        script: agvtool new-version -all $BUILD_NUMBER
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build ipa for distribution
+        script: xcode-project build-ipa \
+          --workspace "${XCODE_WORKSPACE?}" \
+          --scheme "${XCODE_SCHEME?}"
+    artifacts:
+      - build/ios/ipa/*.ipa

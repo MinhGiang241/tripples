@@ -1,0 +1,22 @@
+workflows:
+  my-workflow:
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Switch to a specific version of Cordova
+        script: |
+          set -e # exit on first failed command
+
+          cvm install 9.0.0
+          cvm use 9.0.0
+      - name: Add iOS platform
+        script: |
+          set -e # exit on first failed command
+
+          cordova platform remove ios --nosave
+          cordova platform add ios --confirm --no-interactive --noresources --save
+      - name: Build iOS release
+        script: |
+          set -e # exit on first failed command
+
+          cordova build ios --no-interactive

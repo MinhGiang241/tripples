@@ -18,6 +18,9 @@ class TemplateTabView extends StatefulWidget {
       required this.onRefresh,
       required this.selectMonthAndYear,
       required this.year,
+      required this.child,
+      required this.listSearch,
+      required this.onSearch,
       required this.month})
       : super(key: key);
   List<ScheduleCampaign> listCampaign;
@@ -28,12 +31,16 @@ class TemplateTabView extends StatefulWidget {
   final int year;
   final int month;
   final Function selectMonthAndYear;
+  final Widget child;
+  bool onSearch;
+  List<ScheduleCampaign> listSearch = [];
 
   @override
   _TemplateTabViewState createState() => _TemplateTabViewState();
 }
 
-class _TemplateTabViewState extends State<TemplateTabView> {
+class _TemplateTabViewState extends State<TemplateTabView>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController searchController = TextEditingController();
   bool onSearch = false;
   List<ScheduleCampaign> listSearch = [];
@@ -43,6 +50,7 @@ class _TemplateTabViewState extends State<TemplateTabView> {
   ];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  bool loading = false;
 
   @override
   void initState() {
@@ -58,7 +66,11 @@ class _TemplateTabViewState extends State<TemplateTabView> {
         companies.add(RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
       }
     }
+    super.initState();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
@@ -102,11 +114,19 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                 year: widget.year,
                 month: widget.month,
                 selectMonthAndYear: widget.selectMonthAndYear),
+            // loading ? LinearProgressIndicator() : widget.child,
             DropdownButton<RefCompanyIdCompanyDto>(
+              onTap: () async {
+                print('tab');
+                await Future.delayed(Duration(seconds: 1000));
+              },
               isExpanded: true,
+              // autofocus: true,
+              // elevation: 1,pp
               value: selectedCompany,
-              onChanged: (RefCompanyIdCompanyDto? value) {
+              onChanged: (RefCompanyIdCompanyDto? value) async {
                 setState(() {
+                  loading = true;
                   selectedCompany = value!;
                   // listSearch = widget.listCampaign;
                   if (value.id == '-1') {
@@ -122,14 +142,8 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                   }
 
                   if (widget.isCompleted) {
-                    listSearch.sort((a, b) => DateTime.parse(b
-                            .questionResultScheduleIdDto![0]
-                            .answers![0]
-                            .updatedTime!)
-                        .compareTo(DateTime.parse(a
-                            .questionResultScheduleIdDto![0]
-                            .answers![0]
-                            .updatedTime!)));
+                    listSearch.sort((a, b) => DateTime.parse(b.updatedTime!)
+                        .compareTo(DateTime.parse(a.updatedTime!)));
                   } else {
                     listSearch.sort(
                         (a, b) => DateTime.parse(a.updatedTime as String)
@@ -137,6 +151,10 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                         // a.status!.compareTo(b.status!)
                         );
                   }
+                });
+                await Future.delayed(Duration(seconds: 1000));
+                setState(() {
+                  loading = false;
                 });
               },
               items: companies.map((RefCompanyIdCompanyDto company) {
@@ -156,6 +174,7 @@ class _TemplateTabViewState extends State<TemplateTabView> {
                     ? List.generate(
                         listSearch.length,
                         (index) => TemplateItem(
+                              status: widget.listCampaign[index].status,
                               campaign: listSearch[index],
                               isCompleted: widget.isCompleted,
                               onBack: widget.onBack,

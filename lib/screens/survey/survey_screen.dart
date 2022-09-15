@@ -58,9 +58,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
   final GlobalKey<UploadDialogState> DialogState =
       GlobalKey<UploadDialogState>();
 
-  bool disabled = false;
   @override
   Widget build(BuildContext context) {
+    bool disabled = false;
     print(widget.questions);
     final mutationData = """
   mutation (\$data:Dictionary){

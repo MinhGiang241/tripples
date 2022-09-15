@@ -142,13 +142,15 @@ class SinglechoiseAnswer extends StatelessWidget {
                       value: context
                           .watch<SingleChoiseController>()
                           .listData[index],
+                      toggleable: true,
                       onChanged: (val) {
                         Provider.of<SingleChoiseController>(context,
                                 listen: false)
-                            .onChange(val!);
+                            .onChange(val);
+
                         Provider.of<AnswerController>(context, listen: false)
                             .updateLableAnswer(
-                                lable: val.label!,
+                                lable: val != null ? val.label! : '',
                                 questID: questID,
                                 type: "SINGLECHOICE");
                         validation(context);

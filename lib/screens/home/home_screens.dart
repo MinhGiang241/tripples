@@ -7,6 +7,7 @@ import 'package:survey/controllers/auth/auth_controller.dart';
 import 'package:survey/data_sources/api/constants.dart';
 import 'package:survey/models/response_list_campaign.dart';
 import 'package:survey/screens/survey/controllers/answer_controller.dart';
+import '../../models/company.dart';
 import 'components/home_appbar.dart';
 import 'components/home_tabbar.dart';
 import 'components/month_year_picker.dart';
@@ -69,7 +70,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final cl = GraphQLClient(
       link: link,
       // The default store is the InMemoryStore, which does NOT persist to disk
-      cache: GraphQLCache(),
+      cache: GraphQLCache(
+          // store: HiveStore()
+          ),
     );
     ValueNotifier<GraphQLClient> client = ValueNotifier(cl);
     setState(() {
@@ -79,219 +82,338 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return GraphQLProvider(
       client: client,
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          //appBar: HomeAppBar(),
-          body: Query(
-            options: QueryOptions(document: gql(queryMe)),
-            builder: (meResult, {fetchMore, refetch}) {
-              if (meResult.isLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (meResult.data != null) if (meResult
-                      .data!['authorization_get_user_me']['data'] ==
-                  null) {
-                print(meResult);
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
-                      TextButton(
-                          onPressed: () async {
-                            await context
-                                .read<AuthController>()
-                                .logOut(context);
-                          },
-                          child: Text("Đăng nhập lại"))
-                    ]);
-              }
-
-              avatar = meResult.data != null &&
-                      meResult.data!['authorization_get_user_me']['data']
-                              ['avatar'] !=
-                          null
-                  ? meResult.data!['authorization_get_user_me']['data']
-                      ['avatar']
-                  : '';
-              var isRoot = meResult.data != null &&
-                      meResult.data!['authorization_get_user_me']['data']
-                          ['isRoot']
-                  ? meResult.data!['authorization_get_user_me']['data']
-                      ['isRoot']
-                  : false;
-
-              context.read<AuthController>().idUser = meResult.data != null
-                  ? meResult.data!['authorization_get_user_me']['data']['_id']
-                      as String
-                  : null;
-              var filter = {
-                // "filter": {
-                //   "withRecords": true,
-                //   "group": {
-                //     "children": [
-                //       {
-                //         "id": "agent",
-                //         "value": meResult.data!['authorization_get_user_me']
-                //                     ['data'] !=
-                //                 null
-                //             ? meResult.data!['authorization_get_user_me']
-                //                     ['data']['userName'] ??
-                //                 ""
-                //             : ""
-                //       },
-                //       {
-                //         "id": "survey_date",
-                //         "value": DateTime(DateTime.now().year,
-                //                 DateTime.now().month, DateTime.now().day)
-                //             .toUtc()
-                //             .toString()
-                //       }
-                //     ]
-                //   }
-                // }
-              };
-
+      // child: GestureDetector(
+      //   onTap: () {
+      //     FocusScope.of(context).unfocus();
+      //   },
+      child: Scaffold(
+        //appBar: HomeAppBar(),
+        body: Query(
+          options: QueryOptions(document: gql(queryMe)),
+          builder: (meResult, {fetchMore, refetch}) {
+            if (meResult.isLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (meResult.data != null) if (meResult
+                    .data!['authorization_get_user_me']['data'] ==
+                null) {
+              print(meResult);
               return Column(
-                children: [
-                  SizedBox(height: AppBar().preferredSize.height),
-                  HomeAppBar(
-                    name: meResult.data != null
-                        ? meResult.data!["authorization_get_user_me"]["data"] !=
-                                null
-                            ? meResult.data!["authorization_get_user_me"]
-                                    ["data"]["fullName"] ??
-                                meResult.data!["authorization_get_user_me"]
-                                    ["data"]["userName"] ??
-                                "Tên"
-                            : ""
-                        : "",
-                    userId: meResult.data != null
-                        ? meResult.data!["authorization_get_user_me"]["data"] !=
-                                null
-                            ? meResult.data!["authorization_get_user_me"]
-                                ["data"]["_id"]
-                            : "id"
-                        : "id",
-                    avatar: avatar,
-                    // user: meResult.data!["authorization_me"]["data"],
-                  ),
-                  SizedBox(height: padding),
-                  HomeTabBar(tabController: tabController),
-                  Expanded(
-                      child: Query(
-                    options: QueryOptions(
-                        document: gql(queryTemplate),
-                        variables: {'year': year, 'month': month}),
-                    builder: (result, {fetchMore, refetch}) {
-                      if (result.isLoading) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      listCompleted = [];
-                      listInprogress = [];
-                      if (result.data == null) {
-                        RefreshController _refreshController =
-                            RefreshController(initialRefresh: false);
-                        return SmartRefresher(
-                            controller: _refreshController,
-                            enablePullDown: true,
-                            enablePullUp: false,
-                            onRefresh: () {
-                              setState(() {});
-                            },
-                            child: Center(
-                                child: Text(
-                                    'Lỗi kết nối ,không lấy được dữ liệu lịch triển khai')));
-                      }
-                      ResponseListTemplate? responseListTemplate =
-                          ResponseListTemplate.from(result.data);
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
+                    TextButton(
+                        onPressed: () async {
+                          await context.read<AuthController>().logOut(context);
+                        },
+                        child: Text("Đăng nhập lại"))
+                  ]);
+            }
 
-                      print(responseListTemplate);
-                      if (responseListTemplate.querySchedulesDto == null) {}
+            avatar = meResult.data != null &&
+                    meResult.data!['authorization_get_user_me']['data']
+                            ['avatar'] !=
+                        null
+                ? meResult.data!['authorization_get_user_me']['data']['avatar']
+                : '';
+            var isRoot = meResult.data != null &&
+                    meResult.data!['authorization_get_user_me']['data']
+                        ['isRoot']
+                ? meResult.data!['authorization_get_user_me']['data']['isRoot']
+                : false;
 
-                      if (responseListTemplate.querySchedulesDto != null &&
-                          responseListTemplate.querySchedulesDto!.data !=
-                              null) {
-                        for (int i = 0;
-                            i <
-                                responseListTemplate
-                                    .querySchedulesDto!.data!.length;
-                            i++) {
-                          if (responseListTemplate.querySchedulesDto!.data![i]
-                                      .questionResult !=
-                                  null &&
-                              responseListTemplate.querySchedulesDto!.data![i]
-                                      .questionResult?.answers !=
-                                  null &&
-                              responseListTemplate.querySchedulesDto!.data![i]
-                                      .questionResult?.answers!.length !=
-                                  0) {
-                            listCompleted.add(responseListTemplate
-                                .querySchedulesDto!.data![i]);
-                          } else {
-                            listInprogress.add(responseListTemplate
-                                .querySchedulesDto!.data![i]);
-                          }
+            context.read<AuthController>().idUser = meResult.data != null
+                ? meResult.data!['authorization_get_user_me']['data']['_id']
+                    as String
+                : null;
+            var filter = {
+              // "filter": {
+              //   "withRecords": true,
+              //   "group": {
+              //     "children": [
+              //       {
+              //         "id": "agent",
+              //         "value": meResult.data!['authorization_get_user_me']
+              //                     ['data'] !=
+              //                 null
+              //             ? meResult.data!['authorization_get_user_me']
+              //                     ['data']['userName'] ??
+              //                 ""
+              //             : ""
+              //       },
+              //       {
+              //         "id": "survey_date",
+              //         "value": DateTime(DateTime.now().year,
+              //                 DateTime.now().month, DateTime.now().day)
+              //             .toUtc()
+              //             .toString()
+              //       }
+              //     ]
+              //   }
+              // }
+            };
+
+            return Column(
+              children: [
+                SizedBox(height: AppBar().preferredSize.height),
+                HomeAppBar(
+                  name: meResult.data != null
+                      ? meResult.data!["authorization_get_user_me"]["data"] !=
+                              null
+                          ? meResult.data!["authorization_get_user_me"]["data"]
+                                  ["fullName"] ??
+                              meResult.data!["authorization_get_user_me"]
+                                  ["data"]["userName"] ??
+                              "Tên"
+                          : ""
+                      : "",
+                  userId: meResult.data != null
+                      ? meResult.data!["authorization_get_user_me"]["data"] !=
+                              null
+                          ? meResult.data!["authorization_get_user_me"]["data"]
+                              ["_id"]
+                          : "id"
+                      : "id",
+                  avatar: avatar,
+                  // user: meResult.data!["authorization_me"]["data"],
+                ),
+                SizedBox(height: padding),
+                HomeTabBar(tabController: tabController),
+                Expanded(
+                    child: Query(
+                  options: QueryOptions(
+                      document: gql(queryTemplate),
+                      variables: {'year': year, 'month': month}),
+                  builder: (result, {fetchMore, refetch}) {
+                    if (result.isLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    listCompleted = [];
+                    listInprogress = [];
+                    print(result.data);
+                    if (result.data == null) {
+                      RefreshController _refreshController =
+                          RefreshController(initialRefresh: false);
+                      return SmartRefresher(
+                          controller: _refreshController,
+                          enablePullDown: true,
+                          enablePullUp: false,
+                          onRefresh: () {
+                            setState(() {});
+                          },
+                          child: Center(
+                              child: Text(
+                                  'Lỗi kết nối ,không lấy được dữ liệu lịch triển khai')));
+                    }
+                    ResponseListTemplate? responseListTemplate =
+                        ResponseListTemplate.from(result.data);
+
+                    print(responseListTemplate);
+                    if (responseListTemplate.querySchedulesDto == null) {}
+
+                    if (responseListTemplate.querySchedulesDto != null &&
+                        responseListTemplate.querySchedulesDto!.data != null) {
+                      for (int i = 0;
+                          i <
+                              responseListTemplate
+                                  .querySchedulesDto!.data!.length;
+                          i++) {
+                        if (responseListTemplate.querySchedulesDto!.data![i]
+                                    .questionResult !=
+                                null &&
+                            responseListTemplate.querySchedulesDto!.data![i]
+                                    .questionResult?.answers !=
+                                null &&
+                            responseListTemplate.querySchedulesDto!.data![i]
+                                    .questionResult?.answers!.length !=
+                                0) {
+                          listCompleted.add(
+                              responseListTemplate.querySchedulesDto!.data![i]);
+                        } else {
+                          listInprogress.add(
+                              responseListTemplate.querySchedulesDto!.data![i]);
                         }
                       }
+                    }
 
-                      // Provider.of<AnswerController>(context);
-                      listInprogress.sort((a, b) =>
-                          DateTime.parse(b.surveyDate as String).compareTo(
-                              DateTime.parse(a.surveyDate as String)));
-                      listInprogress.sort(
-                          (a, b) => a.status!.compareTo(b.status as String));
+                    // Provider.of<AnswerController>(context);
+                    listInprogress.sort((a, b) =>
+                        DateTime.parse(a.surveyDate as String)
+                            .compareTo(DateTime.parse(b.surveyDate as String)));
+                    listInprogress.sort(
+                        (a, b) => a.status!.compareTo(b.status as String));
 
-                      listCompleted.sort((a, b) =>
-                          DateTime.parse(b.updatedTime as String).compareTo(
-                              DateTime.parse(a.updatedTime as String)));
+                    listCompleted.sort((a, b) =>
+                        DateTime.parse(b.updatedTime as String).compareTo(
+                            DateTime.parse(a.updatedTime as String)));
+                    // INPROGRESS
+                    List<RefCompanyIdCompanyDto> companiesInprogress =
+                        <RefCompanyIdCompanyDto>[
+                      RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
+                    ];
+                    var selectedCompanyInprogress = companiesInprogress[0];
 
-                      return TabBarView(
-                          controller: tabController,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            TemplateTabView(
-                                listCampaign: listInprogress,
-                                isCompleted: false,
-                                selectMonthAndYear: selectMonthAndYear,
-                                year: year,
-                                month: month,
-                                onBack: (val) {
-                                  print('onback');
-                                  if (val == true) setState(() {});
-                                },
-                                onLoading: _onLoading,
-                                onRefresh: () {
-                                  _onRefresh(cl, filter, queryTemplate);
-                                }),
-                            TemplateTabView(
-                              listCampaign: listCompleted,
+                    var resultCompaniesInprogress = listInprogress
+                        .where(
+                            (element) => element.refCompanyIdCompanyDto != null)
+                        .map((element) => element.refCompanyIdCompanyDto!)
+                        .toSet()
+                        .toList();
+                    var idSet = <String?>{};
+                    for (var d in resultCompaniesInprogress) {
+                      if (idSet.add(d.id)) {
+                        companiesInprogress.add(
+                            RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
+                      }
+                    }
+
+                    // COMPLETE
+                    List<RefCompanyIdCompanyDto> companiesCompleted =
+                        <RefCompanyIdCompanyDto>[
+                      RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
+                    ];
+                    var selectedCompanyCompleted = companiesCompleted[0];
+
+                    var resultCompaniesCompleted = listCompleted
+                        .where(
+                            (element) => element.refCompanyIdCompanyDto != null)
+                        .map((element) => element.refCompanyIdCompanyDto!)
+                        .toSet()
+                        .toList();
+                    var idSetComplete = <String?>{};
+                    for (var d in resultCompaniesCompleted) {
+                      if (idSetComplete.add(d.id)) {
+                        companiesCompleted.add(
+                            RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
+                      }
+                    }
+                    List<ScheduleCampaign> listSearchInprogress = [];
+                    List<ScheduleCampaign> listSearchCompleted = [];
+                    bool onSearchInprogress = false;
+                    bool onSearchCompleted = false;
+
+                    var dropdownButtonInprogress =
+                        DropdownButton<RefCompanyIdCompanyDto>(
+                            isExpanded: true,
+                            value: selectedCompanyInprogress,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCompanyInprogress = value!;
+                                listSearchInprogress = listInprogress;
+                                if (value.id == '-1') {
+                                  onSearchInprogress = false;
+                                } else {
+                                  listSearchInprogress.clear();
+                                  listInprogress.forEach((element) {
+                                    if (element.refCompanyIdCompanyDto!.id ==
+                                        value.id) {
+                                      listSearchInprogress.add(element);
+                                    }
+                                  });
+                                  onSearchInprogress = true;
+                                }
+
+                                listSearchInprogress.sort((a, b) =>
+                                    DateTime.parse(a.updatedTime as String)
+                                        .compareTo(DateTime.parse(
+                                            b.updatedTime as String)));
+                                listSearchInprogress.sort((a, b) =>
+                                    a.status!.compareTo(b.status as String));
+
+                                // if (widget.isCompleted) {
+                                //   listSearch.sort((a, b) => DateTime.parse(b.updatedTime!)
+                                //       .compareTo(DateTime.parse(a.updatedTime!)));
+                                // } else {
+                                //   listSearch.sort(
+                                //       (a, b) => DateTime.parse(a.updatedTime as String)
+                                //           .compareTo(DateTime.parse(b.updatedTime as String))
+                                //       // a.status!.compareTo(b.status!)
+                                //       );
+                                // }
+                              });
+                            },
+                            items: companiesInprogress
+                                .map((RefCompanyIdCompanyDto company) {
+                              return DropdownMenuItem<RefCompanyIdCompanyDto>(
+                                value: company,
+                                child: Center(
+                                  child: new Text(
+                                    company.name!,
+                                    style: new TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList());
+
+                    var dropdownButtonCompleted =
+                        DropdownButton<RefCompanyIdCompanyDto>(
+                            isExpanded: true,
+                            value: selectedCompanyCompleted,
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            items: companiesCompleted
+                                .map((RefCompanyIdCompanyDto company) {
+                              return DropdownMenuItem<RefCompanyIdCompanyDto>(
+                                value: company,
+                                child: Center(
+                                  child: new Text(
+                                    company.name!,
+                                    style: new TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList());
+
+                    return TabBarView(controller: tabController,
+                        // physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          TemplateTabView(
+                              onSearch: onSearchInprogress,
+                              listSearch: listSearchInprogress,
+                              child: dropdownButtonInprogress,
+                              listCampaign: listInprogress,
+                              isCompleted: false,
+                              selectMonthAndYear: selectMonthAndYear,
                               year: year,
                               month: month,
-                              selectMonthAndYear: selectMonthAndYear,
-                              onLoading: _onLoading,
-                              onRefresh: () =>
-                                  _onRefresh(cl, filter, queryTemplate),
-                              isCompleted: true,
                               onBack: (val) {
+                                print('onback');
                                 if (val == true) setState(() {});
                               },
-                            ),
-                          ]);
-                    },
-                  ))
-                ],
-              );
-            },
-          ),
+                              onLoading: _onLoading,
+                              onRefresh: () {
+                                _onRefresh(cl, filter, queryTemplate);
+                              }),
+                          TemplateTabView(
+                            onSearch: onSearchCompleted,
+                            listSearch: listSearchCompleted,
+                            child: dropdownButtonCompleted,
+                            listCampaign: listCompleted,
+                            year: year,
+                            month: month,
+                            selectMonthAndYear: selectMonthAndYear,
+                            onLoading: _onLoading,
+                            onRefresh: () =>
+                                _onRefresh(cl, filter, queryTemplate),
+                            isCompleted: true,
+                            onBack: (val) {
+                              if (val == true) setState(() {});
+                            },
+                          ),
+                        ]);
+                  },
+                ))
+              ],
+            );
+          },
         ),
       ),
+      // ),
     );
   }
 

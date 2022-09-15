@@ -125,18 +125,9 @@ class TemplateItem extends StatelessWidget {
                         style: Theme.of(context).textTheme.caption?.copyWith(
                             height: 1.5, fontWeight: FontWeight.bold),
                       ),
-                      // Text(
-                      //   campaign.sId != null ? campaign.sId as String : '',
-                      //   style: Theme.of(context).textTheme.caption?.copyWith(
-                      //       height: 1.5, fontWeight: FontWeight.bold),
-                      // ),
-                      // Text(
-                      //   campaign.updatedTime != null
-                      //       ? campaign.updatedTime as String
-                      //       : '',
-                      //   style: Theme.of(context).textTheme.caption?.copyWith(
-                      //       height: 1.5, fontWeight: FontWeight.bold),
-                      // )
+                      // Text("${campaign.sId}",
+                      //     style: Theme.of(context).textTheme.caption?.copyWith(
+                      //         height: 1.5, fontWeight: FontWeight.bold))
                     ],
                   ),
                 ),
@@ -146,7 +137,7 @@ class TemplateItem extends StatelessWidget {
               height: padding / 2,
             ),
             // isCompleted ||
-            status == 'COMPLETE'
+            status == 'COMPLETE' || isCompleted
                 ? Text(
                     "Đã hoàn thành",
                     style: Theme.of(context)

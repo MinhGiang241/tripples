@@ -179,7 +179,7 @@ class DetailUser extends StatelessWidget {
 
   Widget buildUserInfoDisplay(String getValue, String title) => Center(
         child: Padding(
-            padding: EdgeInsets.only(bottom: 4),
+            padding: EdgeInsets.only(bottom: 5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -196,7 +196,7 @@ class DetailUser extends StatelessWidget {
                 ),
                 Container(
                     width: 350,
-                    height: 35,
+                    height: 40,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(

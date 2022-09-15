@@ -240,8 +240,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       }
                     }
                     listInprogress.sort((a, b) =>
-                        DateTime.parse(a.surveyDate as String)
-                            .compareTo(DateTime.parse(b.surveyDate as String)));
+                        DateTime.parse(a.surveyTime as String)
+                            .compareTo(DateTime.parse(b.surveyTime as String)));
                     listInprogress.sort(
                         (a, b) => a.status!.compareTo(b.status as String));
 

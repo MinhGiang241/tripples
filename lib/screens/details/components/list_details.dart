@@ -49,7 +49,7 @@ class ListDetails extends StatelessWidget {
         ItemDetails(
           title: 'Ngày- giờ khảo sát',
           description: surveyTime != null
-              ? "${surveyTime!.split('T')[0]} - ${surveyTime!.split('T')[1]}"
+              ? "${surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${surveyTime!.split('T')[1]}"
               : DateTime.now().toIso8601String().formatDateTimeDMY(),
         ),
         ItemDetails(

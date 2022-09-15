@@ -122,7 +122,7 @@ class TemplateItem extends StatelessWidget {
                               height: 1.5, fontWeight: FontWeight.bold)),
                       Text(
                         campaign.surveyTime != null
-                            ? "${campaign.surveyTime!.split('T')[0]} - ${campaign.surveyTime!.split('T')[1]}"
+                            ? "${campaign.surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${campaign.surveyTime!.split('T')[1]}"
                             : DateTime.now()
                                 .toIso8601String()
                                 .formatDateTimeDMY(),

@@ -38,15 +38,13 @@ class _AuthButtonState extends State<AuthButton> {
                     : widget.disabled
                         ? Colors.grey
                         : Theme.of(context).primaryColor),
-            child: widget.disabled
-                ? CircularProgressIndicator()
-                : Text(
-                    widget.title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .button
-                        ?.copyWith(color: Colors.white),
-                  )),
+            child: Text(
+              widget.title,
+              style: Theme.of(context)
+                  .textTheme
+                  .button
+                  ?.copyWith(color: Colors.white),
+            )),
       ),
     );
   }

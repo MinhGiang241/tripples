@@ -239,6 +239,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         }
                       }
                     }
+
+                    // Provider.of<AnswerController>(context);
                     listInprogress.sort((a, b) =>
                         DateTime.parse(a.surveyDate as String)
                             .compareTo(DateTime.parse(b.surveyDate as String)));
@@ -248,12 +250,132 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     listCompleted.sort((a, b) =>
                         DateTime.parse(b.updatedTime as String).compareTo(
                             DateTime.parse(a.updatedTime as String)));
+                    // INPROGRESS
+                    List<RefCompanyIdCompanyDto> companiesInprogress =
+                        <RefCompanyIdCompanyDto>[
+                      RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
+                    ];
+                    var selectedCompanyInprogress = companiesInprogress[0];
 
-                    return TabBarView(
-                        controller: tabController,
-                        physics: NeverScrollableScrollPhysics(),
+                    var resultCompaniesInprogress = listInprogress
+                        .where(
+                            (element) => element.refCompanyIdCompanyDto != null)
+                        .map((element) => element.refCompanyIdCompanyDto!)
+                        .toSet()
+                        .toList();
+                    var idSet = <String?>{};
+                    for (var d in resultCompaniesInprogress) {
+                      if (idSet.add(d.id)) {
+                        companiesInprogress.add(
+                            RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
+                      }
+                    }
+
+                    // COMPLETE
+                    List<RefCompanyIdCompanyDto> companiesCompleted =
+                        <RefCompanyIdCompanyDto>[
+                      RefCompanyIdCompanyDto(id: '-1', name: '-- Tất cả --')
+                    ];
+                    var selectedCompanyCompleted = companiesCompleted[0];
+
+                    var resultCompaniesCompleted = listCompleted
+                        .where(
+                            (element) => element.refCompanyIdCompanyDto != null)
+                        .map((element) => element.refCompanyIdCompanyDto!)
+                        .toSet()
+                        .toList();
+                    var idSetComplete = <String?>{};
+                    for (var d in resultCompaniesCompleted) {
+                      if (idSetComplete.add(d.id)) {
+                        companiesCompleted.add(
+                            RefCompanyIdCompanyDto(id: d.id!, name: d.name!));
+                      }
+                    }
+                    List<ScheduleCampaign> listSearchInprogress = [];
+                    List<ScheduleCampaign> listSearchCompleted = [];
+                    bool onSearchInprogress = false;
+                    bool onSearchCompleted = false;
+
+                    var dropdownButtonInprogress =
+                        DropdownButton<RefCompanyIdCompanyDto>(
+                            isExpanded: true,
+                            value: selectedCompanyInprogress,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCompanyInprogress = value!;
+                                listSearchInprogress = listInprogress;
+                                if (value.id == '-1') {
+                                  onSearchInprogress = false;
+                                } else {
+                                  listSearchInprogress.clear();
+                                  listInprogress.forEach((element) {
+                                    if (element.refCompanyIdCompanyDto!.id ==
+                                        value.id) {
+                                      listSearchInprogress.add(element);
+                                    }
+                                  });
+                                  onSearchInprogress = true;
+                                }
+
+                                listSearchInprogress.sort((a, b) =>
+                                    DateTime.parse(a.updatedTime as String)
+                                        .compareTo(DateTime.parse(
+                                            b.updatedTime as String)));
+                                listSearchInprogress.sort((a, b) =>
+                                    a.status!.compareTo(b.status as String));
+
+                                // if (widget.isCompleted) {
+                                //   listSearch.sort((a, b) => DateTime.parse(b.updatedTime!)
+                                //       .compareTo(DateTime.parse(a.updatedTime!)));
+                                // } else {
+                                //   listSearch.sort(
+                                //       (a, b) => DateTime.parse(a.updatedTime as String)
+                                //           .compareTo(DateTime.parse(b.updatedTime as String))
+                                //       // a.status!.compareTo(b.status!)
+                                //       );
+                                // }
+                              });
+                            },
+                            items: companiesInprogress
+                                .map((RefCompanyIdCompanyDto company) {
+                              return DropdownMenuItem<RefCompanyIdCompanyDto>(
+                                value: company,
+                                child: Center(
+                                  child: new Text(
+                                    company.name!,
+                                    style: new TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList());
+
+                    var dropdownButtonCompleted =
+                        DropdownButton<RefCompanyIdCompanyDto>(
+                            isExpanded: true,
+                            value: selectedCompanyCompleted,
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            items: companiesCompleted
+                                .map((RefCompanyIdCompanyDto company) {
+                              return DropdownMenuItem<RefCompanyIdCompanyDto>(
+                                value: company,
+                                child: Center(
+                                  child: new Text(
+                                    company.name!,
+                                    style: new TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList());
+
+                    return TabBarView(controller: tabController,
+                        // physics: NeverScrollableScrollPhysics(),
                         children: [
                           TemplateTabView(
+                              onSearch: onSearchInprogress,
+                              listSearch: listSearchInprogress,
+                              child: dropdownButtonInprogress,
                               listCampaign: listInprogress,
                               isCompleted: false,
                               selectMonthAndYear: selectMonthAndYear,
@@ -268,6 +390,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 _onRefresh(cl, filter, queryTemplate);
                               }),
                           TemplateTabView(
+                            onSearch: onSearchCompleted,
+                            listSearch: listSearchCompleted,
+                            child: dropdownButtonCompleted,
                             listCampaign: listCompleted,
                             year: year,
                             month: month,

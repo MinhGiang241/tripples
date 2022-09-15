@@ -57,9 +57,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   final GlobalKey<UploadDialogState> DialogState =
       GlobalKey<UploadDialogState>();
-  bool disabled = false;
+
   @override
   Widget build(BuildContext context) {
+    bool disabled = false;
     print(widget.questions);
     final mutationData = """
   mutation (\$data:Dictionary){
@@ -380,7 +381,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                               options: MutationOptions(
                                                   document: gql(changeStatus),
                                                   onCompleted: (result) {
-                                                    disabled = false;
                                                     if (result == null) {
                                                       showDialog(
                                                           context: context,
@@ -457,7 +457,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                 setState(() {
                                   disabled = true;
                                 });
-
+                                print(disabled);
                                 var listResult =
                                     context.read<AnswerController>().listResult;
                                 var data = [];
@@ -569,7 +569,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     .length <=
                 0) {
               question.valid = false;
-              disabled = false;
               break;
             } else {
               question.valid = true;
@@ -584,7 +583,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     .length <=
                 0) {
               question.valid = false;
-              disabled = false;
               break;
             } else {
               question.valid = true;
@@ -607,16 +605,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
           e.required &&
           (e.type == "TEXT" ||
               e.type == "ONECHOOSE" ||
-              e.type == "MULTIPLECHOOSE")) {
-        valid = false;
-        break;
-      }
+              e.type == "MULTIPLECHOOSE")) valid = false;
       if (result.answerNumber == null && e.required && e.type == "NUMBER") {
         valid = false;
-        break;
       }
+      break;
     }
-    Future.delayed(Duration(seconds: 1));
     return valid;
   }
 

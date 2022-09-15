@@ -18,6 +18,9 @@ class TemplateTabView extends StatefulWidget {
       required this.onRefresh,
       required this.selectMonthAndYear,
       required this.year,
+      required this.child,
+      required this.listSearch,
+      required this.onSearch,
       required this.month})
       : super(key: key);
   List<ScheduleCampaign> listCampaign;
@@ -28,6 +31,9 @@ class TemplateTabView extends StatefulWidget {
   final int year;
   final int month;
   final Function selectMonthAndYear;
+  final Widget child;
+  bool onSearch;
+  List<ScheduleCampaign> listSearch = [];
 
   @override
   _TemplateTabViewState createState() => _TemplateTabViewState();
@@ -120,6 +126,7 @@ class _TemplateTabViewState extends State<TemplateTabView>
               value: selectedCompany,
               onChanged: (RefCompanyIdCompanyDto? value) async {
                 setState(() {
+                  loading = true;
                   selectedCompany = value!;
                   // listSearch = widget.listCampaign;
                   if (value.id == '-1') {
@@ -139,15 +146,16 @@ class _TemplateTabViewState extends State<TemplateTabView>
                         .compareTo(DateTime.parse(a.updatedTime!)));
                   } else {
                     listSearch.sort(
-                        (a, b) => DateTime.parse(a.surveyDate as String)
-                            .compareTo(DateTime.parse(b.surveyDate as String))
+                        (a, b) => DateTime.parse(a.updatedTime as String)
+                            .compareTo(DateTime.parse(b.updatedTime as String))
                         // a.status!.compareTo(b.status!)
                         );
-                    listSearch.sort(
-                        (a, b) => a.status!.compareTo(b.status as String));
                   }
                 });
-                // await Future.delayed(Duration(seconds: 1000));
+                await Future.delayed(Duration(seconds: 1000));
+                setState(() {
+                  loading = false;
+                });
               },
               items: companies.map((RefCompanyIdCompanyDto company) {
                 return DropdownMenuItem<RefCompanyIdCompanyDto>(

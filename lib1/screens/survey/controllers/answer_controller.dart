@@ -153,7 +153,7 @@ class AnswerController extends ChangeNotifier {
 
   /// Update lable
   void _updateLableAnswerText(String questID, String? lable) {
-    if (lable != null) {
+    if (lable != null && lable != '') {
       var index = listResult
           .indexWhere((element) => element.questionTemplateId == questID);
       if (index >= 0) {
@@ -173,7 +173,7 @@ class AnswerController extends ChangeNotifier {
           .indexWhere((element) => element.questionTemplateId == questID);
       var listChoiceAnswer;
 
-      listChoiceAnswer = listResult[index].answerText!.split('</br>');
+      listChoiceAnswer = listResult[index].answerText!.split('\n');
 
       var choiceIndex = listChoiceAnswer.indexWhere((v) => v == lable);
 
@@ -196,7 +196,7 @@ class AnswerController extends ChangeNotifier {
       }
       if (listResult[index].answerText!.startsWith('</br>')) {
         listResult[index].answerText = listResult[index].answerText!.substring(
-              5,
+              1,
             );
       }
       print(listResult[index].answerText);

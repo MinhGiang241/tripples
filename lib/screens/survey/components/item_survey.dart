@@ -109,17 +109,19 @@ class ItemSurveyState extends State<ItemSurvey> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: textAnswerController,
                     readOnly: widget.isCompleted,
                     decoration: InputDecoration(labelText: "Trả lời"),
                     validator: (value) {
-                      if (widget.question.required && value == null ||
-                          value == "") {
+                      if (widget.question.required &&
+                          (value == null || value.isEmpty)) {
                         return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
                       }
-                      if (value?.trim() == "") {
-                        return 'Không được nhập khoảng trắng là câu trả lời';
-                      }
+                      // if (value?.trim() == "") {
+                      //   return 'Không được nhập khoảng trắng là câu trả lời';
+                      // }
+                      widget.question.valid = false;
                       return null;
                     },
                     onChanged: (v) {
@@ -297,6 +299,7 @@ class ItemSurveyState extends State<ItemSurvey> {
     setState(() {
       if (!widget.question.required) {
         widget.question.valid = true;
+        return;
       }
       switch (widget.question.type) {
         case "ONECHOOSE":
@@ -307,6 +310,7 @@ class ItemSurveyState extends State<ItemSurvey> {
                   .length <=
               0) {
             widget.question.valid = false;
+
             break;
           } else {
             widget.question.valid = true;

@@ -472,6 +472,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                       validationForm(context)) {
                                     runMutation({"data": data});
                                   } else {
+                                    disabled = false;
                                     showDialog(
                                         context: context,
                                         builder: (ctxt) => new AlertDialog(
@@ -489,6 +490,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                                             ));
                                   }
                                 } catch (e) {
+                                  disabled = false;
                                   showDialog(
                                       context: context,
                                       builder: (ctxt) => new AlertDialog(
@@ -570,6 +572,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 0) {
               question.valid = false;
               disabled = false;
+
               break;
             } else {
               question.valid = true;
@@ -609,12 +612,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
               e.type == "ONECHOOSE" ||
               e.type == "MULTIPLECHOOSE")) {
         valid = false;
+        e.valid = false;
+        disabled = false;
         break;
       }
       if (result.answerNumber == null && e.required && e.type == "NUMBER") {
         valid = false;
+        e.valid = false;
         break;
       }
+      e.valid = true;
     }
     Future.delayed(Duration(seconds: 1));
     return valid;

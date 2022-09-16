@@ -39,8 +39,7 @@ class _AuthButtonState extends State<AuthButton> {
                         ? Colors.grey
                         : Theme.of(context).primaryColor),
             child: widget.disabled
-                ? SizedBox(
-                    height: 28, width: 28, child: CircularProgressIndicator())
+                ? CircularProgressIndicator()
                 : Text(
                     widget.title,
                     style: Theme.of(context)

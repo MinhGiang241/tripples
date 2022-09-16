@@ -139,8 +139,8 @@ class _TemplateTabViewState extends State<TemplateTabView>
                         .compareTo(DateTime.parse(a.updatedTime!)));
                   } else {
                     listSearch.sort(
-                        (a, b) => DateTime.parse(a.surveyTime as String)
-                            .compareTo(DateTime.parse(b.surveyTime as String))
+                        (a, b) => DateTime.parse(a.surveyDate as String)
+                            .compareTo(DateTime.parse(b.surveyDate as String))
                         // a.status!.compareTo(b.status!)
                         );
                     listSearch.sort(

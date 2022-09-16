@@ -16,11 +16,13 @@ class ListDetails extends StatelessWidget {
       required this.refCampaignIdCampaignDto,
       required this.department,
       required this.status,
-      required this.surveyTime})
+      required this.surveyTime,
+      required this.surveyDate})
       : super(key: key);
   final RefCampaignIdCampaignDto? refCampaignIdCampaignDto;
   final RefDepartmentIdDepartmentDto department;
   final String? surveyTime;
+  final String? surveyDate;
   final String status;
 
   @override
@@ -49,7 +51,8 @@ class ListDetails extends StatelessWidget {
         ItemDetails(
           title: 'Ngày- giờ khảo sát',
           description: surveyTime != null
-              ? "${surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${surveyTime!.split('T')[1]}"
+              // ? "${surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${surveyTime!.split('T')[1]}"
+              ? "${surveyDate!.formatDateTimeDMY()} -  ${surveyTime!.split('T')[1]}"
               : DateTime.now().toIso8601String().formatDateTimeDMY(),
         ),
         ItemDetails(

@@ -29,6 +29,7 @@ class TemplateItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (_) => DetailsScreen(
                         surveyTime: campaign.surveyTime,
+                        surveyDate: campaign.surveyDate,
                         status: campaign.status != null
                             ? campaign.status as String
                             : '',
@@ -122,7 +123,8 @@ class TemplateItem extends StatelessWidget {
                               height: 1.5, fontWeight: FontWeight.bold)),
                       Text(
                         campaign.surveyTime != null
-                            ? "${campaign.surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${campaign.surveyTime!.split('T')[1]}"
+                            // ? "${campaign.surveyTime!.split('T')[0].split('-').reversed.join('/')} - ${campaign.surveyTime!.split('T')[1]}"
+                            ? "${campaign.surveyDate!.formatDateTimeDMY()} -  ${campaign.surveyTime!.split('T')[1]}"
                             : DateTime.now()
                                 .toIso8601String()
                                 .formatDateTimeDMY(),

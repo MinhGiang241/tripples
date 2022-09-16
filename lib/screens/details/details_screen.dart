@@ -22,6 +22,7 @@ class DetailsScreen extends StatefulWidget {
   final bool isCompleted;
   final String idSchedule;
   final String? surveyTime;
+  final String? surveyDate;
   String status;
   final List<QuestionResultScheduleIdDto>? questionResultScheduleIdDto;
   final QuestionResult? questionResults;
@@ -35,6 +36,7 @@ class DetailsScreen extends StatefulWidget {
       required this.idSchedule,
       required this.questions,
       required this.surveyTime,
+      required this.surveyDate,
       required this.questionResultScheduleIdDto,
       required this.questionResults,
       this.status = '',
@@ -93,6 +95,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       children: [
                         ListDetails(
                             surveyTime: widget.surveyTime,
+                            surveyDate: widget.surveyDate,
                             refCampaignIdCampaignDto: widget.campaign,
                             department: widget.department,
                             status: widget.status),

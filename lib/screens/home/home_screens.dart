@@ -100,16 +100,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     .data!['authorization_get_user_me']['data'] ==
                 null) {
               print(meResult);
-              return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
-                    TextButton(
-                        onPressed: () async {
-                          await context.read<AuthController>().logOut(context);
-                        },
-                        child: Text("Đăng nhập lại"))
-                  ]);
+              return Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Tài khoản đã bị xoá hoặc không có dữ liệu"),
+                      TextButton(
+                          onPressed: () async {
+                            await context
+                                .read<AuthController>()
+                                .logOut(context);
+                          },
+                          child: Text("Đăng nhập lại"))
+                    ]),
+              );
             }
 
             avatar = meResult.data != null &&
@@ -240,8 +244,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       }
                     }
                     listInprogress.sort((a, b) =>
-                        DateTime.parse(a.surveyTime as String)
-                            .compareTo(DateTime.parse(b.surveyTime as String)));
+                        DateTime.parse(a.surveyDate as String)
+                            .compareTo(DateTime.parse(b.surveyDate as String)));
                     listInprogress.sort(
                         (a, b) => a.status!.compareTo(b.status as String));
 

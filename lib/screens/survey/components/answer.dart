@@ -57,6 +57,7 @@ class MultichoiseAnswer extends StatelessWidget {
                             .listData[index]
                             .isSelected,
                         onChanged: (val) {
+                          FocusScope.of(context).unfocus();
                           Provider.of<MultichoiseController>(context,
                                   listen: false)
                               .onChange(index, val!,

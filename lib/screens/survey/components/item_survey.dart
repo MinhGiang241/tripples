@@ -86,236 +86,242 @@ class ItemSurveyState extends State<ItemSurvey>
       children: [
         Padding(
           padding: EdgeInsets.all(padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                child: Text(
-                  widget.question.title != null
-                      ? "${widget.orderNum} - ${widget.question.title}"
-                      : "",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ),
-              SizedBox(
-                height: padding / 2,
-              ),
-              // if (!widget.isCompleted)
-              //   if (valiation(context))
-              //     Padding(
-              //       padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-              //       child: Text(
-              //         "* Đây là trường bắt buộc",
-              //         style: TextStyle(color: Colors.red),
-              //       ),
-              //     ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(
-              //       horizontal: padding * 1.5, vertical: 5),
-              //   child: Text(
-              //     widget.question.hint ?? "",
-              //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
-              //   ),
-              // ),
-              if (widget.question.type == "TEXT")
+          child: InkWell(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: textAnswerController,
-                    readOnly: widget.isCompleted,
-                    decoration: InputDecoration(labelText: "Trả lời"),
-                    validator: (value) {
-                      if (widget.question.required &&
-                          (value == null || value.isEmpty)) {
-                        return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
-                      }
-                      // if (value?.trim() == "") {
-                      //   return 'Không được nhập khoảng trắng là câu trả lời';
-                      // }
-                      widget.question.valid = false;
-                      return null;
-                    },
-                    onChanged: (v) {
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: v,
-                              questID: widget.questID,
-                              type: widget.question.type!);
-                    },
+                  child: Text(
+                    widget.question.title != null
+                        ? "${widget.orderNum} - ${widget.question.title}"
+                        : "",
+                    style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
-              if (widget.question.type == "NUMBER")
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                  child: TextFormField(
-                    controller: numberAnswerController,
-                    readOnly: widget.isCompleted,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (widget.question.required) {
-                        if (value == null || value == "") {
+                SizedBox(
+                  height: padding / 2,
+                ),
+                // if (!widget.isCompleted)
+                //   if (valiation(context))
+                //     Padding(
+                //       padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                //       child: Text(
+                //         "* Đây là trường bắt buộc",
+                //         style: TextStyle(color: Colors.red),
+                //       ),
+                //     ),
+                // Padding(
+                //   padding: EdgeInsets.symmetric(
+                //       horizontal: padding * 1.5, vertical: 5),
+                //   child: Text(
+                //     widget.question.hint ?? "",
+                //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+                //   ),
+                // ),
+                if (widget.question.type == "TEXT")
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                    child: TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: textAnswerController,
+                      readOnly: widget.isCompleted,
+                      decoration: InputDecoration(labelText: "Trả lời"),
+                      validator: (value) {
+                        if (widget.question.required &&
+                            (value == null || value.isEmpty)) {
                           return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
                         }
-                        if (!isNumeric(value)) {
-                          return '$value không đúng định dạng số';
-                        }
-                      } else {
-                        if (!isNumeric(value) && value != "") {
-                          return '$value không đúng định dạng số';
-                        }
-                      }
-
-                      return null;
-                    },
-                    decoration: InputDecoration(labelText: "Trả lời"),
-                    onChanged: (v) {
-                      Provider.of<AnswerController>(context, listen: false)
-                          .updateLableAnswer(
-                              lable: v,
-                              questID: widget.questID,
-                              type: widget.question.type!);
-                    },
+                        // if (value?.trim() == "") {
+                        //   return 'Không được nhập khoảng trắng là câu trả lời';
+                        // }
+                        widget.question.valid = false;
+                        return null;
+                      },
+                      onChanged: (v) {
+                        Provider.of<AnswerController>(context, listen: false)
+                            .updateLableAnswer(
+                                lable: v,
+                                questID: widget.questID,
+                                type: widget.question.type!);
+                      },
+                    ),
                   ),
+                if (widget.question.type == "NUMBER")
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                    child: TextFormField(
+                      controller: numberAnswerController,
+                      readOnly: widget.isCompleted,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (widget.question.required) {
+                          if (value == null || value == "") {
+                            return 'Đây là câu hỏi bắt buộc vui lòng nhập đáp án';
+                          }
+                          if (!isNumeric(value)) {
+                            return '$value không đúng định dạng số';
+                          }
+                        } else {
+                          if (!isNumeric(value) && value != "") {
+                            return '$value không đúng định dạng số';
+                          }
+                        }
+
+                        return null;
+                      },
+                      decoration: InputDecoration(labelText: "Trả lời"),
+                      onChanged: (v) {
+                        Provider.of<AnswerController>(context, listen: false)
+                            .updateLableAnswer(
+                                lable: v,
+                                questID: widget.questID,
+                                type: widget.question.type!);
+                      },
+                    ),
+                  ),
+                if (widget.question.type == "ONECHOOSE")
+                  widget.isCompleted
+                      ? SinglechoiseCompleted(
+                          polls: widget.question.poll!,
+                          values: widget.questionResult != null
+                              ? widget.questionResult!.answerText != null
+                                  ? widget.questionResult!.answerText!
+                                  : ""
+                              : "")
+                      : SinglechoiseAnswer(
+                          choiceScore: choiceScore,
+                          isAutoScore: widget.question.auto_mark ?? false,
+                          questions: widget.question,
+                          validation: validation,
+                          polls: widget.question.poll!,
+                          questID: widget.questID,
+                          values: widget.questionResult != null
+                              ? widget.questionResult!.answerText != null
+                                  ? widget.questionResult!.answerText!
+                                  : ""
+                              : "",
+                        ),
+                if (widget.question.type == "MULTIPLECHOOSE")
+                  widget.isCompleted
+                      ? MultichoiseCompleted(
+                          polls: widget.question.poll!,
+                          values: widget.questionResult != null
+                              ? widget.questionResult!.answerText != null
+                                  ? widget.questionResult!.answerText!
+                                      .split('</br>')
+                                  : []
+                              : [])
+                      : MultichoiseAnswer(
+                          isAutoScore: widget.question.auto_mark ?? false,
+                          choiceScore: choiceScore,
+                          question: widget.question,
+                          validation: validation,
+                          polls: widget.question.poll!,
+                          questID: widget.questID,
+                          values: widget.questionResult != null
+                              ? widget.questionResult!.answerText is String
+                                  ? widget.questionResult!.answerText
+                                  : ""
+                              : "",
+                        ),
+                Divider(
+                  thickness: 1,
                 ),
-              if (widget.question.type == "ONECHOOSE")
-                widget.isCompleted
-                    ? SinglechoiseCompleted(
-                        polls: widget.question.poll!,
-                        values: widget.questionResult != null
-                            ? widget.questionResult!.answerText != null
-                                ? widget.questionResult!.answerText!
-                                : ""
-                            : "")
-                    : SinglechoiseAnswer(
-                        choiceScore: choiceScore,
-                        isAutoScore: widget.question.auto_mark ?? false,
-                        questions: widget.question,
-                        validation: validation,
-                        polls: widget.question.poll!,
-                        questID: widget.questID,
-                        values: widget.questionResult != null
-                            ? widget.questionResult!.answerText != null
-                                ? widget.questionResult!.answerText!
-                                : ""
-                            : "",
-                      ),
-              if (widget.question.type == "MULTIPLECHOOSE")
-                widget.isCompleted
-                    ? MultichoiseCompleted(
-                        polls: widget.question.poll!,
-                        values: widget.questionResult != null
-                            ? widget.questionResult!.answerText != null
-                                ? widget.questionResult!.answerText!
-                                    .split('</br>')
-                                : []
-                            : [])
-                    : MultichoiseAnswer(
-                        isAutoScore: widget.question.auto_mark ?? false,
-                        choiceScore: choiceScore,
-                        question: widget.question,
-                        validation: validation,
-                        polls: widget.question.poll!,
-                        questID: widget.questID,
-                        values: widget.questionResult != null
-                            ? widget.questionResult!.answerText is String
-                                ? widget.questionResult!.answerText
-                                : ""
-                            : "",
-                      ),
-              Divider(
-                thickness: 1,
-              ),
-              // ScoreWidget(),
-              ScoreSlider(
-                  autoScore: widget.question.auto_mark != null
-                      ? !widget.question.auto_mark!
-                      : false,
-                  isTextField: (widget.question.type == 'TEXT' ||
-                          widget.question.type == 'NUMBER')
-                      ? true
-                      : widget.question.auto_mark != null
-                          ? !widget.question.auto_mark!
-                          : true,
-                  textScore: (widget.question.auto_mark == null ||
-                          widget.question.auto_mark == false)
-                      ? null
-                      : choiceScore,
-                  scoreController: scoreController,
-                  maxScore: widget.question.maxScore != null
-                      ? widget.question.maxScore
-                      : 10,
-                  score: widget.questionResult != null
-                      ? widget.questionResult!.score != null
-                          ? widget.questionResult!.score
-                          : 0
-                      : 0,
-                  index: widget.questionIndex,
-                  isReadOnly: widget.isCompleted,
-                  questID: widget.questID),
-              Divider(
-                thickness: 1,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                child: TextField(
-                  controller: noteAnswerController,
-                  readOnly: widget.isCompleted,
-                  minLines: 1,
-                  maxLines: 5,
-                  onChanged: (v) {
-                    Provider.of<AnswerController>(context, listen: false)
-                        .updateNoteAnswer(note: v, questID: widget.questID);
-                  },
-                  decoration: InputDecoration(labelText: "Ghi chú"),
+                // ScoreWidget(),
+                ScoreSlider(
+                    autoScore: widget.question.auto_mark != null
+                        ? !widget.question.auto_mark!
+                        : false,
+                    isTextField: (widget.question.type == 'TEXT' ||
+                            widget.question.type == 'NUMBER')
+                        ? true
+                        : widget.question.auto_mark != null
+                            ? !widget.question.auto_mark!
+                            : true,
+                    textScore: (widget.question.auto_mark == null ||
+                            widget.question.auto_mark == false)
+                        ? null
+                        : choiceScore,
+                    scoreController: scoreController,
+                    maxScore: widget.question.maxScore != null
+                        ? widget.question.maxScore
+                        : 10,
+                    score: widget.questionResult != null
+                        ? widget.questionResult!.score != null
+                            ? widget.questionResult!.score
+                            : 0
+                        : 0,
+                    index: widget.questionIndex,
+                    isReadOnly: widget.isCompleted,
+                    questID: widget.questID),
+                Divider(
+                  thickness: 1,
                 ),
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              SizedBox(
-                height: padding / 2,
-              ),
-              if (!widget.isCompleted)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                  child: ElevatedButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withOpacity(0.5)),
-                      onPressed: () {
-                        Provider.of<ChooseFileController>(context,
-                                listen: false)
-                            .showSelectedFile(
-                                widget.questionIndex, widget.questID);
-                      },
-                      child: Text("Chọn file" //S.current.choose_file
-                          )),
+                  child: TextField(
+                    controller: noteAnswerController,
+                    readOnly: widget.isCompleted,
+                    minLines: 1,
+                    maxLines: 5,
+                    onChanged: (v) {
+                      Provider.of<AnswerController>(context, listen: false)
+                          .updateNoteAnswer(note: v, questID: widget.questID);
+                    },
+                    decoration: InputDecoration(labelText: "Ghi chú"),
+                  ),
                 ),
-              // widget.isCompleted
-              //     ? widget.questionResult != null
-              //         ? widget.questionResultScheduleIdDto!.media != null
-              //             ? ListPinnedFileComplete(
-              //                 medias:
-              //                     widget.questionResultScheduleIdDto!.media!)
-              //             : Container()
-              //         : Container()
-              //     :
-              Divider(
-                thickness: 1,
-              ),
-              GdriveLinkListPin(
-                edit: !widget.isCompleted,
-                questId: widget.questID,
-                Index: widget.questionIndex,
-                questionResult: widget.questionResult,
-              ),
-              ListPinnedFile(
+                Divider(
+                  thickness: 1,
+                ),
+                SizedBox(
+                  height: padding / 2,
+                ),
+                if (!widget.isCompleted)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                    child: ElevatedButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.5)),
+                        onPressed: () {
+                          Provider.of<ChooseFileController>(context,
+                                  listen: false)
+                              .showSelectedFile(
+                                  widget.questionIndex, widget.questID);
+                        },
+                        child: Text("Chọn file" //S.current.choose_file
+                            )),
+                  ),
+                // widget.isCompleted
+                //     ? widget.questionResult != null
+                //         ? widget.questionResultScheduleIdDto!.media != null
+                //             ? ListPinnedFileComplete(
+                //                 medias:
+                //                     widget.questionResultScheduleIdDto!.media!)
+                //             : Container()
+                //         : Container()
+                //     :
+                Divider(
+                  thickness: 1,
+                ),
+                GdriveLinkListPin(
+                  edit: !widget.isCompleted,
+                  questId: widget.questID,
+                  Index: widget.questionIndex,
                   questionResult: widget.questionResult,
-                  questionIndex: widget.questionIndex,
-                  questId: widget.questID),
-            ],
+                ),
+                ListPinnedFile(
+                    questionResult: widget.questionResult,
+                    questionIndex: widget.questionIndex,
+                    questId: widget.questID),
+              ],
+            ),
           ),
         ),
         Divider(

@@ -452,83 +452,93 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
                             height: 10,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: AuthButton(
-                                title: "Kết quả",
-                                onPress: () {
-                                  // setState(() {
-                                  //   disabled = true;
-                                  // });
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: (showBtn &&
+                                      widget.questions.length > 0 &&
+                                      !widget.isCompleted)
+                                  ? AuthButton(
+                                      title: "Kết quả",
+                                      onPress: () {
+                                        // setState(() {
+                                        //   disabled = true;
+                                        // });
 
-                                  var listResult = context
-                                      .read<AnswerController>()
-                                      .listResult;
-                                  var data = [];
-                                  listResult.forEach((v) {
-                                    data.add(v.toJson());
-                                  });
-                                  print(data);
-                                  try {
-                                    validation(context, widget.questions);
+                                        var listResult = context
+                                            .read<AnswerController>()
+                                            .listResult;
+                                        var data = [];
+                                        listResult.forEach((v) {
+                                          data.add(v.toJson());
+                                        });
+                                        print(data);
+                                        try {
+                                          validation(context, widget.questions);
 
-                                    if (_formKey.currentState!.validate() &&
-                                        validationForm(context)) {
-                                      // runMutation({"data": data});
+                                          if (_formKey.currentState!
+                                                  .validate() &&
+                                              validationForm(context)) {
+                                            // runMutation({"data": data});
 
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: ((context) =>
-                                                  GraphQLProvider(
-                                                    client: client,
-                                                    child: SubmitResults(
-                                                      listResult: listResult,
-                                                      questions:
-                                                          widget.questions,
-                                                      data: data,
-                                                      surveyDate:
-                                                          widget.surveyDate!,
-                                                    ),
-                                                  ))));
-                                    } else {
-                                      disabled = false;
-                                      showDialog(
-                                          context: context,
-                                          builder: (ctxt) => new AlertDialog(
-                                                title: Text("Thông báo"),
-                                                content: Text(
-                                                    "Dữ liệu khảo sát không hợp lệ"),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(
-                                                            context, true);
-                                                      },
-                                                      child: Text("Đóng")),
-                                                ],
-                                              ));
-                                    }
-                                  } catch (e) {
-                                    disabled = false;
-                                    showDialog(
-                                        context: context,
-                                        builder: (ctxt) => new AlertDialog(
-                                              title: Text("Có lỗi xảy ra"),
-                                              content: Text(
-                                                  "Không gửi được kết quả"),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(
-                                                          context, true);
-                                                    },
-                                                    child: Text("Đóng")),
-                                              ],
-                                            ));
-                                  }
-                                }),
-                          ),
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: ((context) =>
+                                                        GraphQLProvider(
+                                                          client: client,
+                                                          child: SubmitResults(
+                                                            listResult:
+                                                                listResult,
+                                                            questions: widget
+                                                                .questions,
+                                                            data: data,
+                                                            surveyDate: widget
+                                                                .surveyDate!,
+                                                          ),
+                                                        ))));
+                                          } else {
+                                            disabled = false;
+                                            showDialog(
+                                                context: context,
+                                                builder: (ctxt) =>
+                                                    new AlertDialog(
+                                                      title: Text("Thông báo"),
+                                                      content: Text(
+                                                          "Dữ liệu khảo sát không hợp lệ"),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  true);
+                                                            },
+                                                            child:
+                                                                Text("Đóng")),
+                                                      ],
+                                                    ));
+                                          }
+                                        } catch (e) {
+                                          disabled = false;
+                                          showDialog(
+                                              context: context,
+                                              builder: (ctxt) =>
+                                                  new AlertDialog(
+                                                    title:
+                                                        Text("Có lỗi xảy ra"),
+                                                    content: Text(
+                                                        "Không gửi được kết quả"),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context, true);
+                                                          },
+                                                          child: Text("Đóng")),
+                                                    ],
+                                                  ));
+                                        }
+                                      })
+                                  : SizedBox()),
                         ],
                       ),
                     );

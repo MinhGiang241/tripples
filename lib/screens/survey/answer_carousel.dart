@@ -380,56 +380,59 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
                         ),
                 ),
               ),
-              if (showBtn && widget.questions.length > 0 && !widget.isCompleted)
-                Mutation(
-                    builder: (runMutation, result) {
-                      return Positioned(
-                        bottom: 10,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: AnimatedSmoothIndicator(
-                                activeIndex: activeIndex,
-                                count: widget.questions.length,
-                                effect: JumpingDotEffect(
-                                  dotWidth: 10,
-                                  dotHeight: 10,
-                                  dotColor: Colors.black12,
-                                  activeDotColor:
-                                      Theme.of(context).primaryColor,
+              Mutation(
+                  builder: (runMutation, result) {
+                    return Positioned(
+                      bottom: 10,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Center(
+                          //   child: AnimatedSmoothIndicator(
+
+                          //     activeIndex: activeIndex,
+                          //     count: widget.questions.length,
+                          //     effect: JumpingDotEffect(
+                          //       dotWidth: 10,
+                          //       dotHeight: 10,
+                          //       dotColor: Colors.black12,
+                          //       activeDotColor: Theme.of(context).primaryColor,
+                          //     ),
+                          //   ),
+                          // ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              activeIndex == 0
+                                                  ? Colors.grey
+                                                  : Colors.orange[700])),
+                                  onPressed: activeIndex == 0
+                                      ? null
+                                      : () {
+                                          FocusScope.of(context).unfocus();
+                                          carouselController.previousPage();
+                                        },
+                                  child: Icon(Icons.arrow_left)),
+                              Container(
+                                width: 100,
+                                child: Text(
+                                  "Trang: ${(activeIndex + 1).toString()}/${widget.questions.length}",
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                activeIndex == 0
-                                                    ? Colors.grey
-                                                    : Colors.orange[700])),
-                                    onPressed: activeIndex == 0
-                                        ? null
-                                        : () {
-                                            FocusScope.of(context).unfocus();
-                                            carouselController.previousPage();
-                                          },
-                                    child: Icon(Icons.arrow_left)),
-                                Container(
-                                  width: 100,
-                                  child: Text(
-                                    "Trang: ${(activeIndex + 1).toString()}/${widget.questions.length}",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              if (showBtn &&
+                                  widget.questions.length > 0 &&
+                                  !widget.isCompleted)
                                 ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -448,77 +451,59 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
                                             },
                                   child: Icon(Icons.arrow_right),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: AuthButton(
-                                  title: "Kết quả",
-                                  onPress: () {
-                                    // setState(() {
-                                    //   disabled = true;
-                                    // });
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: AuthButton(
+                                title: "Kết quả",
+                                onPress: () {
+                                  // setState(() {
+                                  //   disabled = true;
+                                  // });
 
-                                    var listResult = context
-                                        .read<AnswerController>()
-                                        .listResult;
-                                    var data = [];
-                                    listResult.forEach((v) {
-                                      data.add(v.toJson());
-                                    });
-                                    print(data);
-                                    try {
-                                      validation(context, widget.questions);
+                                  var listResult = context
+                                      .read<AnswerController>()
+                                      .listResult;
+                                  var data = [];
+                                  listResult.forEach((v) {
+                                    data.add(v.toJson());
+                                  });
+                                  print(data);
+                                  try {
+                                    validation(context, widget.questions);
 
-                                      if (_formKey.currentState!.validate() &&
-                                          validationForm(context)) {
-                                        // runMutation({"data": data});
+                                    if (_formKey.currentState!.validate() &&
+                                        validationForm(context)) {
+                                      // runMutation({"data": data});
 
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: ((context) =>
-                                                    GraphQLProvider(
-                                                      client: client,
-                                                      child: SubmitResults(
-                                                        listResult: listResult,
-                                                        questions:
-                                                            widget.questions,
-                                                        data: data,
-                                                        surveyDate:
-                                                            widget.surveyDate!,
-                                                      ),
-                                                    ))));
-                                      } else {
-                                        disabled = false;
-                                        showDialog(
-                                            context: context,
-                                            builder: (ctxt) => new AlertDialog(
-                                                  title: Text("Thông báo"),
-                                                  content: Text(
-                                                      "Dữ liệu khảo sát không hợp lệ"),
-                                                  actions: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context, true);
-                                                        },
-                                                        child: Text("Đóng")),
-                                                  ],
-                                                ));
-                                      }
-                                    } catch (e) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  GraphQLProvider(
+                                                    client: client,
+                                                    child: SubmitResults(
+                                                      listResult: listResult,
+                                                      questions:
+                                                          widget.questions,
+                                                      data: data,
+                                                      surveyDate:
+                                                          widget.surveyDate!,
+                                                    ),
+                                                  ))));
+                                    } else {
                                       disabled = false;
                                       showDialog(
                                           context: context,
                                           builder: (ctxt) => new AlertDialog(
-                                                title: Text("Có lỗi xảy ra"),
+                                                title: Text("Thông báo"),
                                                 content: Text(
-                                                    "Không gửi được kết quả"),
+                                                    "Dữ liệu khảo sát không hợp lệ"),
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
@@ -529,165 +514,177 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
                                                 ],
                                               ));
                                     }
-                                  }),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    options: MutationOptions(
-                        document: gql(mutationData),
-                        onCompleted: (data) async {
-                          await showDialog(
-                            context: context,
-                            builder: (_) {
-                              if (data == null) {
-                                return AlertDialog(
-                                    title: Text('Có lỗi xảy ra'),
-                                    content: Text("Kiểm tra lại kết nối"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text('Đóng'))
-                                    ]);
-                              }
-                              if (data["scheduleresult_save_schedule_result"]
-                                      ["code"] !=
-                                  0) {
-                                return AlertDialog(
-                                    title: Text('Có lỗi xảy ra'),
-                                    content:
-                                        Text("Không gửi kết quả lên được "),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text('Đóng'))
-                                    ]);
-                              }
+                                  } catch (e) {
+                                    disabled = false;
+                                    showDialog(
+                                        context: context,
+                                        builder: (ctxt) => new AlertDialog(
+                                              title: Text("Có lỗi xảy ra"),
+                                              content: Text(
+                                                  "Không gửi được kết quả"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context, true);
+                                                    },
+                                                    child: Text("Đóng")),
+                                              ],
+                                            ));
+                                  }
+                                }),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  options: MutationOptions(
+                      document: gql(mutationData),
+                      onCompleted: (data) async {
+                        await showDialog(
+                          context: context,
+                          builder: (_) {
+                            if (data == null) {
                               return AlertDialog(
-                                title: data["scheduleresult_save_schedule_result"]
-                                                ["code"] ==
-                                            0 &&
-                                        data["scheduleresult_save_schedule_result"]
-                                                ["data"]["failure"] ==
-                                            0
-                                    ? Text("Thành công")
-                                    : Text("Thất bại"),
-                                content: data["scheduleresult_save_schedule_result"]
-                                            ["code"] ==
-                                        0
-                                    ? Text(
-                                        data["scheduleresult_save_schedule_result"]
-                                                ["data"]["message"]
-                                            .split('<')
-                                            .first)
-                                    : Text(data[
-                                            "scheduleresult_save_schedule_result"]
-                                        ["message"]),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        if (data["scheduleresult_save_schedule_result"]
-                                                ["code"] !=
-                                            0) {
-                                          Navigator.pop(context);
-                                        } else {
-                                          Navigator.pop(context, true);
-                                        }
-                                      },
-                                      child: Text("OK"))
-                                ],
-                              );
-                            },
-                          ).then((value) {
-                            if (value != null) {
-                              if (value == true) {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => GraphQLProvider(
-                                        client: client,
-                                        child: Mutation(
-                                          options: MutationOptions(
-                                              document: gql(changeStatus),
-                                              onCompleted: (result) {
-                                                disabled = false;
-                                                if (result == null) {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (_) {
-                                                        return AlertDialog(
-                                                          title: Text(
-                                                              'Có lỗi xảy ra '),
-                                                          content: Text(
-                                                              'xem lại kết nối internet'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                              child:
-                                                                  Text('Đóng'),
-                                                            )
-                                                          ],
-                                                        );
-                                                      });
-                                                } else if (result[
-                                                            'schedule_change_status_schedule']
-                                                        ['code'] !=
-                                                    0) {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (_) {
-                                                        return AlertDialog(
-                                                          title: Text(
-                                                              'Không chuyển trạng thái chiến dịch được'),
-                                                          content: Text(
-                                                              result['schedule_change_status_schedule']
-                                                                      [
-                                                                      'message']
-                                                                  .split(':')
-                                                                  .last),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                              child:
-                                                                  Text('Đóng'),
-                                                            )
-                                                          ],
-                                                        );
-                                                      });
-                                                } else {}
-                                              }),
-                                          builder: (runMutation, result) {
-                                            var dta = DateTime.parse(
-                                                widget.surveyDate!);
+                                  title: Text('Có lỗi xảy ra'),
+                                  content: Text("Kiểm tra lại kết nối"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Đóng'))
+                                  ]);
+                            }
+                            if (data["scheduleresult_save_schedule_result"]
+                                    ["code"] !=
+                                0) {
+                              return AlertDialog(
+                                  title: Text('Có lỗi xảy ra'),
+                                  content: Text("Không gửi kết quả lên được "),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Đóng'))
+                                  ]);
+                            }
+                            return AlertDialog(
+                              title: data["scheduleresult_save_schedule_result"]
+                                              ["code"] ==
+                                          0 &&
+                                      data["scheduleresult_save_schedule_result"]
+                                              ["data"]["failure"] ==
+                                          0
+                                  ? Text("Thành công")
+                                  : Text("Thất bại"),
+                              content: data["scheduleresult_save_schedule_result"]
+                                          ["code"] ==
+                                      0
+                                  ? Text(
+                                      data["scheduleresult_save_schedule_result"]
+                                              ["data"]["message"]
+                                          .split('<')
+                                          .first)
+                                  : Text(data[
+                                          "scheduleresult_save_schedule_result"]
+                                      ["message"]),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      if (data["scheduleresult_save_schedule_result"]
+                                              ["code"] !=
+                                          0) {
+                                        Navigator.pop(context);
+                                      } else {
+                                        Navigator.pop(context, true);
+                                      }
+                                    },
+                                    child: Text("OK"))
+                              ],
+                            );
+                          },
+                        ).then((value) {
+                          if (value != null) {
+                            if (value == true) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => GraphQLProvider(
+                                      client: client,
+                                      child: Mutation(
+                                        options: MutationOptions(
+                                            document: gql(changeStatus),
+                                            onCompleted: (result) {
+                                              disabled = false;
+                                              if (result == null) {
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (_) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Có lỗi xảy ra '),
+                                                        content: Text(
+                                                            'xem lại kết nối internet'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Text('Đóng'),
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              } else if (result[
+                                                          'schedule_change_status_schedule']
+                                                      ['code'] !=
+                                                  0) {
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (_) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Không chuyển trạng thái chiến dịch được'),
+                                                        content: Text(
+                                                            result['schedule_change_status_schedule']
+                                                                    ['message']
+                                                                .split(':')
+                                                                .last),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Text('Đóng'),
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              } else {}
+                                            }),
+                                        builder: (runMutation, result) {
+                                          var dta = DateTime.parse(
+                                              widget.surveyDate!);
 
-                                            return RootScreen(
-                                              year: dta.year,
-                                              month: dta.month,
-                                            );
-                                          },
-                                        ),
+                                          return RootScreen(
+                                            year: dta.year,
+                                            month: dta.month,
+                                          );
+                                        },
                                       ),
                                     ),
-                                    (route) => route.isFirst);
-                              }
+                                  ),
+                                  (route) => route.isFirst);
                             }
-                          });
-                        })
+                          }
+                        });
+                      })
 
-                    // Padding(
-                    //       padding:
-                    //           EdgeInsets.symmetric(horizontal: padding),
-                    //       child: AuthButton(title: "Gửi", onPress: () {})),
-                    ),
+                  // Padding(
+                  //       padding:
+                  //           EdgeInsets.symmetric(horizontal: padding),
+                  //       child: AuthButton(title: "Gửi", onPress: () {})),
+                  ),
               if (context.watch<ChooseFileController>().isSelectedFile &&
                   !widget.isCompleted)
                 SelectFileDialog(),

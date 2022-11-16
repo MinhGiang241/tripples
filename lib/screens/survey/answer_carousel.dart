@@ -430,27 +430,22 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
                               const SizedBox(
                                 height: 12,
                               ),
-                              if (showBtn &&
-                                  widget.questions.length > 0 &&
-                                  !widget.isCompleted)
-                                ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              activeIndex ==
-                                                      widget.questions.length -
-                                                          1
-                                                  ? Colors.grey
-                                                  : Colors.orange[700])),
-                                  onPressed:
-                                      activeIndex == widget.questions.length - 1
-                                          ? null
-                                          : () {
-                                              FocusScope.of(context).unfocus();
-                                              carouselController.nextPage();
-                                            },
-                                  child: Icon(Icons.arrow_right),
-                                ),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        activeIndex ==
+                                                widget.questions.length - 1
+                                            ? Colors.grey
+                                            : Colors.orange[700])),
+                                onPressed:
+                                    activeIndex == widget.questions.length - 1
+                                        ? null
+                                        : () {
+                                            FocusScope.of(context).unfocus();
+                                            carouselController.nextPage();
+                                          },
+                                child: Icon(Icons.arrow_right),
+                              ),
                             ],
                           ),
                           const SizedBox(

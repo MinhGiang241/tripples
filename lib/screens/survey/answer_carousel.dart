@@ -271,7 +271,7 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
               Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKey,
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () {
                     FocusScope.of(context).unfocus();
                   },

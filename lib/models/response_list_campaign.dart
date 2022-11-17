@@ -131,68 +131,71 @@ class ScheduleCampaign extends ChangeNotifier {
 
       json['campaign']['question_list'].asMap().forEach((i, v) {
         var index = list.indexWhere((e) => e["questionTemplateId"] == v['_id']);
-        double maxScore = 0;
+        // double maxScore = 0;
 
         var y = json['campaign']['questions'][index];
 
-        if (json['campaign']['questions'][index]['auto_mark'] == true &&
-            v['answer_type'] == "MULTIPLECHOOSE") {
-          // print(v);
-          // print(y);
-          // if (v['choice'] != null) {
-          // v['choice']!.reduce((a, b) {
-          //   return a + b['score'];
-          // });
-          // (v['choices'] as List).forEach((a) {
-          //   if (a['score'] != null) {
-          //     maxScore += (a['score'] as int);
-          //   } else {}
-          // });
-          // }
-          if (v['choices'] != null) {
-            for (var i = 0; i < v['choices'].length; i++) {
-              print('score: ${v['choices'][i]['score']}');
-              if (v['choices'][i]['score'] != null) {
-                maxScore = maxScore + (v['choices'][i]['score']);
-                print('score: ${v['choices'][i]['score']}');
-              } else {}
-            }
-          }
+        // if (json['campaign']['questions'][index]['auto_mark'] == true &&
+        //     v['answer_type'] == "MULTIPLECHOOSE") {
+        //   // print(v);
+        //   // print(y);
+        //   // if (v['choice'] != null) {
+        //   // v['choice']!.reduce((a, b) {
+        //   //   return a + b['score'];
+        //   // });
+        //   // (v['choices'] as List).forEach((a) {
+        //   //   if (a['score'] != null) {
+        //   //     maxScore += (a['score'] as int);
+        //   //   } else {}
+        //   // });
+        //   // }
+        //   // if (v['choices'] != null) {
+        //   //   for (var i = 0; i < v['choices'].length; i++) {
+        //   //     print('score: ${v['choices'][i]['score']}');
+        //   //     if (v['choices'][i]['score'] != null) {
+        //   //       maxScore = maxScore + (v['choices'][i]['score']);
+        //   //       print('score: ${v['choices'][i]['score']}');
+        //   //     } else {}
+        //   //   }
+        //   // }
 
-          // (v['choices']).forEach((a) {
-          //   if (a['score'] != null) {
-          //     return maxScore += (a['score'] as int);
-          //   } else {}
-          // });
-        } else if (json['campaign']['questions'][index]['auto_mark'] == true &&
-            v['answer_type'] == "ONECHOOSE") {
-          if (v['choices'] != null &&
-              double.tryParse(v['choices'][0]['score'].toString()) != null) {
-            maxScore = double.parse(v['choices'][0]['score'].toString());
-            for (var i = 0; i < v['choices'].length; i++) {
-              if (v['choices'][i]['score'] != null) {
-                if (v['choices'][i]['score'] > maxScore) {
-                  maxScore = double.parse(v['choices'][i]['score'].toString());
-                }
-              } else {}
-            }
-          }
-        } else {
-          if (double.tryParse(json['campaign']['questions'][index]['max_score']
-                  .toString()) !=
-              null) {
-            maxScore = double.parse(
-                json['campaign']['questions'][index]['max_score'].toString());
-          } else {
-            maxScore = 10;
-          }
-        }
-        print(maxScore);
+        //   // (v['choices']).forEach((a) {
+        //   //   if (a['score'] != null) {
+        //   //     return maxScore += (a['score'] as int);
+        //   //   } else {}
+        //   // });
+        // } else if (json['campaign']['questions'][index]['auto_mark'] == true &&
+        //     v['answer_type'] == "ONECHOOSE") {
+        //   // if (v['choices'] != null &&
+        //   //     double.tryParse(v['choices'][0]['score'].toString()) != null) {
+        //   //   maxScore = double.parse(v['choices'][0]['score'].toString());
+        //   //   for (var i = 0; i < v['choices'].length; i++) {
+        //   //     if (v['choices'][i]['score'] != null) {
+        //   //       if (v['choices'][i]['score'] > maxScore) {
+        //   //         maxScore = double.parse(v['choices'][i]['score'].toString());
+        //   //       }
+        //   //     } else {}
+        //   //   }
+        //   // }
+        // } else {
+        //   if (double.tryParse(json['campaign']['questions'][index]['max_score']
+        //           .toString()) !=
+        //       null) {
+        //     maxScore = double.parse(
+        //         json['campaign']['questions'][index]['max_score'].toString());
+        //   } else {
+        //     maxScore = json['campaign']['questions'][index]['max_score'];
+        //   }
+        // }
+
+        print('maxScore: ${json['campaign']['questions'][index]['max_score']}');
+
         questions?.add(new Questions.fromJson(
           v,
 
-          // json['campaign']['questions'][index]['max_score'],
-          maxScore,
+          json['campaign']['questions'][index]['max_score'],
+
+          // maxScore,
           // json['campaign']['questions'][required_index]['required']
           json['campaign']['questions'][index]['required'],
           json['campaign']['questions'][index]['order_no'],

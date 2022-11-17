@@ -152,6 +152,7 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
       builder: (context, child) => GraphQLProvider(
         client: client,
         child: Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: Text(
               widget.isCompleted ? "Kết quả khảo sát" : 'Thực hiện khảo sát',
@@ -270,114 +271,101 @@ class _AnswerCarouselState extends State<AnswerCarousel> {
               Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKey,
-                child: Center(
-                  child: widget.questions.length > 0
-                      ? ListView(
-                          addAutomaticKeepAlives: true,
-                          children: [
-                            CarouselSlider.builder(
-                              carouselController: carouselController,
-                              options: CarouselOptions(
-                                scrollPhysics: AlwaysScrollableScrollPhysics(),
-                                pageViewKey: PageStorageKey(0),
-                                enableInfiniteScroll: false,
-                                initialPage: activeIndex,
-                                autoPlay: false,
-                                height: (showBtn &&
-                                        widget.questions.length > 0 &&
-                                        !widget.isCompleted)
-                                    ? MediaQuery.of(context).size.height -
-                                        50 -
-                                        80 -
-                                        100
-                                    : MediaQuery.of(context).size.height -
-                                        50 -
-                                        120,
-                                viewportFraction: 1,
-                                onPageChanged: (index, reason) {
-                                  FocusScope.of(context).unfocus();
-                                  setState(() {
-                                    activeIndex = index;
-                                  });
-                                },
-                              ),
-                              itemCount: widget.questions.length,
-                              itemBuilder: (context, index, realIndex) {
-                                listKey.add(GlobalKey());
-                                if (widget.questions
-                                    .contains((e) => e.order_no == null)) {
-                                  widget.questions.sort(
-                                    (a, b) =>
-                                        removeDiacritics(a.title!.toLowerCase())
-                                            .compareTo(
-                                      removeDiacritics(
-                                        b.title!.toLowerCase(),
+                child: InkWell(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: Center(
+                    child: widget.questions.length > 0
+                        ? ListView(
+                            addAutomaticKeepAlives: true,
+                            children: [
+                              CarouselSlider.builder(
+                                carouselController: carouselController,
+                                options: CarouselOptions(
+                                  scrollPhysics:
+                                      AlwaysScrollableScrollPhysics(),
+                                  pageViewKey: PageStorageKey(0),
+                                  enableInfiniteScroll: false,
+                                  initialPage: activeIndex,
+                                  autoPlay: false,
+                                  height: (showBtn &&
+                                          widget.questions.length > 0 &&
+                                          !widget.isCompleted)
+                                      ? MediaQuery.of(context).size.height -
+                                          50 -
+                                          80 -
+                                          100
+                                      : MediaQuery.of(context).size.height -
+                                          50 -
+                                          120,
+                                  viewportFraction: 1,
+                                  onPageChanged: (index, reason) {
+                                    FocusScope.of(context).unfocus();
+                                    setState(() {
+                                      activeIndex = index;
+                                    });
+                                  },
+                                ),
+                                itemCount: widget.questions.length,
+                                itemBuilder: (context, index, realIndex) {
+                                  listKey.add(GlobalKey());
+                                  if (widget.questions
+                                      .contains((e) => e.order_no == null)) {
+                                    widget.questions.sort(
+                                      (a, b) => removeDiacritics(
+                                              a.title!.toLowerCase())
+                                          .compareTo(
+                                        removeDiacritics(
+                                          b.title!.toLowerCase(),
+                                        ),
                                       ),
+                                    );
+                                  } else {
+                                    widget.questions.sort(
+                                        (a, b) => a.order_no! - b.order_no!);
+                                  }
+
+                                  var question = widget.questions[index];
+                                  var questionResult = widget
+                                              .questionResults.answers !=
+                                          null
+                                      ? widget.questionResults.answers!.length >
+                                              0
+                                          ? widget.questionResults.answers
+                                              ?.firstWhere((element) =>
+                                                  element.questionTemplateId ==
+                                                  question.questID)
+                                          : null
+                                      : null;
+                                  int questionIndex = widget.questions.length >
+                                          0
+                                      ? widget.questions.indexWhere((element) =>
+                                          element.questID == question.questID)
+                                      : -1;
+                                  return SingleChildScrollView(
+                                    child: ItemSurvey(
+                                      orderNum: activeIndex + 1,
+                                      formKey: _formKey,
+                                      key: listKey[index],
+                                      question: question,
+                                      isCompleted: widget.isCompleted,
+                                      questID: question.questID ?? "",
+                                      questionResult: questionResult,
+                                      questionIndex: questionIndex,
                                     ),
                                   );
-                                } else {
-                                  widget.questions.sort(
-                                      (a, b) => a.order_no! - b.order_no!);
-                                }
-
-                                // widget.questions.sort(
-                                //   (a, b) =>
-                                //       removeDiacritics(a.title!.toLowerCase())
-                                //           .compareTo(
-                                //     removeDiacritics(
-                                //       b.title!.toLowerCase(),
-                                //     ),
-                                //   ),
-                                // );
-                                widget.questions.sort((a, b) =>
-                                        DateTime.parse(a.createdTime as String)
-                                            .compareTo(DateTime.parse(
-                                                b.createdTime as String))
-                                    //     removeDiacritics(a.title!.toLowerCase())
-                                    //         .compareTo(
-                                    //   removeDiacritics(
-                                    //     b.title!.toLowerCase(),
-                                    //   ),
-                                    // ),
-                                    );
-
-                                var question = widget.questions[index];
-                                var questionResult = widget
-                                            .questionResults.answers !=
-                                        null
-                                    ? widget.questionResults.answers!.length > 0
-                                        ? widget.questionResults.answers
-                                            ?.firstWhere((element) =>
-                                                element.questionTemplateId ==
-                                                question.questID)
-                                        : null
-                                    : null;
-                                int questionIndex = widget.questions.length > 0
-                                    ? widget.questions.indexWhere((element) =>
-                                        element.questID == question.questID)
-                                    : -1;
-                                return SingleChildScrollView(
-                                  child: ItemSurvey(
-                                    orderNum: activeIndex + 1,
-                                    formKey: _formKey,
-                                    key: listKey[index],
-                                    question: question,
-                                    isCompleted: widget.isCompleted,
-                                    questID: question.questID ?? "",
-                                    questionResult: questionResult,
-                                    questionIndex: questionIndex,
-                                  ),
-                                );
-                              },
-                            ),
-                            // Divider(
-                            //   color: Colors.black,
-                            // ),
-                          ],
-                        )
-                      : Center(
-                          child: Text("Không có câu hỏi nào"),
-                        ),
+                                },
+                              ),
+                              // Divider(
+                              //   color: Colors.black,
+                              // ),
+                            ],
+                          )
+                        : Center(
+                            child: Text("Không có câu hỏi nào"),
+                          ),
+                  ),
                 ),
               ),
               Mutation(

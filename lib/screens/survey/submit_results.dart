@@ -341,9 +341,13 @@ class _SubmitResultsState extends State<SubmitResults> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    '${e.value.score.toStringAsFixed(1)} / ${q.maxScore.toStringAsFixed(1)}',
-                                    textAlign: TextAlign.center),
+                                child: q.maxScore != null
+                                    ? Text(
+                                        '${e.value.score.toStringAsFixed(1)} / ${q.maxScore.toStringAsFixed(1)}',
+                                        textAlign: TextAlign.center)
+                                    : Text(
+                                        '${e.value.score.toStringAsFixed(1)} ',
+                                        textAlign: TextAlign.center),
                               )
                             ],
                           );

@@ -249,7 +249,7 @@ class ItemSurveyState extends State<ItemSurvey>
                     scoreController: scoreController,
                     maxScore: widget.question.maxScore != null
                         ? widget.question.maxScore
-                        : 10,
+                        : null,
                     score: widget.questionResult != null
                         ? widget.questionResult!.score != null
                             ? widget.questionResult!.score
@@ -491,12 +491,13 @@ class ScoreSlider extends StatelessWidget {
                             scoreController!.text,
                             style: TextStyle(height: 1.5, fontSize: 16),
                           ),
-                        Text('/ ${maxScore.toStringAsFixed(1)}',
-                            style: TextStyle(
-                              height: 1.5,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            )),
+                        if (maxScore != null)
+                          Text('/ ${maxScore.toStringAsFixed(1)}',
+                              style: TextStyle(
+                                height: 1.5,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              )),
                       ],
                     )
                     // Text(
